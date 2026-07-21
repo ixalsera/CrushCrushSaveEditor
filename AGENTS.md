@@ -142,7 +142,8 @@ which loses sub-second precision at this magnitude via float rounding).
 ### Investigating an unconfirmed field
 
 The most reliable way to pin down what a field does: keep a `*.prev.sav` /
-`*.prev.txt` snapshot from before a play session, take a new save after,
+`*.prev.txt` snapshot from before a play session (`python3
+tools/rotate_save.py` does this rotation), take a new save after,
 and diff the two **reconstructed key sets** (not a raw line diff - the `::`
 prefix-compression reshuffles line order between saves, so a plain `diff`
 on the raw decoded text is noisy). This is how the Phone Fling feature, the
@@ -192,6 +193,16 @@ tools/phone_fling.py       decode_conversation_state(blob_b64: str) -> dict | No
 
 CLI:
   python3 tools/phone_fling.py decode <C<N>P-blob> [<C<N>D-value>]
+
+tools/rotate_save.py       rotate(name: str = "crushcrush") -> list[(src, dst)]
+                            (moves saves/<name>.sav -> saves/<name>.prev.sav
+                            and decoded/<name>.txt -> decoded/<name>.prev.txt,
+                            overwriting any existing .prev. files; refuses to
+                            rotate either file if the other's source is
+                            missing, so a rotation never happens half-done)
+
+CLI:
+  python3 tools/rotate_save.py [name]   (default: crushcrush)
 ```
 
 ## Standard edit workflow

@@ -3,13 +3,14 @@
 ## Mapping
 Phone Fling data are stored in the save file using an index instead of the Girl's name. The table below attempts to map the fling ID with the girl it represents:
 
-| Fling ID | Name                         |
-|----------|------------------------------|
-| 5        | Sophia                       |
-| 7        | Ruri                         |
-| 8        | Sawyer (Partially confirmed) |
-| 9        | Honey                        |
-| 13       | Nova                         |
+| Fling ID | Name               |
+|----------|--------------------|
+| 5        | Sophia             |
+| 7        | Ruri               |
+| 8        | Sawyer (Suspected) |
+| 9        | Honey              |
+| 11       | Lake               |
+| 13       | Nova               |
 
 ## Data
 
@@ -22,17 +23,18 @@ While `C<N>D` represents the time the last message was received, `C<N>P` likely 
   - the 32-bit value that follows those two counts down towards single digits; this is likely the `nextMessageDelay` determining the ticks/seconds until the next message is shown
 - `C<N>P` is empty for flings that have not been started (pairs 1:1 with `C<N>D:0`)
 - That 32-bit delay reads as exactly `4294967292` (`0xFFFFFFFC`, i.e. `-4` as a signed 32-bit int) on every fling whose `C<N>D` is the "needs an unlock requirement" sentinel (`int64.max`) - but also on a few flings with an otherwise ordinary `C<N>D`. Looks like an independent "conversation currently gated, no countdown running" flag on the `P` blob itself rather than just a mirror of `D`'s sentinel; unconfirmed why an active-looking fling would carry it
+- Conversations awaiting a player choice have the delay/countdown set to `0`
 
 We can derive a blob structure for the data thus (pseudocode; confirmed against every fling in a real save, see `tools/phone_fling.py`):
 ```
 struct PhoneFlingData {
-  u16 MessageCounter
-  u16 UnknownValue           // possibly a sent-message-only counter; unconfirmed
+  u16 TotalMessageCounter    // Fling message count + player message count
+  u16 PlayerMessageCounter   // suspected but still not enough data
   u32 NextMessageCountdown   // 0xFFFFFFFC sentinel = locked/gated, not a literal countdown
   byte[] Trailing            // variable length (1-7 bytes seen); unparsed
 }
 ```
 
-What `UnknownValue` and `Trailing` are is currently unclear. Potentially `Trailing` is the player's conversational choices as a bitmask for replaying the conversation correctly as well as potentially some indication of seen photos.
+What `Trailing` is, is currently unclear. Potentially `Trailing` is the player's conversational choices as a bitmask for replaying the conversation correctly.
 
 Use `tools/phone_fling.py decode` to parse a `C<N>P` blob against this structure - it already handles the empty-blob and locked-sentinel states above instead of misparsing or crashing on them.
