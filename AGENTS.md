@@ -203,6 +203,17 @@ tools/rotate_save.py       rotate(name: str = "crushcrush") -> list[(src, dst)]
 
 CLI:
   python3 tools/rotate_save.py [name]   (default: crushcrush)
+
+tools/blank_save.py        blank_out(template_text: str, now: datetime) -> str
+                            (transforms a real decoded save into a
+                            zero-progress/no-unlocks one, keyed off the
+                            template's own key set rather than a hardcoded
+                            schema copy - see the module docstring for the
+                            call made on each unconfirmed field)
+
+CLI:
+  python3 tools/blank_save.py [template.txt] [output.txt]
+    (default: decoded/crushcrush.prev.txt -> decoded/crushcrush.blank.txt)
 ```
 
 ## Standard edit workflow
