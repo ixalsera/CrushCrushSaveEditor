@@ -12,7 +12,11 @@ what a field means:
   number maps to, and their event-scoped schemas.
 - `FLINGS.md` - the Phone Fling feature (`C<N>D`/`C<N>P`): fling-ID-to-girl
   mapping (WIP, mostly unconfirmed) and what's been decoded of the `C<N>P`
-  blob so far.
+  blob so far. The save only ever stores the numeric fling index (`C<N>`) -
+  it never stores a girl's name against a fling, and a fling doesn't
+  necessarily correspond to any `Girl<Name>` block in the roster (the
+  ID-to-girl mapping is a separate, unconfirmed lookup table maintained in
+  `FLINGS.md`, not something recoverable from the save itself).
 
 ## Directory layout
 
@@ -104,7 +108,10 @@ with prefix compression at the *application* layer (independent of LZF):
 - The `C<N>D`/`C<N>P` numbered pairs are the **Phone Fling** feature
   (confirmed - see `SCHEMA.md`/`FLINGS.md`). `C<N>D` is a `DateTime` value
   (see below) for the last message received, or `int64.MaxValue` if the
-  next message needs an extra unlock requirement met first.
+  next message needs an extra unlock requirement met first. Flings are
+  identified purely by their `<N>` index in the key name - there is no
+  girl-name-keyed variant to search for, and no guarantee the index maps to
+  a girl present in this save's roster at all.
 
 ### Timestamp fields
 
@@ -125,6 +132,13 @@ else:                                   # Unspecified kind (e.g. Task*Start)
 datetime(1,1,1) + timedelta(seconds=ticks//10_000_000, microseconds=(ticks%10_000_000)//10)
 ```
 
+Use `tools/timestamp.py` instead of re-deriving this inline - `decode` takes
+one or more raw values straight from a decoded save/diff and prints the
+`DateTimeKind` + ISO datetime for each (sentinels print as `N/A`/`never`);
+`encode` does the reverse for writing an edited timestamp back into a save.
+It uses exact integer tick arithmetic (not `timedelta.total_seconds()`,
+which loses sub-second precision at this magnitude via float rounding).
+
 ### Investigating an unconfirmed field
 
 The most reliable way to pin down what a field does: keep a `*.prev.sav` /
@@ -136,6 +150,16 @@ per-level reset behavior of `Girl.Hearts`/`DateCount<N>`/`GiftCount<N>`, and
 several bitmask/counter fields got confirmed - by pairing "what changed"
 with what actually happened in the session (e.g. `decoded/crushcrush.prev.txt`
 vs `decoded/crushcrush.txt` in this repo).
+
+When the thing you're checking is specifically a Phone Fling, diff the
+`C<N>D`/`C<N>P` keys directly (e.g. `grep -oE '^C[0-9]+[DP]:.*'` over both
+files) - don't bother grepping for a girl's name first. The save has no
+name-keyed fling data to find, so a name search only tells you whether that
+girl's own `Girl<Name>` block exists, not whether her fling (if any) changed.
+Use `tools/phone_fling.py decode` to break a `C<N>P` blob down instead of
+re-deriving the byte layout inline - it also already knows about the
+"never started" (empty blob) and "locked/gated" (sentinel countdown) states
+that a naive parse of a fresh fling will otherwise crash or get confused on.
 
 ## Tools (`tools/`, Python 3, no third-party deps)
 
@@ -152,6 +176,22 @@ tools/crushcrush_save.py   MAGIC = bytes.fromhex("9737dc")
 CLI:
   python3 tools/crushcrush_save.py decode <in.sav> [out.txt]
   python3 tools/crushcrush_save.py encode <in.txt> [out.sav]
+
+tools/timestamp.py         decode(value: int) -> (kind: str, dt: datetime | None)
+                            encode(dt: datetime, kind: str = "utc") -> int
+
+CLI:
+  python3 tools/timestamp.py decode <value> [value ...]
+  python3 tools/timestamp.py encode <iso-datetime> [local|utc|unspecified]
+
+tools/phone_fling.py       decode_conversation_state(blob_b64: str) -> dict | None
+                            (a C<N>P blob's known/unknown fields, or None if
+                            the blob is empty - see the module docstring for
+                            the byte layout and two sentinel values found by
+                            sweeping every fling in a real save)
+
+CLI:
+  python3 tools/phone_fling.py decode <C<N>P-blob> [<C<N>D-value>]
 ```
 
 ## Standard edit workflow
