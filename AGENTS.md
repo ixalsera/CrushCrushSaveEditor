@@ -3,9 +3,16 @@
 Tooling to decode, edit, and re-encode save files for the game **Crush Crush**
 (Sad Panda Studios). This file documents the reverse-engineered save format and
 the tools already built so that format discovery never has to be repeated.
-For a detailed, per-key breakdown of what's inside the decoded plaintext
-(every top-level key, nested object schemas like `Girl`/`Job`/`Hobby`, and
-the per-LTE "Event Schemas"), see `SCHEMA.md`.
+
+Per-key documentation lives in three files - check these before re-deriving
+what a field means:
+- `SCHEMA.md` - every top-level key, and nested object schemas (`Girl`,
+  `Job`, `Hobby`, `Task`, `ACH`, Phone Fling, etc).
+- `EVENTS.md` - the `pes<N>` limited-time-event prefixes: which event each
+  number maps to, and their event-scoped schemas.
+- `FLINGS.md` - the Phone Fling feature (`C<N>D`/`C<N>P`): fling-ID-to-girl
+  mapping (WIP, mostly unconfirmed) and what's been decoded of the `C<N>P`
+  blob so far.
 
 ## Directory layout
 
@@ -88,11 +95,47 @@ with prefix compression at the *application* layer (independent of LZF):
   the root schema it needs: some (`pes27`) bundle a near-complete copy
   (their own `GameState`, `Job`, `Hobby`, `Girl` blocks, with their own
   hobby-name set), others (`pes53`, `pes54`) are much smaller fragments
-  (e.g. just a `Goals` field or a single `GameState.Date`). See
-  `SCHEMA.md`'s "Event Schemas" section for the known prefix -> event name
-  mapping and per-event key details. The top-level (unprefixed) keys remain
-  "the" active save state - that's what the user's stated facts (3
-  diamonds, Cassie/Mio Love:9) matched against, not any `pes<N>` block.
+  (e.g. just a `Goals` field or a single `GameState.Date`). See `EVENTS.md`
+  for the confirmed prefix -> event name mapping (`pes27`=Fuzzy Festival,
+  `pes53`/`pes54`=Roxxy) and per-event key details. The top-level
+  (unprefixed) keys remain "the" active save state - that's what the user's
+  stated facts (3 diamonds, Cassie/Mio Love:9) matched against, not any
+  `pes<N>` block.
+- The `C<N>D`/`C<N>P` numbered pairs are the **Phone Fling** feature
+  (confirmed - see `SCHEMA.md`/`FLINGS.md`). `C<N>D` is a `DateTime` value
+  (see below) for the last message received, or `int64.MaxValue` if the
+  next message needs an extra unlock requirement met first.
+
+### Timestamp fields
+
+Long, unsuffixed fields that look like timestamps (e.g. `GameState.Date`,
+`DateUTC`, `LoginDate`, `Task<N>Start`, `C<N>D`) are .NET `DateTime.ToBinary()`
+values - confirmed by decoding and cross-checking against known play dates.
+Given the raw 64-bit `value`:
+
+```
+unsigned = value & 0xFFFFFFFFFFFFFFFF
+if unsigned & 0x8000000000000000:      # bit 63 set -> Local kind
+    ticks = unsigned - 0x8000000000000000   # UTC-equivalent (offset unknown)
+elif unsigned & 0x4000000000000000:    # bit 62 set -> Utc kind
+    ticks = unsigned - 0x4000000000000000
+else:                                   # Unspecified kind (e.g. Task*Start)
+    ticks = unsigned                    # raw ticks, no tag bits
+# ticks = 100ns units since 0001-01-01; sentinel int64.MaxValue = "N/A"; 0 = "never"
+datetime(1,1,1) + timedelta(seconds=ticks//10_000_000, microseconds=(ticks%10_000_000)//10)
+```
+
+### Investigating an unconfirmed field
+
+The most reliable way to pin down what a field does: keep a `*.prev.sav` /
+`*.prev.txt` snapshot from before a play session, take a new save after,
+and diff the two **reconstructed key sets** (not a raw line diff - the `::`
+prefix-compression reshuffles line order between saves, so a plain `diff`
+on the raw decoded text is noisy). This is how the Phone Fling feature, the
+per-level reset behavior of `Girl.Hearts`/`DateCount<N>`/`GiftCount<N>`, and
+several bitmask/counter fields got confirmed - by pairing "what changed"
+with what actually happened in the session (e.g. `decoded/crushcrush.prev.txt`
+vs `decoded/crushcrush.txt` in this repo).
 
 ## Tools (`tools/`, Python 3, no third-party deps)
 
@@ -131,9 +174,13 @@ CLI:
   `Diamonds` non-negative) is enforced by the tools - edits are freeform
   text edits. If asked to build an actual editor UI/CLI for specific
   fields, that's new work, not yet started.
-- `pes<N>` prefixes are understood to be per-LTE (limited-time event) data
-  (see above and `SCHEMA.md`), but the full prefix -> event mapping is only
-  confirmed for 3 events so far, and exact edit semantics for LTE-scoped
-  `Girl`/`Job`/`Hobby` blocks (e.g. whether editing them affects anything
-  visible once the event has ended) remain unconfirmed - still treat edits
-  there as out of scope unless asked.
+- `pes<N>` -> event name mapping (`EVENTS.md`) is confirmed for 3 prefixes
+  only; exact edit semantics for LTE-scoped `Girl`/`Job`/`Hobby` blocks
+  (e.g. whether editing them affects anything visible once the event has
+  ended) remain unconfirmed - still treat edits there as out of scope
+  unless asked.
+- `FLINGS.md`'s fling-ID -> girl mapping is a work in progress (most IDs
+  unmapped or unconfirmed) - don't treat it as complete.
+- See `SCHEMA.md`'s own "Open questions" section for the current list of
+  unidentified fields (`dchk`, `ana.ev`/`ana.vid`, achievement ID mapping,
+  etc.) rather than duplicating it here.
