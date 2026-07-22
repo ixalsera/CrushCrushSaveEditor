@@ -44,15 +44,7 @@ least. It is likely that if a bitmask represents a girl, the bit index will matc
 At the moment it is unclear whether paid DLC girls will unlock simply by flipping their bit in `GirlsUnlocked`. It seems
 unlikely that this would work; I imagine the game does a DLC ownership check on save load. I could be wrong. At any
 rate, using these tools to unlock paid DLC is not condoned by the project maintainer. If you want the girl, show the
-devs your appreciation for their hard work.
-
-Related, confirmed data point: loading a save with a blanked/local `Ids`, `GirlsUnlocked`, and `BlayfapAwardedItems`
-back into the game on an account that legitimately owns several DLC/bundle girls (Jelle, Quillzone, Bonchovy, Spectrum,
-Shibuki, Lumi) caused the game to restore `Ids` to its original value and re-flip every one of those girls' bits,
-alongside re-populating `BlayfapAwardedItems` and `Playfab.Inventory`/`Participation` - all from server/account state,
-independent of what was in the local save. So DLC ownership is authoritative server/account-side, not derived from the
-local save's bits at all; this doesn't yet say anything about the reverse case (flipping a bit for DLC the account does
-*not* own).
+devs your appreciation for their hard work and fork over the cost of a coffee for her.
 
 ## Outfits
 
@@ -67,11 +59,11 @@ flipping it will do nothing).
 |----|----------------------------------------------------------------------------|
 | 1  | ?                                                                          |
 | 2  | DX Wedding Dress (unconfirmed; this is at least true for Tessa and Amelia) |
-| 18 | Diamond Ring/School Uniform/Holiday (unconfirmed)                          |
-| 19 | Diamond Ring/School Uniform/Holiday (unconfirmed)                          |
+| 18 | Diamond Ring (unconfirmed)                                                 |
+| 19 | School Uniform                                                             |
 | 20 | Bathing Suit                                                               |
 | 21 | Quill's Fuzzy Festival Outfit                                              |
-| 22 | Diamond Ring/School Uniform/Holiday (unconfirmed)                          |
+| 22 | Holiday (unconfirmed)                                                      |
 | 29 | Lingerie                                                                   |
 | 30 | Birthday Suit                                                              |
 
@@ -81,4 +73,5 @@ the latest when you switch to that specific one
 
 ### Equipped Outfits
 
-Equipping an outfit for a girl will set a bit on her `Clothing` field. See the table above for the known outfit mappings.
+Equipping an outfit for a girl will set a bit on her `Clothing` field. See the table above for the known outfit
+mappings.

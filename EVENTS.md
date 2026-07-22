@@ -1,17 +1,22 @@
 # Events
 
-Events appear to come in two forms: parallel events and limited-time events. Parallel events appear to track their own state in a `pes`-prefixed set of keys,
-likely because there is a separate game section for these (such as Fuzzy Festival). LTEs are simply task based token accumulation and therefore do not get
-their own `pes` "namespace".
+Events appear to come in two forms: parallel events and limited-time events. Parallel events appear to track their own
+state in a `pes`-prefixed set of keys, likely because there is a separate game section for these (such as Fuzzy
+Festival). LTEs are simply task based token accumulation and therefore do not get their own `pes` "namespace".
 
 ## Parallel Events
-Currently, the suspected event mapping is:
 
-| Event                                             | Prefix                                                                             |
-|---------------------------------------------------|------------------------------------------------------------------------------------|
-| Fuzzy Festival (Paid DLC)                         | `pes27`                                                                            |
+Currently, the known event mapping is:
+
+| Event                     | Prefix  |
+|---------------------------|---------|
+| Fuzzy Festival (Paid DLC) | `pes27` |
 
 ### Schemas
+
+Since only one event has been observed so far, no generic schema exists for parallel events besides the mirroring of
+some of the root schema. For the known events, the following describes the keys unique to that event.
+
 #### Fuzzy Festival (`pes27`)
 
 | Sub-key                                                          | Shape   | Represents                                                                                                            |
@@ -21,21 +26,21 @@ Currently, the suspected event mapping is:
 | `Pes27Start` (note capital `P`, unlike every other `pes27*` key) | `long`  | Timestamp, shape consistent with `DateTime.ToBinary()` — when the event was started by the player                     |
 | `pes27TimeMultiplier`                                            | `float` | Same meaning as root `TimeMultiplier`, scoped to this event                                                           |
 
-Its `Hobby<Name>` instances use a **different 12 names** than the root
-profile: `Bravery`, `Caring`, `Charisma`, `Creative`, `Focus`,
-`Innovation`, `Luck`, `Optimism`, `Peaceful`, `Responsible`,
-`Tenderness`, `Trustworthy`.
+Its `Hobby<Name>` instances use a **different 12 names** than the root profile: `Bravery`, `Caring`, `Charisma`,
+`Creative`, `Focus`, `Innovation`, `Luck`, `Optimism`, `Peaceful`, `Responsible`, `Tenderness`, `Trustworthy`.
 
 ## Limited-time Events (LTEs)
-The game only seems to store the current achieved tokens and the previous event tokens. This is likely so
-that it can calculate the cost (in diamonds) to complete the previous event if you were short of tokens.
 
-The current event ID is tracked under the root `EventID` with tokens for the current and previous events
-stored under `Event<N>Tokens`. The current `Event<N>Tokens` likely remains empty until the `Task` entries
-are rotated out for the next event.
+The game only seems to store the current achieved tokens and the previous event tokens. This is likely so that it can
+calculate the cost (in diamonds) to complete the previous event if you were short of tokens.
 
-`Task` entries are removed when the event rolls over to the next one and then populated with however many `Task` keys are required.
-Usually the amount of Tasks is calculated as `3 * eventDuration`, i.e. 3 tasks per day.
+The current event ID is tracked under the root `EventID` with tokens for the current and previous events stored under
+`Event<N>Tokens`. The current `Event<N>Tokens` likely remains empty until the `Task` entries are rotated out for the
+next event.
+
+`Task` entries are removed when the event rolls over to the next one and then populated with however many `Task` keys
+are required. Usually the amount of Tasks is calculated as `3 * eventDuration`, i.e. 3 tasks per day, but this can vary
+according to the event.
 
 Known Event IDs:
 

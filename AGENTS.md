@@ -4,8 +4,8 @@ Tooling to decode, edit, and re-encode save files for the game **Crush Crush**
 (Sad Panda Studios). This file documents the reverse-engineered save format and
 the tools already built so that format discovery never has to be repeated.
 
-Per-key documentation lives in three files - check these before re-deriving
-what a field means:
+Per-key documentation lives in several files - check these before
+re-deriving what a field means:
 - `SCHEMA.md` - every top-level key, and nested object schemas (`Girl`,
   `Job`, `Hobby`, `Task`, `ACH`, Phone Fling, etc).
 - `EVENTS.md` - the `pes<N>` limited-time-event prefixes: which event each
@@ -17,6 +17,12 @@ what a field means:
   necessarily correspond to any `Girl<Name>` block in the roster (the
   ID-to-girl mapping is a separate, unconfirmed lookup table maintained in
   `FLINGS.md`, not something recoverable from the save itself).
+- `GIRLS.md` - the `GirlsUnlocked`/`GirlsPreviouslyUnlocked` bit-index-to-
+  girl mapping, plus per-girl `Clothing`/`LifeOutfits` outfit-bit findings.
+- `UNLOCKS.md` - the same kind of bitmask/list analysis as `GIRLS.md`, but
+  for the account-level `Playfab`/`BlayfapAwardedItems` fields instead of
+  per-girl ones - notably, that both are server-synced on launch and not
+  derived from the local save at all.
 
 ## Directory layout
 
