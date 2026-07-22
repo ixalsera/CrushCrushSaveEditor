@@ -91,10 +91,9 @@ def blank_out(template_text, now):
         if prefix == "ACH":
             continue  # AchievementCount:0 -> no achievement entries
         if prefix == "Task":
-            new_lines = []
-            for n in range(42):
-                new_lines.append(f"{n}Start:0")
-            result.append([prefix, new_lines])
+            # confirmed: a fresh account has NO Task entries at all until it
+            # opens an LTE - tasks aren't a fixed 0-41 preallocation, they
+            # only exist for events the player has actually entered
             continue
         if prefix == "Skill":
             new_lines = [f"{n}:0i" for n in range(12)]

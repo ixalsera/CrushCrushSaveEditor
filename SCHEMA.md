@@ -38,47 +38,47 @@ once confirmed against the game.
 
 ## Top-level keys
 
-| Key                                                 | Shape                         | Represents                                                                                                                                                                 |
-|-----------------------------------------------------|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `.speedboost.<size>.pri` (`large`/`medium`/`small`) | `int` (negative)              | Shop price for a speed-boost purchase, per size tier; unconfirmed                                                                                                          |
-| `.speedboost.<size>.qty`                            | `int` (negative)              | Quantity/count associated with a speed-boost purchase, per size tier; unconfirmed                                                                                          |
-| `.timeblocks.<size>.pri`                            | `int` (negative)              | Shop price for a time-block purchase, per size tier; unconfirmed                                                                                                           |
-| `.timeblocks.<size>.qty`                            | `int` (negative)              | Quantity/count for a time-block purchase, per size tier; unconfirmed                                                                                                       |
-| `.timeskip.<size>.pri`                              | `int` (negative)              | Shop price for a time-skip purchase, per size tier; unconfirmed                                                                                                            |
-| `.timeskip.<size>.qty`                              | `int` (negative)              | Quantity/count for a time-skip purchase, per size tier; unconfirmed                                                                                                        |
-| `ACH`                                               | `object`                      | See [Achievement schema](#achievement-ach-schema)                                                                                                                          |
-| `AchievementCount`                                  | `int`                         | Total number of achievements unlocked                                                                                                                                      |
-| `ana.ev`                                            | `long`                        | ????                                                                                                                                                                       |
-| `ana.vid`                                           | `long`                        | ????                                                                                                                                                                       |
-| `AvailableJobs`                                     | `int`                         | Bitmask; bit count (~19 set bits) is close to the number of distinct `Job<Name>` types seen in this file (20), suggesting one bit per job type — unconfirmed               |
-| `BlayfapAwardedItems`                               | `blob` (base64 of plain text) | Decodes to a literal pipe-delimited list, likely of DLC girls as it seems to contain the Kaiju girls and, most recently, Lumi. This value may be refreshed at game launch  |
-| `C<N>D` (e.g. `C1D`..`C46D`)                        | `long`                        | Confirmed: Phone Fling feature. See [Phone Fling schema](#phone-fling-schema)                                                                                              |
-| `C<N>P` (e.g. `C1P`..`C46P`)                        | `blob`                        | Confirmed: Phone Fling feature. See [Phone Fling schema](#phone-fling-schema)                                                                                              |
-| `Completed`                                         | `object`                      | See [Completed schema](#completed-events-schema)                                                                                                                           |
-| `CurrentGirl`                                       | `int`                         | Index of the currently selected/active girl; likely only used to restore game state back to this specific girl on launch (instead of jumping to Cassie).                   |
-| `dchk`                                              | `int`                         | ????; I suspect this might stand for "Drift Check" but it could just as well be "Data Checksum"                                                                            |
-| `Event<ID>Tokens` (e.g. `Event307Tokens`)           | `int`                         | Token/currency count for the numbered limited-time event; unconfirmed                                                                                                      |
-| `EventID`                                           | `int`                         | ID of the currently active/most recent limited-time event; unconfirmed                                                                                                     |
-| `events.popupinfo`                                  | JSON object                   | Per-event popup display tracking: `{"<event-key>": {"shownCount": int, "shownAt": ISO-8601 timestamp}}`                                                                    |
-| `GameState`                                         | `object`                      | See [GameState schema](#gamestate-schema)                                                                                                                                  |
-| `Girl<Name>`                                        | `object`                      | See [Girl schema](#girl-schema). One instance per girl in the roster (~80+ seen)                                                                                           |
-| `GirlsPreviouslyUnlocked`                           | `blob` (17-byte bitmask)      | Bitmask, likely 1 bit per girl in the roster, tracking girls unlocked at some earlier point (vs. currently, see next)                                                      |
-| `GirlsUnlocked`                                     | `blob` (17-byte bitmask)      | Bitmask, likely 1 bit per girl in the roster, tracking currently-unlocked girls                                                                                            |
-| `HasSeenFuzzyExternalPurchaseConfirmation`          | `flag`                        | Whether a specific purchase-confirmation dialog has been shown; no idea what this is for                                                                                   |
-| `Hobby<Name>`                                       | `object`                      | See [Hobby schema](#hobby-schema). 12 instances seen                                                                                                                       |
-| `Job<Name>`                                         | `object`                      | See [Job schema](#job-schema). ~20 instances seen                                                                                                                          |
-| `LastPesId<N>` (`0`-`9`)                            | `string`                      | A recently-seen limited-time event (LTE) ID (see `pes27`/`pes53`/`pes54` below); slot `N` is a recency-ordered list, not a stat index                                      |
-| `Playfab`                                           | `object`                      | See [Playfab schema](#playfab-schema)                                                                                                                                      |
-| `Prereg`                                            | `flag`                        | Likely whether pre-registration content is unlocked; unconfirmed                                                                                                           |
-| `SaveFileVersion`                                   | `flag`                        | Bare in this sample — expected a version number here; treat as unconfirmed                                                                                                 |
-| `Settings`                                          | `object`                      | See [Settings schema](#settings-schema)                                                                                                                                    |
-| `Skill<N>` (`0`-`11`)                               | `object`                      | See [Skill schema](#skill-schema)                                                                                                                                          |
-| `Task`                                              | `object`                      | See [Task schema](#task-schema)                                                                                                                                            |
-| `TermsVersionAccepted`                              | `flag`                        | Whether the current Terms of Service version has been accepted                                                                                                             |
-| `ticketboothSeen`                                   | `flag`                        | Whether the "ticket booth" UI element/prompt has been seen                                                                                                                 |
-| `TimeMultiplier`                                    | `float`                       | Current overall time-speed multiplier                                                                                                                                      |
-| `Tutorial`                                          | `int`                         | Tutorial progress step/stage reached                                                                                                                                       |
-| `UnlockedPFS`                                       | `blob` (3-byte bitmask)       | Unknown. If unset, it seems to read `/n+a` (i.e. not applicable). Possibly this is whether Phone Flings has unlocked (will require a fresh save to verify)                 |
+| Key                                                  | Shape                         | Represents                                                                                                                                                                                                                                                                            |
+|------------------------------------------------------|-------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `.speedboost.<size>.pri` (`large`/`medium`/`small`)  | `int` (negative)              | Shop price for a speed-boost purchase, per size tier; unconfirmed                                                                                                                                                                                                                     |
+| `.speedboost.<size>.qty`                             | `int` (negative)              | Quantity/count associated with a speed-boost purchase, per size tier; unconfirmed                                                                                                                                                                                                     |
+| `.timeblocks.<size>.pri`                             | `int` (negative)              | Shop price for a time-block purchase, per size tier; unconfirmed                                                                                                                                                                                                                      |
+| `.timeblocks.<size>.qty`                             | `int` (negative)              | Quantity/count for a time-block purchase, per size tier; unconfirmed                                                                                                                                                                                                                  |
+| `.timeskip.<size>.pri`                               | `int` (negative)              | Shop price for a time-skip purchase, per size tier; unconfirmed                                                                                                                                                                                                                       |
+| `.timeskip.<size>.qty`                               | `int` (negative)              | Quantity/count for a time-skip purchase, per size tier; unconfirmed                                                                                                                                                                                                                   |
+| `ACH`                                                | `object`                      | See [Achievement schema](#achievement-ach-schema)                                                                                                                                                                                                                                     |
+| `AchievementCount`                                   | `int`                         | Total number of achievements unlocked                                                                                                                                                                                                                                                 |
+| `ana.ev`                                             | `long`                        | ????; I suspect this relates to the Annabelle LTE                                                                                                                                                                                                                                     |
+| `ana.vid`                                            | `long`                        | ????; I suspect this relates to the Annabelle LTE                                                                                                                                                                                                                                     |
+| `AvailableJobs`                                      | `int`                         | Confirmed: bitmask, one bit per `Job<Name>` (20 total). A save with only the tutorial completed has just bit 0 set, matching `JobFAST FOOD` being the only job unlocked by the tutorial - bit 0 = first job slot (`FAST FOOD`). More bits set as more jobs are unlocked through play. |
+| `BlayfapAwardedItems`                                | `blob` (base64 of plain text) | Decodes to a literal pipe-delimited list, likely of DLC girls as it seems to contain the Kaiju girls and, most recently, Lumi. This value may be refreshed at game launch                                                                                                             |
+| `C<N>D` (e.g. `C1D`..`C46D`)                         | `long`                        | Confirmed: Phone Fling feature. See [Phone Fling schema](#phone-fling-schema)                                                                                                                                                                                                         |
+| `C<N>P` (e.g. `C1P`..`C46P`)                         | `blob`                        | Confirmed: Phone Fling feature. See [Phone Fling schema](#phone-fling-schema)                                                                                                                                                                                                         |
+| `Completed`                                          | `object`                      | See [Completed schema](#completed-events-schema)                                                                                                                                                                                                                                      |
+| `CurrentGirl`                                        | `int`                         | Index of the currently selected/active girl; likely only used to restore game state back to this specific girl on launch (instead of jumping to Cassie).                                                                                                                              |
+| `dchk`                                               | `int`                         | ????; I suspect this might stand for "Drift Check" but it could just as well be "Data Checksum"                                                                                                                                                                                       |
+| `Event<ID>Tokens` (e.g. `Event307Tokens`)            | `int`                         | Token/currency count for the numbered limited-time event; likely current and previous event IDs                                                                                                                                                                                       |
+| `EventID`                                            | `int`                         | ID of the currently active limited-time event                                                                                                                                                                                                                                         |
+| `events.popupinfo`                                   | JSON object                   | Per-event popup display tracking: `{"<event-key>": {"shownCount": int, "shownAt": ISO-8601 timestamp}}`                                                                                                                                                                               |
+| `GameState`                                          | `object`                      | See [GameState schema](#gamestate-schema)                                                                                                                                                                                                                                             |
+| `Girl<Name>`                                         | `object`                      | See [Girl schema](#girl-schema). One instance per girl in the roster (~80+ seen)                                                                                                                                                                                                      |
+| `GirlsPreviouslyUnlocked`                            | `blob` (17-byte bitmask)      | Bitmask, likely 1 bit per girl in the roster, tracking girls unlocked at some earlier point (vs. currently, see next)                                                                                                                                                                 |
+| `GirlsUnlocked`                                      | `blob` (17-byte bitmask)      | Bitmask, likely 1 bit per girl in the roster, tracking currently-unlocked girls                                                                                                                                                                                                       |
+| `HasSeenFuzzyExternalPurchaseConfirmation`           | `flag`                        | Whether a specific purchase-confirmation dialog has been shown; no idea what this is for                                                                                                                                                                                              |
+| `Hobby<Name>`                                        | `object`                      | See [Hobby schema](#hobby-schema). 12 instances seen                                                                                                                                                                                                                                  |
+| `Job<Name>`                                          | `object`                      | See [Job schema](#job-schema). ~20 instances seen                                                                                                                                                                                                                                     |
+| `LastPesId<N>` (`0`-`9`)                             | `string`                      | A recently-seen parallel event ID; slot `N` is a recency-ordered list, not a stat index                                                                                                                                                                                               |
+| `Playfab`                                            | `object`                      | See [Playfab schema](#playfab-schema)                                                                                                                                                                                                                                                 |
+| `Prereg`                                             | `flag`                        | Likely whether pre-registration content is unlocked; unconfirmed                                                                                                                                                                                                                      |
+| `SaveFileVersion`                                    | `flag`                        | Bare in this sample — expected a version number here; treat as unconfirmed                                                                                                                                                                                                            |
+| `Settings`                                           | `object`                      | See [Settings schema](#settings-schema)                                                                                                                                                                                                                                               |
+| `Skill<N>` (`0`-`11`)                                | `object`                      | See [Skill schema](#skill-schema)                                                                                                                                                                                                                                                     |
+| `Task`                                               | `object`                      | See [Task schema](#task-schema)                                                                                                                                                                                                                                                       |
+| `TermsVersionAccepted`                               | `flag`                        | Whether the current Terms of Service version has been accepted                                                                                                                                                                                                                        |
+| `ticketboothSeen`                                    | `flag`                        | Whether the "ticket booth" UI element/prompt has been seen                                                                                                                                                                                                                            |
+| `TimeMultiplier`                                     | `float`                       | Current overall time-speed multiplier                                                                                                                                                                                                                                                 |
+| `Tutorial`                                           | `int`                         | Tutorial progress step/stage reached                                                                                                                                                                                                                                                  |
+| `UnlockedPFS`                                        | `blob` (3-byte bitmask)       | Unknown. If unset, it seems to read `/n+a` (i.e. not applicable). Possibly this is whether Phone Flings has unlocked (will require a fresh save to verify)                                                                                                                            |
 
 ## GameState schema
 
@@ -114,22 +114,29 @@ Both `DateCount` and `GiftCount` are suffixed with a number from `1` to `3`, whe
 represents in which slot that Gift or Date tracker sits (`Hearts` is always slot 0 of 4). If no progress has been made
 towards the Gift/Date, this value is likely to not be present rather than set to 0.
 
-| Sub-key                       | Shape                    | Represents                                                                                                      |
-|-------------------------------|--------------------------|-----------------------------------------------------------------------------------------------------------------|
-| `Clothing`                    | `int` (bitmask)          | Currently equipped clothing/outfit, likely a bitmask/flag value; exact options and mappings yet to be confirmed |
-| `DateCount<N>` (`1`-`3` seen) | `int`                    | Count of dates required to progress (see above regarding the relevance of `N`)                                  |
-| `Dates`                       | `int`                    | Bare/zero in samples seen — current date count (relationship to `DateCount<N>` unconfirmed)                     |
-| `GiftCount<N>` (`1`-`3` seen) | `int`                    | Count of gifts required to progress (see above regarding the relevance of `N`)                                  |
-| `Hearts`                      | `long`                   | Accumulated Hearts *for this level*                                                                             |
-| `LifeDates`                   | `int`                    | Lifetime total dates been on with this girl                                                                     |
-| `LifeOutfits`                 | `int` (bitmask)          | Lifetime unlocked outfits/costumes for this girl                                                                |
-| `Love`                        | `int` (`0`-`9` observed) | Relationship tier; 9 represents "Lover" level                                                                   |
+See [GIRLS.md](GIRLS.md) for more information such as clothing/outfit tables.
+
+| Sub-key                       | Shape                    | Represents                                                                     |
+|-------------------------------|--------------------------|--------------------------------------------------------------------------------|
+| `Clothing`                    | `int` (bitmask)          | Currently equipped clothing/outfit                                             |
+| `DateCount<N>` (`1`-`3` seen) | `int`                    | Count of dates required to progress (see above regarding the relevance of `N`) |
+| `Dates`                       | `int`                    | Whether dating is unlocked for this girl; unconfirmed                          |
+| `GiftCount<N>` (`1`-`3` seen) | `int`                    | Count of gifts required to progress (see above regarding the relevance of `N`) |
+| `Hearts`                      | `long`                   | Accumulated Hearts *for this level*                                            |
+| `LifeDates`                   | `int`                    | Lifetime total dates been on with this girl                                    |
+| `LifeOutfits`                 | `int` (bitmask)          | Lifetime unlocked outfits/costumes for this girl                               |
+| `Love`                        | `int` (`0`-`9` observed) | Relationship tier; 9 represents "Lover" level                                  |
 
 **Notes and Cautions**:
 
-- `GirlPamulzebub` and `GirlQuillzone` are **not** distinct objects for the respective "demon" or "kaiju" versions of
-  Pamu and Quill. For some reason (probably internal parsing) these end up as sub-keys for Pamu and Quill. Take care
-  when editing their stats.
+- `GirlPamulzebub` and `GirlQuillzone` **are** distinct girls with their own independent `Hearts` etc.
+  (confirmed: a fresh save with neither unlocked shows both as separate zero-`Hearts` entries). They
+  are **not** sub-objects of Pamu/Quill - there is no real parent-child relationship. They only *look*
+  like sub-keys because the save's prefix-compression groups consecutive lines by shared leading
+  substring, and the reconstructed keys `GirlPamulzebubHearts`/`GirlQuillzoneHearts` happen to start
+  with the literal text "GirlPamu"/"GirlQuill", so the compressor folds them under that `::` section
+  header (rendered as trailing `lzebubHearts`/`zoneHearts` suffix lines). Take care when editing:
+  the section header's girl and the trailing suffix-only entries beneath it are different girls.
 - Not all girls seem to follow the same shape. Locked girls appear as both:
   ```
   ::
@@ -243,18 +250,25 @@ Prefix: `Skill`
 entries, which may or may not mean each index maps 1:1 to a specific
 hobby's stat; unconfirmed but likely).
 
-| Sub-key pattern | Shape  | Represents                                                                                                                   |
-|-----------------|--------|------------------------------------------------------------------------------------------------------------------------------|
-| `Skill<N>`      | `int`  | Skill/stat level for the hobby represented by `N`; these map to the hobby's internal ID, **NOT** to its alphabetical ordinal |
-| `Gender`        | `flag` | Player gender; Set = Female; Unset = Male (Unconfirmed)                                                                      |
-| `Hair`          | `int`  | Selected player hairstyle ID                                                                                                 |
-| `Hat`           | `flag` | Whether the player avatar is wearing a hat                                                                                   |
-| `Plushy`        | `int`  | Selected plushy/collectible ID (although I've not seen this in-game); this could also just be the hat ID                     |
+| Sub-key pattern   | Shape    | Represents                                                                                                                          |
+|-------------------|----------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `Skill<N>`        | `int`    | Skill/stat level for the hobby represented by `N`; these map to the hobby's internal ID, **NOT** to its alphabetical ordinal        |
+| `Gender`          | `int`    | Player gender selection; seen as `0i` on a fresh account. Confirmed `int`, not a `flag` as previously guessed - meaning unconfirmed |
+| `Hair`            | `int`    | Selected player hairstyle ID                                                                                                        |
+| `Hat`             | `int`    | Selected hat ID; seen as `-1i` on a fresh account (no hat selected). Confirmed `int`, not a `flag` as previously guessed            |
+| `Plushy`          | `int`    | Selected plushy/collectible ID (although I've not seen this in-game); this could also just be the hat ID                            |
 
 ## Task schema
 
-Prefix: `Task`. Sub-keys are numbered `0`-`41` with three
-possible suffixes each. These map to the three daily tasks during LTEs; `3*14 = 42`
+Prefix: `Task`. Sub-keys are numbered with three possible suffixes each.
+`0`-`41` (three daily tasks over a 14-day LTE, `3*14 = 42`) is the shape
+seen for a **standard** LTE, but this is not a fixed/universal count - it's
+just how many tasks that event defines. A save that has only entered the
+Newcomer event (`EventID`/`Completed.Events` bit `118`, see
+[EVENTS.md](EVENTS.md)) has *only* `Task.0`-`Task.2` present (three tasks
+total, not three per day). Tasks only exist in the save for events the
+player has actually opened - a genuinely fresh/blank save should have **no**
+`Task` entries at all.
 
 | Sub-key pattern    | Shape  | Represents                                                                                                                                                                                       |
 |--------------------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -262,9 +276,9 @@ possible suffixes each. These map to the three daily tasks during LTEs; `3*14 = 
 | `Task.<N>Complete` | `flag` | Task `N`'s objective has been completed                                                                                                                                                          |
 | `Task.<N>Claimed`  | `flag` | Task `N`'s reward has been claimed                                                                                                                                                               |
 
-# Event Schemas
+# Parallel Event Schemas
 
-Limited-time events (LTEs) have their own set of key/values that are seemingly prefixed with `pes` and the event number.
+Parallel events have their own set of key/values that are seemingly prefixed with `pes` - likely standing for Parallel Event State - and the event number.
 See [EVENTS.md](EVENTS.md) for the event table and individual event schemas.
 
 ## Open questions
