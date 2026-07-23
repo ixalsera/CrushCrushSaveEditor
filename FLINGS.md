@@ -8,8 +8,9 @@ Fling for 10 diamonds.
 ## Mapping
 
 Phone Fling data are stored in the save file using an ID instead of the Girl's name. The ID of a phone fling girl has no
-bearing on her bit index for `GirlsUnlocked` - in the event she does have an unlockable date - and vice versa, i.e. Cassie
-has the `GirlsUnlocked` index of `0` but the Phone Fling ID `23`.
+bearing on her bit index for `GirlsUnlocked` - in the event she does have an unlockable date - and vice versa, i.e.
+Cassie has the `GirlsUnlocked` index of `0` but the Phone Fling ID `23` and Peanut has the Phone Fling ID of `1` but the
+`GirlsUnlocked` index of `30`.
 
 The table below attempts to map the fling ID with the girl it represents:
 
@@ -35,8 +36,11 @@ The table below attempts to map the fling ID with the girl it represents:
 
 ## Data
 
-While `C<N>D` represents the time the last message was received, `C<N>P` likely represent the conversation state. The
-following has been observed:
+`C<N>D` represents the time the conversation was last viewed. If a Fling has been unlocked - i.e. its bit is flipped on
+in `UnlockedPFS` - but has never been opened, this will remain `0`. `C<N>P`, on the other hand, represents the
+conversation state.
+
+The following has been observed:
 
 - `C<N>P` changes with conversations regardless of whether a pic was received (thus `P` is unlikely to be about actual
   pics received as I initially suspected)

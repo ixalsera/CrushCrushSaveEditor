@@ -11,41 +11,52 @@ unlocked in this save file.
 
 The below table lists the currently suspected mapping between bit index and girl as determined from save file analysis:
 
-| Index | Girl      |
-|-------|-----------|
-| 0     | Cassie    |
-| 1     | Mio       |
-| 2     | Quill     |
-| 3     | Elle      |
-| 4     | Nutaku    |
-| 5     | Iro       |
-| 6     | Bonnibel  |
-| 7     | Ayeka     |
-| 8     | Fumi      |
-| 9     | Bearverly |
-| 10    | Nina      |
-| 11    | Alpha     |
-| 12    | Pamu      |
-| 20    | Jelle     |
-| 21    | Quillzone |
-| 22    | Bonchovy  |
-| 23    | Spectrum  |
-| 26    | Shibuki   |
-| 30    | Peanut    |
-| 73    | Liz (?)   |
-| 84    | Lumi      |
+| Index | Girl                                                     |
+|-------|----------------------------------------------------------|
+| 0     | Cassie                                                   |
+| 1     | Mio                                                      |
+| 2     | Quill                                                    |
+| 3     | Elle                                                     |
+| 4     | Nutaku                                                   |
+| 5     | Iro                                                      |
+| 6     | Bonnibel                                                 |
+| 7     | Ayeka                                                    |
+| 8     | Fumi                                                     |
+| 9     | Bearverly                                                |
+| 10    | Nina                                                     |
+| 11    | Alpha                                                    |
+| 12    | Pamu                                                     |
+| 20    | Jelle                                                    |
+| 21    | Quillzone                                                |
+| 22    | Bonchovy                                                 |
+| 23    | Spectrum                                                 |
+| 26    | Shibuki                                                  |
+| 30    | Peanut                                                   |
+| 45    | Mallory/Lydia (Unconfirmed; one or the other)            |
+| 68    | Ginger & Wasabi                                          |
+| 71    | Mortha (Unconfirmed)                                     |
+| 72    | Kaiju2  (Unconfirmed; Can't remember her name right now) |
+| 73    | Liz (Unconfirmed)                                        |
+| 82    | Mallory/Lydia (Unconfirmed; one or the other)            |
+| 84    | Lumi                                                     |
 
 These IDs are used to reference girls in `GirlsUnlocked`, `GirlsPreviouslyUnlocked` and `CurrentGirl`, at the very
 least. It is likely that if a bitmask represents a girl, the bit index will match the above table.
 
 ## Event Girls
 
+At the moment it is unclear whether event girls will unlock simply by flipping their bit in `GirlsUnlocked`. It seems
+unlikely that this would work; the "entitlement" is essentially stored in the `BlayfapAwardedItems` field which is
+fetched from the server on launch. I don't know whether this would be merged with the existing value but considering I
+have seen the `july2017` event entitlement appear and disappear numerous times, it's probably there's some server
+validation happening. I could be wrong.
+
 ## DLC Girls
 
-At the moment it is unclear whether paid DLC girls will unlock simply by flipping their bit in `GirlsUnlocked`. It seems
-unlikely that this would work; I imagine the game does a DLC ownership check on save load. I could be wrong. At any
-rate, using these tools to unlock paid DLC is not condoned by the project maintainer. If you want the girl, show the
-devs your appreciation for their hard work and fork over the cost of a coffee for her.
+It's also unclear whether paid DLC girls will unlock simply by flipping their bit in `GirlsUnlocked` either. I imagine
+the game does a DLC ownership check on save load. Again, I could be wrong. At any rate, using these tools to unlock paid
+DLC is not condoned by the project maintainer. If you want the girl, show the devs your appreciation for their hard work
+and fork over the cost of a coffee for her.
 
 ## Outfits
 
