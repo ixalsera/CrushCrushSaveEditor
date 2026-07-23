@@ -109,25 +109,25 @@ require Date or Gift progression in order to level up, the respective entry will
 
 See [GIRLS.md](GIRLS.md) for more information such as clothing/outfit bit mapping tables.
 
-| Sub-key                       | Shape                    | Represents                                                                                 |
-|-------------------------------|--------------------------|--------------------------------------------------------------------------------------------|
-| `Clothing`                    | `int` (bitmask)          | Currently equipped clothing/outfit                                                         |
-| `DateCount<N>` (`1`-`3` seen) | `int`                    | Count of dates completed towards level progress (see above regarding the relevance of `N`) |
-| `Dates`                       | `int`                    | Whether dating is unlocked for this girl; unconfirmed                                      |
-| `GiftCount<N>` (`1`-`3` seen) | `int`                    | Count of gifts completed towards level progress (see above regarding the relevance of `N`) |
-| `Hearts`                      | `long`                   | Accumulated Hearts *for this level*                                                        |
-| `LifeDates`                   | `int` (bitmask)          | Bitmask of the dates completed for this Girl (bit mapping of dates is currently unknown)   |
-| `LifeOutfits`                 | `int` (bitmask)          | Lifetime unlocked outfits/costumes for this girl                                           |
-| `Love`                        | `int` (`0`-`9` observed) | Relationship tier; 9 represents "Lover" level                                              |
+| Sub-key                       | Shape           | Represents                                                                                 |
+|-------------------------------|-----------------|--------------------------------------------------------------------------------------------|
+| `Clothing`                    | `int` (bitmask) | Currently equipped clothing/outfit                                                         |
+| `DateCount<N>` (`1`-`3` seen) | `int`           | Count of dates completed towards level progress (see above regarding the relevance of `N`) |
+| `Dates`                       | `int`           | Whether dating is unlocked for this girl; unconfirmed                                      |
+| `GiftCount<N>` (`1`-`3` seen) | `int`           | Count of gifts completed towards level progress (see above regarding the relevance of `N`) |
+| `Hearts`                      | `long`          | Accumulated Hearts *for this level*                                                        |
+| `LifeDates`                   | `int` (bitmask) | Bitmask of the dates completed for this Girl (bit mapping of dates is currently unknown)   |
+| `LifeOutfits`                 | `int` (bitmask) | Lifetime unlocked outfits/costumes for this girl                                           |
+| `Love`                        | `int` (`0`-`9`) | Relationship tier; 9 represents "Lover" level                                              |
 
 **Notes and Cautions**:
 
-- `GirlPamulzebub` and `GirlQuillzone` **are** distinct girls with their own independent `Hearts` etc, they are **not** sub-objects of
-  Pamu/Quill - there is no real parent-child relationship. They only *look* like sub-keys because the save's prefix-compression groups
-  consecutive lines by shared leading substring, and the reconstructed keys `GirlPamulzebubHearts`/`GirlQuillzoneHearts` happen to start
-  with the literal text "GirlPamu"/"GirlQuill", so the compressor folds them under that `::` section header (rendered as trailing
-  `lzebubHearts`/`zoneHearts` suffix lines). Take care when editing: the section header's girl and the trailing suffix-only entries
-  beneath it are different girls.
+- `GirlPamulzebub` and `GirlQuillzone` **are** distinct girls with their own independent `Hearts` etc, they are **not**
+  sub-objects of Pamu/Quill - there is no real parent-child relationship. They only *look* like sub-keys because the
+  save's prefix-compression groups consecutive lines by shared leading substring, and the reconstructed keys
+  `GirlPamulzebubHearts`/`GirlQuillzoneHearts` happen to start with the literal text "GirlPamu"/"GirlQuill", so the
+  compressor folds them under that `::` section header (rendered as trailing `lzebubHearts`/`zoneHearts` suffix lines).
+  Take care when editing: the section header's girl and the trailing suffix-only entries beneath it are different girls.
 - Not all girls seem to follow the same shape. Locked girls appear as both:
   ```
   ::
@@ -143,14 +143,16 @@ See [GIRLS.md](GIRLS.md) for more information such as clothing/outfit bit mappin
 
 ## Hobby schema
 
-Prefix: `Hobby<Name>` (e.g. `HobbyAngst`, `HobbySmart`). One block per each of the 12 core game hobbies (`Angst`,
-`Badass`, `Buff`, `Funny`, `Lucky`, `Motivation`, `Mysterious`, `Smart`, `Suave`, `TechSavvy`, `Tenderness`,
-`Wisdom`)
+Prefix: `Hobby<Name>` (e.g. `HobbyAngst`, `HobbySmart`).
+
+One block per each of the 12 core game hobbies (`Angst`, `Badass`, `Buff`, `Funny`, `Lucky`, `Motivation`, `Mysterious`,
+`Smart`, `Suave`, `TechSavvy`, `Tenderness`, `Wisdom`)
 
 This is the base tracking data for a Hobby. Each Hobby is paired with a [Skill](#skill-schema) based on its _in-game
 order_ - i.e. `Suave` maps to `Skill1` etc. - where the Skill tracks the total level of the Hobby.
 
-**Notes** — Parallel events that incorporate hobbies use a **different** set of hobby names (see [EVENTS.md](EVENTS.md) for a list of known Event hobbies).
+**Notes** — Parallel events that incorporate hobbies use a **different** set of hobby names (see [EVENTS.md](EVENTS.md)
+for a list of known Event hobbies).
 
 | Sub-key           | Shape   | Represents                                          |
 |-------------------|---------|-----------------------------------------------------|
@@ -161,25 +163,27 @@ order_ - i.e. `Suave` maps to `Skill1` etc. - where the Skill tracks the total l
 
 ## Job schema
 
-Prefix: `Job<Name>` (e.g. `JobART`, `JobZOO`). One block for each of the core jobs (`ART`,
-`CASINO`, `CLEANING`, `COMPUTERS`, `DIGGER`, `FAST FOOD`, `HUNTING`,
-`LEGAL`, `LIFEGUARD`, `LOVE`, `MOVIES`, `PLANTER`, `RESTAURANT`,
-`SLAYING`, `SPACE`, `SPORTS`, `UNKNOWN`, `WIZARD`, `ZOO`) and any DLC exclusive jobs (`MECH`).
+Prefix: `Job<Name>` (e.g. `JobART`, `JobZOO`).
 
-| Sub-key      | Shape   | Represents                                                                                      |
-|--------------|---------|-------------------------------------------------------------------------------------------------|
-| `Active`     | `flag`  | Currently working this job                                                                      |
-| `Experience` | `long`  | Total XP earned in this job                                                                     |
-| `Gilded`     | `flag`  | Whether the job is "Gilded", i.e. has the bonus earnings modifier applied (costing 10 diamonds) |
-| `Level`      | `int`   | Current job level                                                                               |
-| `Locked`     | `flag`  | Whether the job is unlocked. Yes, really. Probably a dev typo.                                  |
-| `Time`       | `float` | Current work timer/progress                                                                     |
+One block for each of the core jobs (`ART`, `CASINO`, `CLEANING`, `COMPUTERS`, `FAST FOOD`, `HUNTING`, `LEGAL`,
+`LIFEGUARD`, `LOVE`, `MOVIES`, `RESTAURANT`, `SLAYING`, `SPACE`, `SPORTS`, `WIZARD`, `ZOO`) and any DLC exclusive jobs
+(`DIGGER` (Charlotte), `PLANTER`, `MECH` (Kaiju), `UNKNOWN`).
+
+| Sub-key      | Shape           | Represents                                                                                      |
+|--------------|-----------------|-------------------------------------------------------------------------------------------------|
+| `Active`     | `flag`          | Currently working this job                                                                      |
+| `Experience` | `long`          | Total XP earned in this job                                                                     |
+| `Gilded`     | `flag`          | Whether the job is "Gilded", i.e. has the bonus earnings modifier applied (costing 10 diamonds) |
+| `Level`      | `int` (`0`-`9`) | Current job level                                                                               |
+| `Locked`     | `flag`          | Whether the job is unlocked. Yes, really. Probably a dev typo.                                  |
+| `Time`       | `float`         | Current work timer/progress                                                                     |
 
 ## Achievement (`ACH`) schema
 
 Prefix: `ACH`.
 
-Sub-keys are numeric achievement IDs, internal to the game; no name mapping is available from the save alone but can be inferred (there will be a map at a later point).
+Sub-keys are numeric achievement IDs, internal to the game; no name mapping is available from the save alone but can be
+inferred (there will be a map at a later point).
 
 | Sub-key pattern | Shape           | Represents                                  |
 |-----------------|-----------------|---------------------------------------------|
@@ -244,13 +248,13 @@ Prefix: `Skill`
 Skill represents the level of a [Hobby](#hobby-schema). It seems to relate to other data about the player/avatar as well
 since the customization options are rolled in to this too.
 
-| Sub-key pattern | Shape | Represents                                                                                                                          |
-|-----------------|-------|-------------------------------------------------------------------------------------------------------------------------------------|
-| `Skill<N>`      | `int` | Skill/stat level for the hobby represented by `N`; these map to the hobby's internal ID, **NOT** to its alphabetical ordinal        |
-| `Gender`        | `int` | Player gender selection; seen as `0i` on a fresh account. Confirmed `int`, not a `flag` as previously guessed - meaning unconfirmed |
-| `Hair`          | `int` | Selected player hairstyle ID                                                                                                        |
-| `Hat`           | `int` | Selected hat ID; seen as `-1i` on a fresh account (no hat selected). Confirmed `int`, not a `flag` as previously guessed            |
-| `Plushy`        | `int` | Selected plushy/collectible ID (although I've not seen this in-game); this could also just be the hat ID                            |
+| Sub-key pattern | Shape            | Represents                                                                                                                          |
+|-----------------|------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `Skill<N>`      | `int` (`0`-`75`) | Skill/stat level for the hobby represented by `N`; these map to the hobby's internal ID, **NOT** to its alphabetical ordinal        |
+| `Gender`        | `int`            | Player gender selection; seen as `0i` on a fresh account. Confirmed `int`, not a `flag` as previously guessed - meaning unconfirmed |
+| `Hair`          | `int`            | Selected player hairstyle ID                                                                                                        |
+| `Hat`           | `int`            | Selected hat ID; seen as `-1i` on a fresh account (no hat selected). Confirmed `int`, not a `flag` as previously guessed            |
+| `Plushy`        | `int`            | Selected plushy/collectible ID (although I've not seen this in-game); this could also just be the hat ID                            |
 
 ## Task schema
 
@@ -269,7 +273,8 @@ LTE, there will likely be no Task entries (such as with a fresh save).
 # Parallel Event Schemas
 
 Parallel events have their own set of key/values that are seemingly prefixed with `pes` - likely standing for Parallel
-Event State - and the event number. See [EVENTS.md](EVENTS.md) for the event table, schema, and individual event schemas.
+Event State - and the event number. See [EVENTS.md](EVENTS.md) for the event table, schema, and individual event
+schemas.
 
 ## Open questions
 

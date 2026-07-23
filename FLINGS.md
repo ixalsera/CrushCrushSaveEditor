@@ -1,21 +1,22 @@
 # Phone Flings (WIP)
 
-Phone flings are simple text conversations in the style of MMS messaging between the player and certain girls. For the
-most part, these flings do not relate to an actual Core Girl but some of them may have unlockable Event Girls for the
-primary game system. Conversely, once a Core Girl has been leveled up to Lover level, the player can unlock her Phone
+Phone flings are simple text and photo conversations in the style of MMS messaging between the player and certain girls.
+For the most part, these flings do not relate to an actual Core Girl but some of them may have unlockable Event Girls for
+the primary game system. Conversely, once a Core Girl has been leveled up to Lover level, the player can unlock her Phone
 Fling for 10 diamonds.
 
 ## Mapping
 
 Phone Fling data are stored in the save file using an ID instead of the Girl's name. The ID of a phone fling girl has no
-bearing on her bit index for `GirlsUnlocked` - in the event she does have an unlockable date - and vice versa, i.e.
-Cassie has the `GirlsUnlocked` index of `0` but the Phone Fling ID `23` and Peanut has the Phone Fling ID of `1` but the
+bearing on her bit index for `GirlsUnlocked` (in the event she does have an unlockable date) and vice versa, i.e. Cassie
+has the `GirlsUnlocked` index of `0` but the Phone Fling ID `23` and Peanut has the Phone Fling ID of `1` but the
 `GirlsUnlocked` index of `30`.
 
 The table below attempts to map the fling ID with the girl it represents:
 
 | Fling ID | Name                |
 |----------|---------------------|
+| 0        | Unused              |
 | 1        | Peanut              |
 | 2        | Wendy               |
 | 3        | Generica            |
