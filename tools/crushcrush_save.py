@@ -20,6 +20,7 @@ import sys
 import base64
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "utils"))
 import lzf
 
 MAGIC = bytes.fromhex("9737dc")

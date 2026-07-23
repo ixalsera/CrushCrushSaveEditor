@@ -32,6 +32,11 @@ saves/     Real save files, exactly as copied from the game. Never hand-edit
 decoded/   Human-readable plaintext dumps produced by tools/crushcrush_save.py.
            Regenerate freely; not authoritative once saves/ changes.
 tools/     The decode/encode implementation (Python 3, stdlib only).
+utils/     Generic, Crush-Crush-agnostic codecs that tools/ depends on (LZF
+           compression, .NET DateTime.ToBinary() timestamps) - reusable on
+           any project that happens to hit the same generic formats.
+scripts/   Investigation/analysis helpers used while reverse-engineering the
+           format (not needed to just edit a save - see `tools/` for that).
 ```
 
 Save files may have any name but the default as used by the game itself is simply `crushcrush.sav`
@@ -53,7 +58,7 @@ base64( MAGIC + lzf_compress(plaintext_save_data) )
 
 ### LZF stream format (classic liblzf-compatible)
 
-Implemented in `tools/lzf.py`. Per control byte `ctrl`:
+Implemented in `utils/lzf.py`. Per control byte `ctrl`:
 
 - `ctrl < 32`: literal run, `ctrl + 1` raw bytes follow.
 - `ctrl >= 32`: back-reference.
@@ -65,7 +70,7 @@ Implemented in `tools/lzf.py`. Per control byte `ctrl`:
   - copy `length` bytes from `output[-offset:]`, byte-by-byte (overlapping
     copies for run-length-style repeats are valid and expected).
 
-`tools/lzf.py` provides:
+`utils/lzf.py` provides:
 - `decompress(buf) -> bytes` - implements the above exactly; used to read
   real game saves, so it is validated against actual game output (not just
   round-trip against our own encoder).
@@ -138,7 +143,7 @@ else:                                   # Unspecified kind (e.g. Task*Start)
 datetime(1,1,1) + timedelta(seconds=ticks//10_000_000, microseconds=(ticks%10_000_000)//10)
 ```
 
-Use `tools/timestamp.py` instead of re-deriving this inline - `decode` takes
+Use `utils/timestamp.py` instead of re-deriving this inline - `decode` takes
 one or more raw values straight from a decoded save/diff and prints the
 `DateTimeKind` + ISO datetime for each (sentinels print as `N/A`/`never`);
 `encode` does the reverse for writing an edited timestamp back into a save.
@@ -152,11 +157,25 @@ The most reliable way to pin down what a field does: keep a `*.prev.sav` /
 tools/rotate_save.py` does this rotation), take a new save after,
 and diff the two **reconstructed key sets** (not a raw line diff - the `::`
 prefix-compression reshuffles line order between saves, so a plain `diff`
-on the raw decoded text is noisy). This is how the Phone Fling feature, the
-per-level reset behavior of `Girl.Hearts`/`DateCount<N>`/`GiftCount<N>`, and
-several bitmask/counter fields got confirmed - by pairing "what changed"
-with what actually happened in the session (e.g. `decoded/crushcrush.prev.txt`
-vs `decoded/crushcrush.txt` in this repo).
+on the raw decoded text is noisy). Use `scripts/diff_saves.py <prev.txt>
+<cur.txt>` for this instead of re-deriving the reconstruction inline - it
+undoes the `::` prefix-compression and prints added/removed/changed keys as
+a clean set diff (it can also just dump one file's reconstructed pairs,
+`scripts/diff_saves.py <file.txt>`, handy for grepping/filtering a single
+save's full key set, e.g. by `Job<Name>`/`Girl<Name>` prefix). This is how
+the Phone Fling feature, the per-level reset behavior of
+`Girl.Hearts`/`DateCount<N>`/`GiftCount<N>`, and several bitmask/counter
+fields got confirmed - by pairing "what changed" with what actually happened
+in the session (e.g. `decoded/crushcrush.prev.txt` vs `decoded/crushcrush.txt`
+in this repo).
+
+For the base64 `blob` fields that are bitmasks or pipe-delimited text
+(`GirlsUnlocked`, `GirlsPreviouslyUnlocked`, `UnlockedPFS`,
+`BlayfapAwardedItems`), use `scripts/decode_blob.py` rather than re-deriving
+the base64/bit-unpacking inline - `bits`/`text` decode a single value,
+`diff-bits`/`diff-text` decode two and print what was added/removed (handles
+the bitmask growing a byte between saves, as `GirlsUnlocked` and
+`UnlockedPFS` both do).
 
 When the thing you're checking is specifically a Phone Fling, diff the
 `C<N>D`/`C<N>P` keys directly (e.g. `grep -oE '^C[0-9]+[DP]:.*'` over both
@@ -168,12 +187,27 @@ re-deriving the byte layout inline - it also already knows about the
 "never started" (empty blob) and "locked/gated" (sentinel countdown) states
 that a naive parse of a fresh fling will otherwise crash or get confused on.
 
+## Utils (`utils/`, Python 3, no third-party deps)
+
+Generic codecs with no Crush-Crush-specific knowledge - `tools/` imports
+these rather than re-implementing them, but nothing about them is tied to
+this project's save format specifically.
+
+```
+utils/lzf.py               compress(data: bytes) -> bytes
+                            decompress(buf: bytes) -> bytes
+
+utils/timestamp.py         decode(value: int) -> (kind: str, dt: datetime | None)
+                            encode(dt: datetime, kind: str = "utc") -> int
+
+CLI:
+  python3 utils/timestamp.py decode <value> [value ...]
+  python3 utils/timestamp.py encode <iso-datetime> [local|utc|unspecified]
+```
+
 ## Tools (`tools/`, Python 3, no third-party deps)
 
 ```
-tools/lzf.py               compress(data: bytes) -> bytes
-                            decompress(buf: bytes) -> bytes
-
 tools/crushcrush_save.py   MAGIC = bytes.fromhex("9737dc")
                             decode_bytes(raw_b64_text: str) -> bytes   # plaintext
                             encode_bytes(plaintext_bytes: bytes) -> bytes  # b64 text
@@ -183,13 +217,6 @@ tools/crushcrush_save.py   MAGIC = bytes.fromhex("9737dc")
 CLI:
   python3 tools/crushcrush_save.py decode <in.sav> [out.txt]
   python3 tools/crushcrush_save.py encode <in.txt> [out.sav]
-
-tools/timestamp.py         decode(value: int) -> (kind: str, dt: datetime | None)
-                            encode(dt: datetime, kind: str = "utc") -> int
-
-CLI:
-  python3 tools/timestamp.py decode <value> [value ...]
-  python3 tools/timestamp.py encode <iso-datetime> [local|utc|unspecified]
 
 tools/phone_fling.py       decode_conversation_state(blob_b64: str) -> dict | None
                             (a C<N>P blob's known/unknown fields, or None if
@@ -220,6 +247,33 @@ tools/blank_save.py        blank_out(template_text: str, now: datetime) -> str
 CLI:
   python3 tools/blank_save.py [template.txt] [output.txt]
     (default: decoded/crushcrush.prev.txt -> decoded/crushcrush.blank.txt)
+```
+
+## Scripts (`scripts/`, Python 3, no third-party deps)
+
+Analysis helpers used while reverse-engineering the format - not part of the
+decode/edit/encode path an end user needs (that's `tools/`), but reused
+often enough across investigation sessions that they're kept here instead of
+being re-derived inline each time.
+
+```
+scripts/diff_saves.py      reconstruct(path) -> dict[str, str]
+                            (undoes the `::` prefix-compression into flat
+                            key:value pairs - see "Plaintext save structure"
+                            above)
+
+CLI:
+  python3 scripts/diff_saves.py <file.txt>              dump reconstructed pairs, sorted
+  python3 scripts/diff_saves.py <prev.txt> <cur.txt>     diff two snapshots (added/removed/changed)
+
+scripts/decode_blob.py     bits(b64) -> list[int]        (bitmask -> set bit indices)
+                            text(b64) -> str              (base64-of-ASCII -> decoded text)
+
+CLI:
+  python3 scripts/decode_blob.py bits <base64>                    decoded bit indices set, and count
+  python3 scripts/decode_blob.py text <base64>                    decoded pipe-delimited text
+  python3 scripts/decode_blob.py diff-bits <base64_a> <base64_b>  bits added/removed, a -> b
+  python3 scripts/decode_blob.py diff-text <base64_a> <base64_b>  pipe items added/removed, a -> b
 ```
 
 ## Standard edit workflow

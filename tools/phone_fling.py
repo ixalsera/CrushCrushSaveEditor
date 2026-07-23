@@ -58,7 +58,9 @@ import base64
 import re
 import struct
 import sys
+from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "utils"))
 import timestamp
 
 _KEY_PREFIX_RE = re.compile(r"^C\d+[DP]:")
