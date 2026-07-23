@@ -20,7 +20,7 @@ The below table lists the currently suspected mapping between bit index and girl
 | 4     | Nutaku                |
 | 5     | Iro                   |
 | 6     | Bonnibel              |
-| 7     | Ayeka                 |
+| 7     | Ayeka[^1]             |
 | 8     | Fumi                  |
 | 9     | Bearverly             |
 | 10    | Nina                  |
@@ -39,6 +39,7 @@ The below table lists the currently suspected mapping between bit index and girl
 | 73    | Liz (Unconfirmed)     |
 | 82    | Lydia (Unconfirmed)   |
 | 84    | Lumi                  |
+| 85    | Nixie (Unconfirmed)   |
 
 These IDs are used to reference girls in `GirlsUnlocked`, `GirlsPreviouslyUnlocked` and `CurrentGirl`, at the very
 least. It is likely that if a bitmask represents a girl, the bit index will match the above table.
@@ -87,3 +88,5 @@ the latest when you switch to that specific one
 
 Equipping an outfit for a girl will set a bit on her `Clothing` field. See the table above for the known outfit
 mappings.
+
+[^1]: While the save still refers to Ayeka as Ayano, I prefer to use the name as displayed in the game.

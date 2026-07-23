@@ -1,4 +1,4 @@
-# Phone Flings (WIP)
+# Phone Flings
 
 Phone flings are simple text and photo conversations in the style of MMS messaging between the player and certain girls.
 For the most part, these flings do not relate to an actual Core Girl but some of them may have unlockable Event Girls for
@@ -24,16 +24,21 @@ The table below attempts to map the fling ID with the girl it represents:
 | 5        | Sophia              |
 | 6        | Caitlin             |
 | 7        | Ruri                |
-| 8        | Sawyer (Suspected)  |
+| 8        | Miss Desiree        |
 | 9        | Honey               |
+| 10       | Sawyer              |
 | 11       | Lake                |
-| 12       | Willow (Suspected)  |
+| 12       | Willow              |
 | 13       | Nova                |
+| 14       | Blanche (Suspected) |
 | 16       | Renee               |
 | 19       | Amelia (Suspected)  |
 | 20       | Dr Fumi (Suspected) |
 | 23       | Cassie (Suspected)  |
 | 24       | Mio                 |
+| 25       | Quill (Suspected)   |
+| 26       | Elle (Suspected)    |
+| 27       | Iro (Suspected)     |
 
 ## Data
 

@@ -204,12 +204,12 @@ See [FLINGS.md](FLINGS.md) for the mapping between fling ID and the actual Girl 
 
 Prefix: `Completed`.
 
-| Sub-key      | Shape                    | Represents                                                                                                   |
-|--------------|--------------------------|--------------------------------------------------------------------------------------------------------------|
-| `2018Events` | `long`                   | likely a bitmask of 2018 limited-time events completed (I wasn't playing during those times to confirm this) |
-| `2019Events` | `long`                   | likely a bitmask of 2019 limited-time events completed (I wasn't playing during those times to confirm this) |
-| `2020Events` | `long`                   | likely a bitmask of 2020 limited-time events completed (I wasn't playing during those times to confirm this) |
-| `Events`     | `blob` (15-byte bitmask) | Bitmask of completed limited-time events (only one bit set in the sample)                                    |
+| Sub-key      | Shape            | Represents                                                                                                   |
+|--------------|------------------|--------------------------------------------------------------------------------------------------------------|
+| `2018Events` | `long`           | likely a bitmask of 2018 limited-time events completed (I wasn't playing during those times to confirm this) |
+| `2019Events` | `long`           | likely a bitmask of 2019 limited-time events completed (I wasn't playing during those times to confirm this) |
+| `2020Events` | `long`           | likely a bitmask of 2020 limited-time events completed (I wasn't playing during those times to confirm this) |
+| `Events`     | `blob` (bitmask) | Bitmask of completed limited-time events (only one bit set in the sample)                                    |
 
 ## Playfab schema
 
@@ -217,11 +217,11 @@ Prefix: `Playfab`. [Playfab](https://playfab.com) is a common third-party game-b
 certainly related to it. It's unlikely whether these fields can be edited as they will likely re-sync from PlayFab at
 next launch.
 
-| Sub-key          | Shape                   | Represents                                                                     |
-|------------------|-------------------------|--------------------------------------------------------------------------------|
-| `FlingPurchases` | `long`                  | A purchase counter? Potentially which Core Flings have been purchased          |
-| `Inventory`      | `int` (bitmask)         | Playfab-tracked inventory item bitmask                                         |
-| `Participation`  | `blob` (7-byte bitmask) | Entirely unknown but I suspect this may have something to do with Ticket Booth |
+| Sub-key          | Shape            | Represents                                                                       |
+|------------------|------------------|----------------------------------------------------------------------------------|
+| `FlingPurchases` | `long`           | A purchase counter? Potentially which Core Flings have been purchased            |
+| `Inventory`      | `int` (bitmask)  | Playfab-tracked inventory item bitmask                                           |
+| `Participation`  | `blob` (bitmask) | Bitmask tracking the parallel event(s) that have been participated in (at least) |
 
 ## Settings schema
 

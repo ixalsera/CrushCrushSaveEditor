@@ -6,16 +6,17 @@ Festival). LTEs are simply task based token accumulation and therefore do not ge
 
 ## Parallel Events
 
-The table below lists known parallel events and their prefix mapping:
+The table below lists known parallel events and their event IDs:
 
-| Event                     | Prefix  |
-|---------------------------|---------|
-| Fuzzy Festival (Paid DLC) | `pes27` |
-| Beach Bash (Nixie)        | ????    |
+| ID   | Event                            | Date            |
+|------|----------------------------------|-----------------|
+| 27   | Fuzzy Festival (Ginger & Wasabi) | N/A (Paid DLC)+ |
+| 53   | Valentines Event (Marybelle)     | June 2026       |
+| 54   | Beach Bash (Nixie)               | July 2026       |
 
 ### Schemas
 
-All event keys are prefixed with their event ID (`pes<NN>`). The following table is an inferred generic schema for parallel
+All event keys are prefixed with `pes` and their event ID (`pes<NN>`). The following table is an inferred generic schema for parallel
 events based on only one dataset (excluding the mirrored keys from the root schema):
 
 | Sub-key                                                                      | Shape   | Represents                                                                                                              |
@@ -29,12 +30,18 @@ For the known events, the following describes the keys unique to that event.
 
 #### Fuzzy Festival (`pes27`)
 
+##### Hobbies
 Its `Hobby<Name>` instances use a **different 12 names** than the root profile: `Bravery`, `Caring`, `Charisma`,
 `Creative`, `Focus`, `Innovation`, `Luck`, `Optimism`, `Peaceful`, `Responsible`, `Tenderness`, `Trustworthy`.
 
-#### Beach Bash (`pes???`)
+#### Beach Bash (`pes54`)
 
-As this event has yet to launch, there is no specific data available.
+##### Girls
+The following Girls are available in the Beach Bash parallel event, with corresponding entries: Iro, Roxxy, Nova, Shibuki, Sutra, Lustat and Nixie.
+
+##### Hobbies
+Its `Hobby<Name>` instances use a **different 12 names** than the root profile: `Adventurous`, `Brave`, `Buff`,
+`Competetive`, `Cool`, `Culinary`, `Easygoing`, `Healthy`, `Independent`, `Patience`, `Sentimental`, `Thorough`.
 
 ## Limited-time Events (LTEs)
 
@@ -51,9 +58,9 @@ according to the event.
 
 Known Event IDs:
 
-| Event ID | Event              | Duration |
-|----------|--------------------|----------|
-| 118      | Newcomer           | 1 Day    |
-| 307      | Roxxy              | 14 Days  |
-| 308      | Roxxy's Outfits    | 14 Days  |
-| 309      | Peanut Phone Pinup | 7 Days   |
+| ID  | Event              | Duration |
+|-----|--------------------|----------|
+| 118 | Newcomer           | 1 Day    |
+| 307 | Roxxy              | 14 Days  |
+| 308 | Roxxy's Outfits    | 14 Days  |
+| 309 | Peanut Phone Pinup | 7 Days   |

@@ -1,28 +1,22 @@
 # CrushCrushSaveEdit
 
-Tooling to decode, edit, and re-encode save files for the game **Crush Crush**
-(Sad Panda Studios). This file documents the reverse-engineered save format and
-the tools already built so that format discovery never has to be repeated.
+Tooling to decode, edit, and re-encode save files for the game **Crush Crush** (Sad Panda Studios). This file documents
+the reverse-engineered save format and the tools already built so that format discovery never has to be repeated.
 
-Per-key documentation lives in several files - check these before
-re-deriving what a field means:
+Per-key documentation lives in several files - check these before re-deriving what a field means:
+
 - `SCHEMA.md` - every top-level key, and nested object schemas (`Girl`,
   `Job`, `Hobby`, `Task`, `ACH`, Phone Fling, etc).
-- `EVENTS.md` - the `pes<N>` limited-time-event prefixes: which event each
-  number maps to, and their event-scoped schemas.
-- `FLINGS.md` - the Phone Fling feature (`C<N>D`/`C<N>P`): fling-ID-to-girl
-  mapping (WIP, mostly unconfirmed) and what's been decoded of the `C<N>P`
-  blob so far. The save only ever stores the numeric fling index (`C<N>`) -
-  it never stores a girl's name against a fling, and a fling doesn't
-  necessarily correspond to any `Girl<Name>` block in the roster (the
-  ID-to-girl mapping is a separate, unconfirmed lookup table maintained in
-  `FLINGS.md`, not something recoverable from the save itself).
-- `GIRLS.md` - the `GirlsUnlocked`/`GirlsPreviouslyUnlocked` bit-index-to-
-  girl mapping, plus per-girl `Clothing`/`LifeOutfits` outfit-bit findings.
-- `UNLOCKS.md` - the same kind of bitmask/list analysis as `GIRLS.md`, but
-  for the account-level `Playfab`/`BlayfapAwardedItems` fields instead of
-  per-girl ones - notably, that both are server-synced on launch and not
-  derived from the local save at all.
+- `EVENTS.md` - the `pes<N>` parallel event prefixes - which event each number maps to, and their event-scoped schemas -
+  as well as limited-time-event IDs.
+- `FLINGS.md` - the Phone Fling feature (`C<N>D`/`C<N>P`): fling-ID-to-girl mapping and what's been decoded of the
+  `C<N>P` blob so far. The save only ever stores the numeric fling index (`C<N>`) - it never stores a girl's name
+  against a fling, and a fling doesn't necessarily correspond to any `Girl<Name>` block in the roster.
+- `GIRLS.md` - the `GirlsUnlocked`/`GirlsPreviouslyUnlocked` bit-index-to- girl mapping, plus per-girl `Clothing`/
+  `LifeOutfits` outfit-bit findings.
+- `UNLOCKS.md` - the same kind of bitmask/list analysis as `GIRLS.md`, but for the account-level `Playfab`/
+  `BlayfapAwardedItems` fields instead of per-girl ones - notably, that both are server-synced on launch and not derived
+  from the local save at all.
 
 ## Directory layout
 
@@ -49,12 +43,10 @@ A `.sav` file is ASCII text, single line, **no trailing newline**:
 base64( MAGIC + lzf_compress(plaintext_save_data) )
 ```
 
-- `MAGIC` = fixed 3 bytes `97 37 dc`. Identical across every save observed
-  (different content, different plaintext length) - it is a format/version
-  marker, **not** a length field or checksum. Do not try to parse it as one.
-- After base64-decoding, the LZF-compressed data starts immediately after
-  those 3 bytes.
-- Base64 alphabet is standard (`+`, `/`, `=` padding) - nothing custom. 
+- `MAGIC` = fixed 3 bytes `97 37 dc`. Identical across every save observed (different content, different plaintext
+  length) - it is a format/version marker, **not** a length field or checksum. Do not try to parse it as one.
+- After base64-decoding, the LZF-compressed data starts immediately after those 3 bytes.
+- Base64 alphabet is standard (`+`, `/`, `=` padding) - nothing custom.
 
 ### LZF stream format (classic liblzf-compatible)
 
@@ -62,35 +54,30 @@ Implemented in `utils/lzf.py`. Per control byte `ctrl`:
 
 - `ctrl < 32`: literal run, `ctrl + 1` raw bytes follow.
 - `ctrl >= 32`: back-reference.
-  - `length_field = ctrl >> 5` (0-7)
-  - if `length_field == 7`: an extra length byte follows; `length = 7 + extra_byte + 2`
-  - else: `length = length_field + 2`
-  - `offset = ((ctrl & 0x1f) << 8) + next_byte + 1` (1..8192 bytes back from
-    current output position)
-  - copy `length` bytes from `output[-offset:]`, byte-by-byte (overlapping
-    copies for run-length-style repeats are valid and expected).
+    - `length_field = ctrl >> 5` (0-7)
+    - if `length_field == 7`: an extra length byte follows; `length = 7 + extra_byte + 2`
+    - else: `length = length_field + 2`
+    - `offset = ((ctrl & 0x1f) << 8) + next_byte + 1` (1..8192 bytes back from current output position)
+    - copy `length` bytes from `output[-offset:]`, byte-by-byte (overlapping copies for run-length-style repeats are
+      valid and expected).
 
 `utils/lzf.py` provides:
-- `decompress(buf) -> bytes` - implements the above exactly; used to read
-  real game saves, so it is validated against actual game output (not just
-  round-trip against our own encoder).
-- `compress(data) -> bytes` - a simple greedy LZ77 encoder that emits valid
-  LZF tokens. It is **not** byte-identical to whatever encoder the game
-  itself uses (ours is smaller, even), but validity only requires that
-  `decompress(compress(x)) == x`, which is verified below - LZF decompression
-  doesn't care how the compressor decided to encode things.
+
+- `decompress(buf) -> bytes` - implements the above exactly; used to read real game saves, so it is validated against
+  actual game output (not just round-trip against our own encoder).
+- `compress(data) -> bytes` - a simple greedy LZ77 encoder that emits valid LZF tokens. It is **not** byte-identical to
+  whatever encoder the game itself uses (ours is smaller, even), but validity only requires that
+  `decompress(compress(x)) == x`, which is verified below - LZF decompression doesn't care how the compressor decided to
+  encode things.
 
 ## Plaintext save structure
 
-Once decompressed, the save is a flat, newline-delimited list of entries.
-There is no top-level JSON/XML - it's closer to a flattened key-value dump
-with prefix compression at the *application* layer (independent of LZF):
+Once decompressed, the save is a flat, newline-delimited list of entries. There is no top-level JSON/XML - it's closer
+to a flattened key-value dump with prefix compression at the *application* layer (independent of LZF):
 
-- A bare line `::` resets to "no active prefix"; the next line is a
-  self-contained `key:value` entry.
-- A line `::SomeName` starts a section/prefix named `SomeName`; subsequent
-  lines until the next `::` are **suffixes** that should be concatenated
-  onto that prefix to get the real key, e.g.:
+- A bare line `::` resets to "no active prefix"; the next line is a self-contained `key:value` entry.
+- A line `::SomeName` starts a section/prefix named `SomeName`; subsequent lines until the next `::` are **suffixes**
+  that should be concatenated onto that prefix to get the real key, e.g.:
   ```
   ::GirlCassie
   Clothing:1073741824i
@@ -101,34 +88,23 @@ with prefix compression at the *application* layer (independent of LZF):
   ```
   means `GirlCassieClothing:1073741824i`, `GirlCassieHearts:204188`, ...,
   `GirlCassieLove:9i`.
-- Value type suffixes seen: `i` = integer, `f` = float, no suffix = plain
-  integer/long or an empty/flag value (bare key with no `:value` at all is
-  a boolean-ish flag, e.g. `Locked`, `Active`, `Gilded`).
+- Value type suffixes seen: `i` = integer, `f` = float, no suffix = plain integer/long or an empty/flag value (bare key
+  with no `:value` at all is a boolean-ish flag, e.g. `Locked`, `Active`, `Gilded`).
 - Keys prefixed with `pes<N>` (e.g. `pes27GameStateDate`,
-  `pes27GirlQuillHearts`) are **not** a second save slot/profile - they're
-  per-**Limited-Time-Event (LTE)** data. Each event mirrors whatever part of
-  the root schema it needs: some (`pes27`) bundle a near-complete copy
-  (their own `GameState`, `Job`, `Hobby`, `Girl` blocks, with their own
-  hobby-name set), others (`pes53`, `pes54`) are much smaller fragments
-  (e.g. just a `Goals` field or a single `GameState.Date`). See `EVENTS.md`
-  for the confirmed prefix -> event name mapping (`pes27`=Fuzzy Festival,
-  `pes53`/`pes54`=Roxxy) and per-event key details. The top-level
-  (unprefixed) keys remain "the" active save state - that's what the user's
-  stated facts (3 diamonds, Cassie/Mio Love:9) matched against, not any
-  `pes<N>` block.
-- The `C<N>D`/`C<N>P` numbered pairs are the **Phone Fling** feature
-  (confirmed - see `SCHEMA.md`/`FLINGS.md`). `C<N>D` is a `DateTime` value
-  (see below) for the last message received, or `int64.MaxValue` if the
-  next message needs an extra unlock requirement met first. Flings are
-  identified purely by their `<N>` index in the key name - there is no
-  girl-name-keyed variant to search for, and no guarantee the index maps to
-  a girl present in this save's roster at all.
+  `pes27GirlQuillHearts`) are **not** a second save slot/profile - they're per- **parallel event** data. Each event
+  mirrors whatever part of the root schema it needs: some bundle a near-complete copy (their own `GameState`, `Job`,
+  `Hobby`, `Girl` blocks, with their own hobby-name set), others are much smaller fragments (e.g. just a `Goals` field
+  or a single `GameState.Date`) depending on their real-world state. See `EVENTS.md` for the confirmed prefix -> event
+  name mapping and per-event key details. The top-level (unprefixed) keys remain "the" active save state.
+- The `C<N>D`/`C<N>P` numbered pairs are the **Phone Fling** feature (confirmed - see `SCHEMA.md`/`FLINGS.md`). `C<N>D`
+  is a `DateTime` value (see below) for the last message received, or `int64.MaxValue` if the next message needs an
+  extra unlock requirement met first. Flings are identified purely by their `<N>` index in the key name - there is no
+  girl-name-keyed variant to search for, and no guarantee the index maps to a girl present in this save's roster at all.
 
 ### Timestamp fields
 
-Long, unsuffixed fields that look like timestamps (e.g. `GameState.Date`,
-`DateUTC`, `LoginDate`, `Task<N>Start`, `C<N>D`) are .NET `DateTime.ToBinary()`
-values - confirmed by decoding and cross-checking against known play dates.
+Long, unsuffixed fields that look like timestamps (e.g. `GameState.Date`, `DateUTC`, `LoginDate`, `Task<N>Start`,
+`C<N>D`) are .NET `DateTime.ToBinary()` values - confirmed by decoding and cross-checking against known play dates.
 Given the raw 64-bit `value`:
 
 ```
@@ -143,55 +119,40 @@ else:                                   # Unspecified kind (e.g. Task*Start)
 datetime(1,1,1) + timedelta(seconds=ticks//10_000_000, microseconds=(ticks%10_000_000)//10)
 ```
 
-Use `utils/timestamp.py` instead of re-deriving this inline - `decode` takes
-one or more raw values straight from a decoded save/diff and prints the
-`DateTimeKind` + ISO datetime for each (sentinels print as `N/A`/`never`);
-`encode` does the reverse for writing an edited timestamp back into a save.
-It uses exact integer tick arithmetic (not `timedelta.total_seconds()`,
-which loses sub-second precision at this magnitude via float rounding).
+Use `utils/timestamp.py` instead of re-deriving this inline - `decode` takes one or more raw values straight from a
+decoded save/diff and prints the `DateTimeKind` + ISO datetime for each (sentinels print as `N/A`/`never`);
+`encode` does the reverse for writing an edited timestamp back into a save. It uses exact integer tick arithmetic (not
+`timedelta.total_seconds()`, which loses sub-second precision at this magnitude via float rounding).
 
 ### Investigating an unconfirmed field
 
-The most reliable way to pin down what a field does: keep a `*.prev.sav` /
-`*.prev.txt` snapshot from before a play session (`python3
-tools/rotate_save.py` does this rotation), take a new save after,
-and diff the two **reconstructed key sets** (not a raw line diff - the `::`
-prefix-compression reshuffles line order between saves, so a plain `diff`
-on the raw decoded text is noisy). Use `scripts/diff_saves.py <prev.txt>
-<cur.txt>` for this instead of re-deriving the reconstruction inline - it
-undoes the `::` prefix-compression and prints added/removed/changed keys as
-a clean set diff (it can also just dump one file's reconstructed pairs,
-`scripts/diff_saves.py <file.txt>`, handy for grepping/filtering a single
-save's full key set, e.g. by `Job<Name>`/`Girl<Name>` prefix). This is how
-the Phone Fling feature, the per-level reset behavior of
-`Girl.Hearts`/`DateCount<N>`/`GiftCount<N>`, and several bitmask/counter
-fields got confirmed - by pairing "what changed" with what actually happened
-in the session (e.g. `decoded/crushcrush.prev.txt` vs `decoded/crushcrush.txt`
-in this repo).
+The most reliable way to pin down what a field does: keep a `*.prev.sav` /`*.prev.txt` snapshot from before a play
+session (`python3 tools/rotate_save.py` does this rotation), take a new save after, and diff the two **reconstructed key
+sets** (not a raw line diff - the `::` prefix-compression reshuffles line order between saves, so a plain `diff`
+on the raw decoded text is noisy). Use `scripts/diff_saves.py <prev.txt> <cur.txt>` for this instead of re-deriving the
+reconstruction inline - it undoes the `::` prefix-compression and prints added/removed/changed keys as a clean set diff
+(it can also just dump one file's reconstructed pairs, `scripts/diff_saves.py <file.txt>`, handy for grepping/filtering
+a single save's full key set, e.g. by `Job<Name>`/`Girl<Name>` prefix). This is how the Phone Fling feature, the
+per-level reset behavior of `Girl.Hearts`/`DateCount<N>`/`GiftCount<N>`, and several bitmask/counter fields got
+confirmed - by pairing "what changed" with what actually happened in the session (e.g. `decoded/crushcrush.prev.txt` vs
+`decoded/crushcrush.txt` in this repo).
 
-For the base64 `blob` fields that are bitmasks or pipe-delimited text
-(`GirlsUnlocked`, `GirlsPreviouslyUnlocked`, `UnlockedPFS`,
-`BlayfapAwardedItems`), use `scripts/decode_blob.py` rather than re-deriving
-the base64/bit-unpacking inline - `bits`/`text` decode a single value,
-`diff-bits`/`diff-text` decode two and print what was added/removed (handles
-the bitmask growing a byte between saves, as `GirlsUnlocked` and
-`UnlockedPFS` both do).
+For the base64 `blob` fields that are bitmasks or pipe-delimited text (`GirlsUnlocked`, `GirlsPreviouslyUnlocked`,
+`UnlockedPFS`, `BlayfapAwardedItems`), use `scripts/decode_blob.py` rather than re-deriving the base64/bit-unpacking
+inline - `bits`/`text` decode a single value, `diff-bits`/`diff-text` decode two and print what was added/removed
+(handles the bitmask growing a byte between saves, as `GirlsUnlocked` and `UnlockedPFS` both do).
 
-When the thing you're checking is specifically a Phone Fling, diff the
-`C<N>D`/`C<N>P` keys directly (e.g. `grep -oE '^C[0-9]+[DP]:.*'` over both
-files) - don't bother grepping for a girl's name first. The save has no
-name-keyed fling data to find, so a name search only tells you whether that
-girl's own `Girl<Name>` block exists, not whether her fling (if any) changed.
-Use `tools/phone_fling.py decode` to break a `C<N>P` blob down instead of
-re-deriving the byte layout inline - it also already knows about the
-"never started" (empty blob) and "locked/gated" (sentinel countdown) states
-that a naive parse of a fresh fling will otherwise crash or get confused on.
+When the thing you're checking is specifically a Phone Fling, diff the `C<N>D`/`C<N>P` keys directly (e.g.
+`grep -oE '^C[0-9]+[DP]:.*'` over both files) - don't bother grepping for a girl's name first. The save has no
+name-keyed fling data to find, so a name search only tells you whether that girl's own `Girl<Name>` block exists, not
+whether her fling (if any) changed. Use `tools/phone_fling.py decode` to break a `C<N>P` blob down instead of
+re-deriving the byte layout inline - it also already knows about the "never started" (empty blob) and "locked/gated"
+(sentinel countdown) states that a naive parse of a fresh fling will otherwise crash or get confused on.
 
 ## Utils (`utils/`, Python 3, no third-party deps)
 
-Generic codecs with no Crush-Crush-specific knowledge - `tools/` imports
-these rather than re-implementing them, but nothing about them is tied to
-this project's save format specifically.
+Generic codecs with no Crush-Crush-specific knowledge - `tools/` imports these rather than re-implementing them, but
+nothing about them is tied to this project's save format specifically.
 
 ```
 utils/lzf.py               compress(data: bytes) -> bytes
@@ -251,10 +212,9 @@ CLI:
 
 ## Scripts (`scripts/`, Python 3, no third-party deps)
 
-Analysis helpers used while reverse-engineering the format - not part of the
-decode/edit/encode path an end user needs (that's `tools/`), but reused
-often enough across investigation sessions that they're kept here instead of
-being re-derived inline each time.
+Analysis helpers used while reverse-engineering the format - not part of the decode/edit/encode path an end user needs
+(that's `tools/`), but reused often enough across investigation sessions that they're kept here instead of being
+re-derived inline each time.
 
 ```
 scripts/diff_saves.py      reconstruct(path) -> dict[str, str]
@@ -281,28 +241,23 @@ CLI:
 1. Decode: `python3 tools/crushcrush_save.py decode "saves/<save_game_filename>.sav" "decoded/<save_game_filename>.txt"`
 2. Edit `decoded/<save_game_filename>.txt` as plain text (respecting the `::`
    prefix-section rules above - don't break the prefix/suffix pairing).
-3. Encode back: `python3 tools/crushcrush_save.py encode "decoded/<save_game_filename>.txt" "saves/<save_game_filename>.edited.sav"`
-4. **Always verify before overwriting a real save**: decode the newly
-   encoded file again and diff its plaintext against the edited text (byte
-   for byte). This has been validated to round-trip exactly for both sample
-   files - if it ever doesn't match, something is wrong with the edit (e.g.
-   a broken `::` section) rather than the tooling.
-5. Only after the diff is clean, replace `saves/<save_game_filename>.sav` (make a
-   backup copy first, `<save_game_filename>.backup.sav`).
+3. Encode back:
+   `python3 tools/crushcrush_save.py encode "decoded/<save_game_filename>.txt" "saves/<save_game_filename>.edited.sav"`
+4. **Always verify before overwriting a real save**: decode the newly encoded file again and diff its plaintext against
+   the edited text (byte for byte). This has been validated to round-trip exactly for both sample files - if it ever
+   doesn't match, something is wrong with the edit (e.g. a broken `::` section) rather than the tooling.
+5. Only after the diff is clean, replace `saves/<save_game_filename>.sav` (make a backup copy first,
+   `<save_game_filename>.backup.sav`).
 
 ## Open items / not yet done
 
-- No value-specific validation (e.g. plausible ranges for `Love` 0-9,
-  `Diamonds` non-negative) is enforced by the tools - edits are freeform
-  text edits. If asked to build an actual editor UI/CLI for specific
-  fields, that's new work, not yet started.
-- `pes<N>` -> event name mapping (`EVENTS.md`) is confirmed for 3 prefixes
-  only; exact edit semantics for LTE-scoped `Girl`/`Job`/`Hobby` blocks
-  (e.g. whether editing them affects anything visible once the event has
-  ended) remain unconfirmed - still treat edits there as out of scope
-  unless asked.
-- `FLINGS.md`'s fling-ID -> girl mapping is a work in progress (most IDs
-  unmapped or unconfirmed) - don't treat it as complete.
-- See `SCHEMA.md`'s own "Open questions" section for the current list of
-  unidentified fields (`dchk`, `ana.ev`/`ana.vid`, achievement ID mapping,
-  etc.) rather than duplicating it here.
+- No value-specific validation (e.g. plausible ranges for `Love` 0-9, `Diamonds` non-negative) is enforced by the
+  tools - edits are freeform text edits. If asked to build an actual editor UI/CLI for specific fields, that's new work,
+  not yet started.
+- `pes<N>` -> event name mapping (`EVENTS.md`) is confirmed for 2 prefixes only; exact edit semantics for LTE-scoped
+  `Girl`/`Job`/`Hobby` blocks (e.g. whether editing them affects anything visible once the event has ended) remain
+  unconfirmed - still treat edits there as out of scope unless asked.
+- `FLINGS.md`'s fling-ID -> girl mapping is a work in progress (most IDs unmapped or unconfirmed) - don't treat it as
+  complete.
+- See `SCHEMA.md`'s own "Open questions" section for the current list of unidentified fields (`dchk`, `ana.ev`/
+  `ana.vid`, achievement ID mapping, etc.) rather than duplicating it here.
