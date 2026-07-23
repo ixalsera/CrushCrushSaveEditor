@@ -32,6 +32,7 @@ The below table lists the currently suspected mapping between bit index and girl
 | 23    | Spectrum  |
 | 26    | Shibuki   |
 | 30    | Peanut    |
+| 73    | Liz (?)   |
 | 84    | Lumi      |
 
 These IDs are used to reference girls in `GirlsUnlocked`, `GirlsPreviouslyUnlocked` and `CurrentGirl`, at the very
@@ -59,11 +60,11 @@ flipping it will do nothing).
 |----|----------------------------------------------------------------------------|
 | 1  | ?                                                                          |
 | 2  | DX Wedding Dress (unconfirmed; this is at least true for Tessa and Amelia) |
-| 18 | Diamond Ring (unconfirmed)                                                 |
+| 18 | Holiday                                                                    |
 | 19 | School Uniform                                                             |
 | 20 | Bathing Suit                                                               |
 | 21 | Quill's Fuzzy Festival Outfit                                              |
-| 22 | Holiday (unconfirmed)                                                      |
+| 22 | Diamond Ring (unconfirmed)                                                 |
 | 29 | Lingerie                                                                   |
 | 30 | Birthday Suit                                                              |
 

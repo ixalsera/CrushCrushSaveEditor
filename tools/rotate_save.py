@@ -8,7 +8,9 @@ Moves:
     decoded/<name>.txt -> decoded/<name>.prev.txt
 
 Refuses to rotate at all (rather than rotating one file and not the other)
-if either source file is missing.
+if either source file is missing - this is a normal, expected case (e.g.
+no save has been produced yet), not an error, so it's reported as a plain
+message rather than raised as an exception.
 
 Usage:
     rotate_save.py [name]   (default: crushcrush)
@@ -22,14 +24,14 @@ ROOT = Path(__file__).resolve().parent.parent
 def rotate(name="crushcrush"):
     """Rotate saves/<name>.sav and decoded/<name>.txt to their .prev.
     counterparts, overwriting any existing .prev. files. Returns the list
-    of (src, dst) pairs actually moved."""
+    of (src, dst) pairs actually moved, or None if either source file is
+    missing (nothing is rotated in that case)."""
     pairs = [
         (ROOT / "saves" / f"{name}.sav", ROOT / "saves" / f"{name}.prev.sav"),
         (ROOT / "decoded" / f"{name}.txt", ROOT / "decoded" / f"{name}.prev.txt"),
     ]
-    missing = [str(src) for src, _ in pairs if not src.exists()]
-    if missing:
-        raise FileNotFoundError(f"missing, nothing rotated: {', '.join(missing)}")
+    if any(not src.exists() for src, _ in pairs):
+        return None
     for src, dst in pairs:
         src.replace(dst)
     return pairs
@@ -37,7 +39,11 @@ def rotate(name="crushcrush"):
 
 def main():
     name = sys.argv[1] if len(sys.argv) > 1 else "crushcrush"
-    for src, dst in rotate(name):
+    result = rotate(name)
+    if result is None:
+        print(f"No save/decoded save available to rotate for {name!r} - nothing done.")
+        return
+    for src, dst in result:
         print(f"{src} -> {dst}")
 
 

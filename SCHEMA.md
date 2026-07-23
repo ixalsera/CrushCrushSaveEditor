@@ -48,8 +48,8 @@ once confirmed against the game.
 | `.timeskip.<size>.qty`                               | `int` (negative)              | Quantity/count for a time-skip purchase, per size tier; unconfirmed                                                                                                                                                                                                                   |
 | `ACH`                                                | `object`                      | See [Achievement schema](#achievement-ach-schema)                                                                                                                                                                                                                                     |
 | `AchievementCount`                                   | `int`                         | Total number of achievements unlocked                                                                                                                                                                                                                                                 |
-| `ana.ev`                                             | `long`                        | ????; I suspect this relates to the Annabelle LTE                                                                                                                                                                                                                                     |
-| `ana.vid`                                            | `long`                        | ????; I suspect this relates to the Annabelle LTE                                                                                                                                                                                                                                     |
+| `ana.ev`                                             | `long`                        | ????                                                                                                                                                                                                                                                                                  |
+| `ana.vid`                                            | `long`                        | ????                                                                                                                                                                                                                                                                                  |
 | `AvailableJobs`                                      | `int`                         | Confirmed: bitmask, one bit per `Job<Name>` (20 total). A save with only the tutorial completed has just bit 0 set, matching `JobFAST FOOD` being the only job unlocked by the tutorial - bit 0 = first job slot (`FAST FOOD`). More bits set as more jobs are unlocked through play. |
 | `BlayfapAwardedItems`                                | `blob` (base64 of plain text) | Decodes to a literal pipe-delimited list, likely of DLC girls as it seems to contain the Kaiju girls and, most recently, Lumi. This value may be refreshed at game launch                                                                                                             |
 | `C<N>D` (e.g. `C1D`..`C46D`)                         | `long`                        | Confirmed: Phone Fling feature. See [Phone Fling schema](#phone-fling-schema)                                                                                                                                                                                                         |
@@ -78,7 +78,7 @@ once confirmed against the game.
 | `ticketboothSeen`                                    | `flag`                        | Whether the "ticket booth" UI element/prompt has been seen                                                                                                                                                                                                                            |
 | `TimeMultiplier`                                     | `float`                       | Current overall time-speed multiplier                                                                                                                                                                                                                                                 |
 | `Tutorial`                                           | `int`                         | Tutorial progress step/stage reached                                                                                                                                                                                                                                                  |
-| `UnlockedPFS`                                        | `blob` (3-byte bitmask)       | Unknown. If unset, it seems to read `/n+a` (i.e. not applicable). Possibly this is whether Phone Flings has unlocked (will require a fresh save to verify)                                                                                                                            |
+| `UnlockedPFS`                                        | `blob` (bitmask)              | Bitmask of Core Girl Phone Flings that have been unlocked (unconfirmed)                                                                                                                                                                                                               |
 
 ## GameState schema
 
@@ -188,9 +188,9 @@ Prefix: `Job<Name>` (e.g. `JobART`, `JobZOO`). One block for each of the core jo
 Prefix: `ACH`. Sub-keys are numeric achievement IDs (internal to the game;
 no name mapping available from the save alone).
 
-| Sub-key pattern                     | Shape                              | Represents                                                                                                                    |
-|-------------------------------------|------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
-| `ACH.<id>` (e.g. `ACH.0`, `ACH.42`) | `int`, or `flag` if at its default | Progress/tier value for achievement `<id>`. Which ID corresponds to which in-game achievement is unknown from this file alone |
+| Sub-key pattern | Shape           | Represents                                  |
+|-----------------|-----------------|---------------------------------------------|
+| `ACH.<id>`      | `int` (bitmask) | Progress/tier value for achievement `<id>`. |
 
 Root-level `AchievementCount` (see top-level table) is the total count these
 sum/unlock to.
@@ -260,15 +260,9 @@ hobby's stat; unconfirmed but likely).
 
 ## Task schema
 
-Prefix: `Task`. Sub-keys are numbered with three possible suffixes each.
-`0`-`41` (three daily tasks over a 14-day LTE, `3*14 = 42`) is the shape
-seen for a **standard** LTE, but this is not a fixed/universal count - it's
-just how many tasks that event defines. A save that has only entered the
-Newcomer event (`EventID`/`Completed.Events` bit `118`, see
-[EVENTS.md](EVENTS.md)) has *only* `Task.0`-`Task.2` present (three tasks
-total, not three per day). Tasks only exist in the save for events the
-player has actually opened - a genuinely fresh/blank save should have **no**
-`Task` entries at all.
+Prefix: `Task`.
+
+Tasks relate to the current Limited-time Event (see [EVENTS.md](EVENTS.md) for more information). Generally, there are three tasks per day for each day the event is active so the number of `Task` sub-keys may vary. If there is no active LTE, there will likely be no Task entries (such as with a fresh save).
 
 | Sub-key pattern    | Shape  | Represents                                                                                                                                                                                       |
 |--------------------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
