@@ -1,23 +1,23 @@
 # Events
 
-Events appear to come in two forms: parallel events (PEs) and limited-time events (LTEs). Parallel events appear to track their own
-state in a `pes`-prefixed set of keys, likely because there is a separate game section for these (such as Fuzzy
-Festival). LTEs are simply task based token accumulation and therefore do not get their own `pes` "namespace".
+Events appear to come in two forms: parallel events (PEs) and limited-time events (LTEs). Parallel events appear to
+track their own state in a `pes`-prefixed set of keys, likely because there is a separate game section for these (such
+as Fuzzy Festival). LTEs are simply task based token accumulation and therefore do not get their own `pes` "namespace".
 
 ## Parallel Events
 
 The table below lists known parallel events and their event IDs:
 
-| ID   | Event                            | Date            |
-|------|----------------------------------|-----------------|
-| 27   | Fuzzy Festival (Ginger & Wasabi) | N/A (Paid DLC)+ |
-| 53   | Valentines Event (Marybelle)     | June 2026       |
-| 54   | Beach Bash (Nixie)               | July 2026       |
+| ID | Event                            | Date           |
+|----|----------------------------------|----------------|
+| 27 | Fuzzy Festival (Ginger & Wasabi) | N/A (Paid DLC) |
+| 53 | Valentine's (Marybelle)          | June 2026      |
+| 54 | Beach Bash (Nixie)               | July 2026      |
 
 ### Schemas
 
-All event keys are prefixed with `pes` and their event ID (`pes<NN>`). The following table is an inferred generic schema for parallel
-events based on only one dataset (excluding the mirrored keys from the root schema):
+All event keys are prefixed with `pes` and their event ID (`pes<NN>`). The following table is an inferred generic schema
+for parallel events based on only one dataset (excluding the mirrored keys from the root schema):
 
 | Sub-key                                                                      | Shape   | Represents                                                                                                              |
 |------------------------------------------------------------------------------|---------|-------------------------------------------------------------------------------------------------------------------------|
@@ -31,17 +31,23 @@ For the known events, the following describes the keys unique to that event.
 #### Fuzzy Festival (`pes27`)
 
 ##### Hobbies
+
 Its `Hobby<Name>` instances use a **different 12 names** than the root profile: `Bravery`, `Caring`, `Charisma`,
 `Creative`, `Focus`, `Innovation`, `Luck`, `Optimism`, `Peaceful`, `Responsible`, `Tenderness`, `Trustworthy`.
 
 #### Beach Bash (`pes54`)
 
 ##### Girls
-The following Girls are available in the Beach Bash parallel event, with corresponding entries: Iro, Roxxy, Nova, Shibuki, Sutra, Lustat and Nixie.
+
+The following Girls are available in the Beach Bash parallel event, with corresponding entries: Iro, Roxxy, Nova,
+Lustat, Shibuki, Sutra and Nixie.
 
 ##### Hobbies
+
 Its `Hobby<Name>` instances use a **different 12 names** than the root profile: `Adventurous`, `Brave`, `Buff`,
 `Competetive`, `Cool`, `Culinary`, `Easygoing`, `Healthy`, `Independent`, `Patience`, `Sentimental`, `Thorough`.
+
+---------
 
 ## Limited-time Events (LTEs)
 
@@ -56,11 +62,33 @@ next event.
 are required. Usually the amount of Tasks is calculated as `3 * eventDuration`, i.e. 3 tasks per day, but this can vary
 according to the event.
 
-Known Event IDs:
+### Duration
 
-| ID  | Event              | Duration |
-|-----|--------------------|----------|
-| 118 | Newcomer           | 1 Day    |
-| 307 | Roxxy              | 14 Days  |
-| 308 | Roxxy's Outfits    | 14 Days  |
-| 309 | Peanut Phone Pinup | 7 Days   |
+LTEs that unlock either a Girl or her outfits seem to run for 14 days while Pinup LTEs only run for 7. THe singular known
+exception to this rule is the "Newcomer" event which is only 1 day long (presumably so you can finish it in a single sitting
+and not miss out if you forget to play the game subsequently).
+
+### Known LTEs:
+
+The table below maps event IDs to known events and gives their duration:
+
+| ID  | Event                 | Duration |
+|-----|-----------------------|----------|
+| 118 | Newcomer              | 1 Day    |
+| 307 | Roxxy                 | 14 Days  |
+| 308 | Roxxy's Outfits       | 14 Days  |
+| 309 | Peanut Phone Pinup    | 7 Days   |
+| ??? | Sirina                | 14 Days  |
+| ??? | Sirina's Outfits      | 14 Days  |
+| ??? | Sawyer and Lake Pinup | 7 Days   |
+| ??? | Tessa                 | 14 Days  |
+| ??? | Tessa's Outfits       | 14 Days  |
+| ??? | Alpha's Pinup         | 7 Days   |
+| ??? | Esper                 | 14 Days  |
+| ??? | Esper's Outfits       | 14 Days  |
+| ??? | School Pinup          | 7 Days   |
+| ??? | Rosa                  | 14 Days  |
+| ??? | Rosa's Outfits        | 14 Days  |
+| ??? | Holiday Pinup         | 7 Days   |
+| ??? | Odango                | 14 Days  |
+| ??? | Odango's Outfits      | 14 Days  |

@@ -16,13 +16,13 @@ immediately identifiable from the data alone - these will be filled in as and wh
 | `i`                              | `int` (32-bit)  |                                                                                                                                                                                                                                                                             |
 | `f`                              | `float`         |                                                                                                                                                                                                                                                                             |
 | *(none)*                         | `long` (64-bit) | Every unsuffixed numeric value observed fits comfortably in an `int64` and several equal or approach `int64.MaxValue` exactly, but not `int32.MaxValue` — consistent with the underlying field being declared as a 64-bit integer type regardless of its current magnitude. |
-| *(bare key, no `:value` at all)* | `flag`          | Presence-only. Appears to mean either "this boolean is `true`" or "this field is at its type's default/zero value and was written without a value" — the file doesn't disambiguate; treat as unconfirmed until verified in-game.                                            |
+| *(bare key, no `:value` at all)* | `flag`          | Presence-only, meaning `true`; the key is omitted entirely when `false`.                                                                                                                                                                                                    |
 | base64-looking string            | `blob`          | An embedded base64 chunk, usually a packed bitmask or small binary struct. Some are just base64 of ASCII text (noted where found).                                                                                                                                          |
 
 - Several long, unsuffixed timestamp-looking fields (very large or negative numbers, e.g. `LoginDate`, `DateUTC`,
   `Pes27Start`, `Task*Start`, `C*D`) are consistent with .NET's `DateTime.ToBinary()` encoding (a `long` ticks value
   with the top bits used to tag UTC/Local `DateTimeKind`, which is why some are negative and others exceed the normal
-  max-ticks range). This is a strong structural inference, not a confirmed fact — noted per-row below.
+  max-ticks range).
 - Where a key has its own set of sub-keys (e.g. `Girl<Name>`), the **Shape** column says `object` and points at that
   key's own schema table further down, instead of repeating its fields inline.
 - Numbered/repeating keys (achievements, challenges, tasks, skills) are shown once as a pattern row (e.g. `ACH.<id>`)
@@ -74,7 +74,9 @@ immediately identifiable from the data alone - these will be filled in as and wh
 
 ## GameState schema
 
-Prefix: `GameState`. Root-level player state.
+Prefix: `GameState`.
+
+Root-level player state.
 
 | Sub-key               | Shape    | Represents                                                                                                                                                                           |
 |-----------------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -99,8 +101,9 @@ Prefix: `GameState`. Root-level player state.
 
 ## Girl schema
 
-Prefix: `Girl<Name>` (e.g. `GirlCassie`, `GirlMio`). One block per girl. This represents their current level's state as
-well as some lifetime trackers.
+Prefix: `Girl<Name>` (e.g. `GirlCassie`, `GirlMio`).
+
+One block per girl. This represents their current level's state as well as some lifetime trackers.
 
 Both `DateCount` and `GiftCount` are suffixed with a number from `1` to `3`, where present. It seems that this
 represents in which slot that Gift or Date tracker sits (`Hearts` is always slot 0 of 4). If no progress has been made
@@ -213,9 +216,10 @@ Prefix: `Completed`.
 
 ## Playfab schema
 
-Prefix: `Playfab`. [Playfab](https://playfab.com) is a common third-party game-backend service; these keys are almost
-certainly related to it. It's unlikely whether these fields can be edited as they will likely re-sync from PlayFab at
-next launch.
+Prefix: `Playfab`.
+
+[Playfab](https://playfab.com) is a common third-party game-backend service; these keys are almost certainly related to
+it. It's unlikely whether these fields can be edited as they will likely re-sync from PlayFab at next launch.
 
 | Sub-key          | Shape            | Represents                                                                       |
 |------------------|------------------|----------------------------------------------------------------------------------|

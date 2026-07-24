@@ -11,38 +11,42 @@ unlocked in this save file.
 
 The below table lists the currently suspected mapping between bit index and girl as determined from save file analysis:
 
-| Index | Girl                  |
-|-------|-----------------------|
-| 0     | Cassie                |
-| 1     | Mio                   |
-| 2     | Quill                 |
-| 3     | Elle                  |
-| 4     | Nutaku                |
-| 5     | Iro                   |
-| 6     | Bonnibel              |
-| 7     | Ayeka[^1]             |
-| 8     | Fumi                  |
-| 9     | Bearverly             |
-| 10    | Nina                  |
-| 11    | Alpha                 |
-| 12    | Pamu                  |
-| 20    | Jelle                 |
-| 21    | Quillzone             |
-| 22    | Bonchovy              |
-| 23    | Spectrum              |
-| 26    | Shibuki               |
-| 30    | Peanut                |
-| 45    | Mallory               |
-| 68    | Ginger & Wasabi       |
-| 71    | Mortha (Unconfirmed)  |
-| 72    | Sephia  (Unconfirmed) |
-| 73    | Liz (Unconfirmed)     |
-| 82    | Lydia (Unconfirmed)   |
-| 84    | Lumi                  |
-| 85    | Nixie (Unconfirmed)   |
+| Index | Girl                      |
+|-------|---------------------------|
+| 0     | Cassie                    |
+| 1     | Mio                       |
+| 2     | Quill                     |
+| 3     | Elle                      |
+| 4     | Nutaku                    |
+| 5     | Iro                       |
+| 6     | Bonnibel                  |
+| 7     | Ayeka[^1]                 |
+| 8     | Fumi                      |
+| 9     | Bearverly                 |
+| 10    | Nina                      |
+| 11    | Alpha                     |
+| 12    | Pamu                      |
+| 20    | Jelle                     |
+| 21    | Quillzone                 |
+| 22    | Bonchovy                  |
+| 23    | Spectrum                  |
+| 26    | Shibuki                   |
+| 30    | Peanut                    |
+| 31    | Roxxy                     |
+| 40    | Nova/Lustat (Unconfirmed) |
+| 45    | Mallory                   |
+| 52    | Nova/Lustat (Unconfirmed) |
+| 68    | Ginger & Wasabi           |
+| 71    | Mortha (Unconfirmed)      |
+| 72    | Sephia  (Unconfirmed)     |
+| 73    | Liz (Unconfirmed)         |
+| 82    | Lydia (Unconfirmed)       |
+| 84    | Lumi                      |
+| 85    | Nixie (Unconfirmed)       |
 
 These IDs are used to reference girls in `GirlsUnlocked`, `GirlsPreviouslyUnlocked` and `CurrentGirl`, at the very
-least. It is likely that if a bitmask represents a girl, the bit index will match the above table.
+least. It is likely that if a bitmask represents a girl or girls, the bit index will match the above table. This can
+be seen in the [parallel events](EVENTS.md) where the event-specific `GirlsUnlocked` bitmask uses these same indices.
 
 ## Event Girls
 
