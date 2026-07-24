@@ -45,8 +45,8 @@ The below table lists the currently suspected mapping between bit index and girl
 | 85    | Nixie (Unconfirmed)       |
 
 These IDs are used to reference girls in `GirlsUnlocked`, `GirlsPreviouslyUnlocked` and `CurrentGirl`, at the very
-least. It is likely that if a bitmask represents a girl or girls, the bit index will match the above table. This can
-be seen in the [parallel events](EVENTS.md) where the event-specific `GirlsUnlocked` bitmask uses these same indices.
+least. It is likely that if a bitmask represents a girl or girls, the bit index will match the above table. This can be
+seen in the [parallel events](EVENTS.md) where the event-specific `GirlsUnlocked` bitmask uses these same indices.
 
 ## Event Girls
 
@@ -92,5 +92,23 @@ the latest when you switch to that specific one
 
 Equipping an outfit for a girl will set a bit on her `Clothing` field. See the table above for the known outfit
 mappings.
+
+#### Parallel Event Outfits
+
+Interestingly, when playing a Parallel Event, Girls have their `Clothing` bitmask set to whatever outfit they are
+supposed to wear for that event (such as "Bathing Suit" for the Beach Bash PE), but this is subsequently ignored by the
+game. Setting this to any other outfit will not cause the Girl to don that outfit in the PE. Which makes me a Sad Panda.
+
+## Dates
+
+A Girl's `Dates` field holds a single bit marking the specific date currently required to progress to her next level
+(see [SCHEMA.md](SCHEMA.md)). That same bit is added to her `LifeDates` bitmask once the date is completed.
+
+| Bit | Date             |
+|-----|------------------|
+| 0   | Moonlight Stroll |
+| 2   | Sightseeing      |
+| 3   | Movie Theater    |
+| 4   | Beach            |
 
 [^1]: While the save still refers to Ayeka as Ayano, I prefer to use the name as displayed in the game.

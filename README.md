@@ -12,8 +12,7 @@ back into a save file the game can load.
 
 Crush Crush's save format is `base64(3-byte magic + LZF-compressed plaintext)` — an undocumented encoding,
 reverse-engineered for this project by diffing successive saves and cross-referencing Unity's own `PlayerPrefs` storage.
-See [AGENTS.md](AGENTS.md) for the full format write-up, and the schema docs under [`docs/`](docs) for what's been
-mapped out so far.
+See the schema docs under [`docs/`](docs) for what's been mapped out so far.
 
 ## Install
 
@@ -59,8 +58,7 @@ Leave off the output path and `decode`/`encode` print straight to your terminal 
    ```
 
 6. **Back up your original save** somewhere outside this project, then copy the edited file over it — renamed to match
-   what the game expects (e.g.
-   `crushcrush.sav`):
+   what the game expects (e.g. `crushcrush.sav`):
    ```shell
    cp "saves/crushcrush.edited.sav" /path/to/your/crushcrush.sav
    ```
@@ -78,15 +76,14 @@ Nothing in `saves/` or `decoded/` needs a particular name — use whatever filen
 
 ## AI Disclosure
 
-AI coding tools were used in this project. Their function was to verify the encoding of saves and correctly decode and
-decompress. They also wrote the tooling scripts and helped to generate the save schema which otherwise would have been a
-long and boring boilerplate task my ADHD doesn't have the time for.
+AI coding tools were used in this project. Their function was to verify the encoding of saves, correctly decode and
+decompress, and diff saves. They also wrote the tooling scripts and helped to generate the save schema. Otherwise, all
+this would have been a long and boring boilerplate task my ADHD doesn't have the time for.
 
 ## Contributing
 
-This is a personal reverse-engineering project, but PRs and issues are welcome — especially new schema findings
-(see [AGENTS.md](AGENTS.md) for the investigation methodology). For anything beyond a small fix, please open an issue
-first to discuss the approach.
+This is a personal reverse-engineering project, but PRs and issues are welcome — especially new schema findings. For
+anything beyond a small fix, please open an issue first to discuss the approach.
 
 ## License
 

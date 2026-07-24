@@ -14,31 +14,32 @@ has the `GirlsUnlocked` index of `0` but the Phone Fling ID `23` and Peanut has 
 
 The table below attempts to map the fling ID with the girl it represents:
 
-| Fling ID | Name                |
-|----------|---------------------|
-| 0        | Unused              |
-| 1        | Peanut              |
-| 2        | Wendy               |
-| 3        | Generica            |
-| 4        | Lotus               |
-| 5        | Sophia              |
-| 6        | Caitlin             |
-| 7        | Ruri                |
-| 8        | Miss Desiree        |
-| 9        | Honey               |
-| 10       | Sawyer              |
-| 11       | Lake                |
-| 12       | Willow              |
-| 13       | Nova                |
-| 14       | Blanche (Suspected) |
-| 16       | Renee               |
-| 19       | Amelia (Suspected)  |
-| 20       | Dr Fumi (Suspected) |
-| 23       | Cassie (Suspected)  |
-| 24       | Mio                 |
-| 25       | Quill (Suspected)   |
-| 26       | Elle (Suspected)    |
-| 27       | Iro (Suspected)     |
+| Fling ID | Name         |
+|----------|--------------|
+| 0        | Unused       |
+| 1        | Peanut       |
+| 2        | Wendy        |
+| 3        | Generica     |
+| 4        | Lotus        |
+| 5        | Sophia       |
+| 6        | Caitlin      |
+| 7        | Ruri         |
+| 8        | Miss Desiree |
+| 9        | Honey        |
+| 10       | Sawyer       |
+| 11       | Lake         |
+| 12       | Willow       |
+| 13       | Nova         |
+| 14       | Blanche      |
+| 16       | Renee        |
+| 17       | Francine     |
+| 19       | Amelia       |
+| 20       | Dr Fumi      |
+| 23       | Cassie       |
+| 24       | Mio          |
+| 25       | Quill        |
+| 26       | Elle         |
+| 27       | Iro          |
 
 ## Data
 
@@ -64,8 +65,7 @@ The following has been observed:
   itself rather than just a mirror of `D`'s sentinel; unconfirmed why an active-looking fling would carry it
 - Conversations awaiting a player choice have the delay/countdown set to `0`
 
-We can derive a blob structure for the data thus (pseudocode; confirmed against every fling in a real save, see
-`../tools/phone_fling.py`):
+We can derive a blob structure for the data thus (pseudocode):
 
 ```
 struct PhoneFlingData {

@@ -1,8 +1,8 @@
 # Save Data Schema
 
-This documents the schema of the plaintext produced by decoding a save file (see [AGENTS.md](../AGENTS.md) for the decode
-format itself). It's derived from a `../decoded/crushcrush.txt`. Cells are left **blank** where the key's purpose isn't
-immediately identifiable from the data alone - these will be filled in as and when they are determined.
+This documents the schema of the plaintext produced by decoding a save file (see [AGENTS.md](../AGENTS.md) for the
+decode format itself). It's derived from a `../decoded/crushcrush.txt`. Cells are left **blank** where the key's purpose
+isn't immediately identifiable from the data alone - these will be filled in as and when they are determined.
 
 ## How to read these tables
 
@@ -23,6 +23,8 @@ immediately identifiable from the data alone - these will be filled in as and wh
   `Pes27Start`, `Task*Start`, `C*D`) are consistent with .NET's `DateTime.ToBinary()` encoding (a `long` ticks value
   with the top bits used to tag UTC/Local `DateTimeKind`, which is why some are negative and others exceed the normal
   max-ticks range).
+- The `flag` shape's omitted-if-`0`/bare-if-`1` convention may apply to `int` fields generally, not just true booleans —
+  `0` omitted, `1` written bare, `2`+ written as `Ni`.
 - Where a key has its own set of sub-keys (e.g. `Girl<Name>`), the **Shape** column says `object` and points at that
   key's own schema table further down, instead of repeating its fields inline.
 - Numbered/repeating keys (achievements, challenges, tasks, skills) are shown once as a pattern row (e.g. `ACH.<id>`)
@@ -32,12 +34,12 @@ immediately identifiable from the data alone - these will be filled in as and wh
 
 | Key                                                 | Shape                         | Represents                                                                                                                                               |
 |-----------------------------------------------------|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `.speedboost.<size>.pri` (`large`/`medium`/`small`) | `int` (negative)              | Shop price for a speed-boost purchase, per size tier; unconfirmed                                                                                        |
-| `.speedboost.<size>.qty`                            | `int` (negative)              | Quantity/count associated with a speed-boost purchase, per size tier; unconfirmed                                                                        |
-| `.timeblocks.<size>.pri`                            | `int` (negative)              | Shop price for a time-block purchase, per size tier; unconfirmed                                                                                         |
-| `.timeblocks.<size>.qty`                            | `int` (negative)              | Quantity/count for a time-block purchase, per size tier; unconfirmed                                                                                     |
-| `.timeskip.<size>.pri`                              | `int` (negative)              | Shop price for a time-skip purchase, per size tier; unconfirmed                                                                                          |
-| `.timeskip.<size>.qty`                              | `int` (negative)              | Quantity/count for a time-skip purchase, per size tier; unconfirmed                                                                                      |
+| `.speedboost.<size>.pri` (`large`/`medium`/`small`) | `int` (`~cost`)               | Diamond cost of a speed-boost purchase, encoded as `~cost` (i.e. `-(cost+1)`).                                                                           |
+| `.speedboost.<size>.qty`                            | `int` (`~multiplier`)         | Speed multiplier granted (x2/x8/x64), encoded as `~multiplier`.                                                                                          |
+| `.timeblocks.<size>.pri`                            | `int` (`~cost`)               | Diamond cost of a time-block purchase, encoded as `~cost`.                                                                                               |
+| `.timeblocks.<size>.qty`                            | `int` (`~count`)              | Number of Time Blocks granted, encoded as `~count`.                                                                                                      |
+| `.timeskip.<size>.pri`                              | `int` (`~cost`)               | Diamond cost of a time-skip purchase, encoded as `~cost`.                                                                                                |
+| `.timeskip.<size>.qty`                              | `int` (`~hours`)              | Duration granted, in hours, encoded as `~hours`.                                                                                                         |
 | `ACH`                                               | `object`                      | See [Achievement schema](#achievement-ach-schema)                                                                                                        |
 | `AchievementCount`                                  | `int`                         | Total number of achievements unlocked                                                                                                                    |
 | `ana.ev`                                            | `long`                        | ????                                                                                                                                                     |
@@ -107,8 +109,9 @@ One block per girl. This represents their current level's state as well as some 
 
 Both `DateCount` and `GiftCount` are suffixed with a number from `1` to `3`, where present. It seems that this
 represents in which slot that Gift or Date tracker sits (`Hearts` is always slot 0 of 4). If no progress has been made
-towards the Gift/Date, this value is likely to not be present rather than set to 0. If the current level does not
-require Date or Gift progression in order to level up, the respective entry will not be present.
+towards the Gift/Date, this value is likely to not be present rather than set to 0 (although, see the above note
+regarding how the save file treats integer values of `0` and `1`). If the current level does not require Date or Gift
+progression in order to level up, the respective entry will not be present.
 
 See [GIRLS.md](GIRLS.md) for more information such as clothing/outfit bit mapping tables.
 
@@ -116,10 +119,10 @@ See [GIRLS.md](GIRLS.md) for more information such as clothing/outfit bit mappin
 |-------------------------------|-----------------|--------------------------------------------------------------------------------------------|
 | `Clothing`                    | `int` (bitmask) | Currently equipped clothing/outfit                                                         |
 | `DateCount<N>` (`1`-`3` seen) | `int`           | Count of dates completed towards level progress (see above regarding the relevance of `N`) |
-| `Dates`                       | `int`           | Whether dating is unlocked for this girl; unconfirmed                                      |
+| `Dates`                       | `int` (bitmask) | The Date required for progression this level (See [GIRLS.md](GIRLS.md) for mapping)        |
 | `GiftCount<N>` (`1`-`3` seen) | `int`           | Count of gifts completed towards level progress (see above regarding the relevance of `N`) |
 | `Hearts`                      | `long`          | Accumulated Hearts *for this level*                                                        |
-| `LifeDates`                   | `int` (bitmask) | Bitmask of the dates completed for this Girl (bit mapping of dates is currently unknown)   |
+| `LifeDates`                   | `int` (bitmask) | Bitmask of the Dates completed for this Girl (See [GIRLS.md](GIRLS.md) for mapping)        |
 | `LifeOutfits`                 | `int` (bitmask) | Lifetime unlocked outfits/costumes for this girl                                           |
 | `Love`                        | `int` (`0`-`9`) | Relationship tier; 9 represents "Lover" level                                              |
 
@@ -170,7 +173,7 @@ Prefix: `Job<Name>` (e.g. `JobART`, `JobZOO`).
 
 One block for each of the core jobs (`ART`, `CASINO`, `CLEANING`, `COMPUTERS`, `FAST FOOD`, `HUNTING`, `LEGAL`,
 `LIFEGUARD`, `LOVE`, `MOVIES`, `RESTAURANT`, `SLAYING`, `SPACE`, `SPORTS`, `WIZARD`, `ZOO`) and any DLC exclusive jobs
-(`DIGGER` (Charlotte), `PLANTER`, `MECH` (Kaiju), `UNKNOWN`).
+(`DIGGER` (Charlotte), `PLANTER` (Suzu), `MECH` (Kaiju), `UNKNOWN` (Frost Event)). 
 
 | Sub-key      | Shape           | Represents                                                                                      |
 |--------------|-----------------|-------------------------------------------------------------------------------------------------|
