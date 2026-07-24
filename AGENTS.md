@@ -207,6 +207,15 @@ CLI:
   python3 scripts/decode_blob.py text <base64>                    decoded pipe-delimited text
   python3 scripts/decode_blob.py diff-bits <base64_a> <base64_b>  bits added/removed, a -> b
   python3 scripts/decode_blob.py diff-text <base64_a> <base64_b>  pipe items added/removed, a -> b
+
+scripts/parse_prefs.py     load_prefs(path) -> dict         (Unity `prefs` XML -> {name: {v, h}})
+                            resolve(entries) -> dict[str, tuple]  (collapsed to one (kind, value) per key)
+                            compare(prefs_path, save_path)   (cross-check against a reconstructed save;
+                            see the module docstring for the full base64/int-pair encoding this undoes)
+
+CLI:
+  python3 scripts/parse_prefs.py dump <prefs-file>                  dump resolved key:value pairs, sorted
+  python3 scripts/parse_prefs.py compare <prefs-file> <decoded.txt> cross-check against a reconstructed save
 ```
 
 ## Standard edit workflow
