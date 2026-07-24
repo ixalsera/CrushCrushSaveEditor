@@ -65,7 +65,7 @@ The following has been observed:
 - Conversations awaiting a player choice have the delay/countdown set to `0`
 
 We can derive a blob structure for the data thus (pseudocode; confirmed against every fling in a real save, see
-`tools/phone_fling.py`):
+`../tools/phone_fling.py`):
 
 ```
 struct PhoneFlingData {

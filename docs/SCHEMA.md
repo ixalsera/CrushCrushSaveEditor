@@ -1,7 +1,7 @@
 # Save Data Schema
 
-This documents the schema of the plaintext produced by decoding a save file (see [AGENTS.md](AGENTS.md) for the decode
-format itself). It's derived from a `decoded/crushcrush.txt`. Cells are left **blank** where the key's purpose isn't
+This documents the schema of the plaintext produced by decoding a save file (see [AGENTS.md](../AGENTS.md) for the decode
+format itself). It's derived from a `../decoded/crushcrush.txt`. Cells are left **blank** where the key's purpose isn't
 immediately identifiable from the data alone - these will be filled in as and when they are determined.
 
 ## How to read these tables

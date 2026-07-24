@@ -5,13 +5,13 @@ format discovery isn't repeated.
 
 Per-key docs - check before re-deriving what a field means:
 
-| File         | Covers                                                                                                                                                                                                        |
-|--------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `SCHEMA.md`  | Every top-level key + nested object schemas (`Girl`, `Job`, `Hobby`, `Task`, `ACH`, Phone Fling, etc).                                                                                                        |
-| `EVENTS.md`  | `pes<N>` parallel-event prefix→event mapping + event-scoped schemas, plus LTE IDs.                                                                                                                            |
-| `FLINGS.md`  | Phone Fling (`C<N>D`/`C<N>P`): fling-ID→girl mapping + `C<N>P` blob decoding. The save stores only the numeric fling index - never a girl's name - and a fling need not correspond to any `Girl<Name>` block. |
-| `GIRLS.md`   | `GirlsUnlocked`/`GirlsPreviouslyUnlocked` bit-index→girl mapping, plus per-girl `Clothing`/`LifeOutfits` outfit-bit findings.                                                                                 |
-| `UNLOCKS.md` | Same bitmask/list analysis as `GIRLS.md`, but for account-level `Playfab`/`BlayfapAwardedItems` - both are server-synced on launch, not derived from the local save.                                          |
+| File              | Covers                                                                                                                                                                                                        |
+|-------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `docs/SCHEMA.md`  | Every top-level key + nested object schemas (`Girl`, `Job`, `Hobby`, `Task`, `ACH`, Phone Fling, etc).                                                                                                        |
+| `docs/EVENTS.md`  | `pes<N>` parallel-event prefix→event mapping + event-scoped schemas, plus LTE IDs.                                                                                                                            |
+| `docs/FLINGS.md`  | Phone Fling (`C<N>D`/`C<N>P`): fling-ID→girl mapping + `C<N>P` blob decoding. The save stores only the numeric fling index - never a girl's name - and a fling need not correspond to any `Girl<Name>` block. |
+| `docs/GIRLS.md`   | `GirlsUnlocked`/`GirlsPreviouslyUnlocked` bit-index→girl mapping, plus per-girl `Clothing`/`LifeOutfits` outfit-bit findings.                                                                                 |
+| `docs/UNLOCKS.md` | Same bitmask/list analysis as `docs/GIRLS.md`, but for account-level `Playfab`/`BlayfapAwardedItems` - both are server-synced on launch, not derived from the local save.                                     |
 
 ## Directory layout
 
@@ -82,12 +82,12 @@ Decompressed, the save is a flat, newline-delimited key-value dump (no JSON/XML)
   all = boolean-ish flag, e.g. `Locked`, `Active`, `Gilded`).
 - `pes<N>` keys (e.g. `pes27GameStateDate`, `pes27GirlQuillHearts`) are **not** a second save slot - they're per-
   **parallel event** data, mirroring whatever part of the root schema that event needs (some near-complete: own
-  `GameState`/`Job`/`Hobby`/`Girl` blocks with their own hobby names; others just a stray field). See `EVENTS.md` for
-  prefix→event mapping. Unprefixed keys remain "the" active save state.
-- `C<N>D`/`C<N>P` numbered pairs are the **Phone Fling** feature (see `SCHEMA.md`/`FLINGS.md`). `C<N>D` = `DateTime` of
-  last message received, or `int64.MaxValue` if the next message needs an extra unlock requirement. Flings are
-  identified purely by `<N>` index - no girl-name-keyed variant exists, and the index isn't guaranteed to map to a girl
-  present in this save's roster.
+  `GameState`/`Job`/`Hobby`/`Girl` blocks with their own hobby names; others just a stray field). See `docs/EVENTS.md`
+  for prefix→event mapping. Unprefixed keys remain "the" active save state.
+- `C<N>D`/`C<N>P` numbered pairs are the **Phone Fling** feature (see `docs/SCHEMA.md`/`docs/FLINGS.md`). `C<N>D` =
+  `DateTime` of last message received, or `int64.MaxValue` if the next message needs an extra unlock requirement. Flings
+  are identified purely by `<N>` index - no girl-name-keyed variant exists, and the index isn't guaranteed to map to a
+  girl present in this save's roster.
 
 ### Timestamp fields
 
@@ -120,14 +120,14 @@ line order, so plain `diff` is noisy). Use `scripts/diff_saves.py <prev.txt> <cu
 
 For base64 `blob` fields that are bitmasks or pipe-delimited text (`GirlsUnlocked`, `GirlsPreviouslyUnlocked`,
 `UnlockedPFS`, `BlayfapAwardedItems`), use `scripts/decode_blob.py` rather than re-deriving inline - `bits`/`text`
-decode a single value, `diff-bits`/`diff-text` decode two and print what was added/removed (handles the bitmask
-growing a byte between saves, as `GirlsUnlocked`/`UnlockedPFS` both do).
+decode a single value, `diff-bits`/`diff-text` decode two and print what was added/removed (handles the bitmask growing
+a byte between saves, as `GirlsUnlocked`/`UnlockedPFS` both do).
 
 For a Phone Fling specifically, diff the `C<N>D`/`C<N>P` keys directly (e.g. `grep -oE '^C[0-9]+[DP]:.*'` over both
 files) rather than grepping for a girl's name - the save has no name-keyed fling data, so a name search only confirms
 the `Girl<Name>` block exists, not whether her fling changed. Use `tools/phone_fling.py decode` to break down a
-`C<N>P` blob - it already handles the "never started" (empty blob) and "locked/gated" (sentinel countdown) states
-that a naive parse will otherwise crash or get confused on.
+`C<N>P` blob - it already handles the "never started" (empty blob) and "locked/gated" (sentinel countdown) states that a
+naive parse will otherwise crash or get confused on.
 
 ## Utils (`utils/`, Python 3, no third-party deps)
 
@@ -221,13 +221,13 @@ CLI:
 ## Standard edit workflow
 
 1. Decode: `python3 tools/crushcrush_save.py decode "saves/<save_game_filename>.sav" "decoded/<save_game_filename>.txt"`
-2. Edit `decoded/<save_game_filename>.txt` as plain text (respect the `::` prefix-section rules above - don't break
-   the prefix/suffix pairing).
+2. Edit `decoded/<save_game_filename>.txt` as plain text (respect the `::` prefix-section rules above - don't break the
+   prefix/suffix pairing).
 3. Encode back:
    `python3 tools/crushcrush_save.py encode "decoded/<save_game_filename>.txt" "saves/<save_game_filename>.edited.sav"`
-4. **Always verify before overwriting a real save**: decode the newly encoded file again and diff its plaintext
-   against the edited text (byte for byte). Validated to round-trip exactly for both sample files - if it doesn't
-   match, the edit broke something (e.g. a broken `::` section), not the tooling.
+4. **Always verify before overwriting a real save**: decode the newly encoded file again and diff its plaintext against
+   the edited text (byte for byte). Validated to round-trip exactly for both sample files - if it doesn't match, the
+   edit broke something (e.g. a broken `::` section), not the tooling.
 5. Only after the diff is clean, replace `saves/<save_game_filename>.sav` (back it up first as
    `<save_game_filename>.backup.sav`).
 
@@ -235,9 +235,9 @@ CLI:
 
 - No value-specific validation (e.g. `Love` 0-9, `Diamonds` non-negative) is enforced - edits are freeform text.
   Building an actual editor UI/CLI for specific fields is new work, not started.
-- `pes<N>` → event name mapping (`EVENTS.md`) confirmed for 2 prefixes only; edit semantics for LTE-scoped
+- `pes<N>` → event name mapping (`docs/EVENTS.md`) confirmed for 2 prefixes only; edit semantics for LTE-scoped
   `Girl`/`Job`/`Hobby` blocks (e.g. whether editing them affects anything once the event ends) are unconfirmed - treat
   edits there as out of scope unless asked.
-- `FLINGS.md`'s fling-ID → girl mapping is WIP (most IDs unmapped/unconfirmed) - don't treat it as complete.
-- See `SCHEMA.md`'s "Open questions" section for unidentified fields (`dchk`, `ana.ev`/`ana.vid`, achievement ID
+- `docs/FLINGS.md`'s fling-ID → girl mapping is WIP (most IDs unmapped/unconfirmed) - don't treat it as complete.
+- See `docs/SCHEMA.md`'s "Open questions" section for unidentified fields (`dchk`, `ana.ev`/`ana.vid`, achievement ID
   mapping) rather than duplicating here.

@@ -11,6 +11,10 @@ The table below lists known parallel events and their event IDs:
 | ID | Event                            | Date           |
 |----|----------------------------------|----------------|
 | 27 | Fuzzy Festival (Ginger & Wasabi) | N/A (Paid DLC) |
+| ?? | Spring Fling (Penny)             | April 2026     |
+| ?? | Spooky (Nightingale)             | April 2026     |
+| ?? | Outer Space (Loola)              | May 2026       |
+| ?? | High Fantasy (Moonbeam)          | June 2026      |
 | 53 | Valentine's (Marybelle)          | June 2026      |
 | 54 | Beach Bash (Nixie)               | July 2026      |
 
