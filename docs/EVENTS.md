@@ -11,6 +11,8 @@ The table below lists known parallel events and their event IDs:
 | ID | Event                            | Date           |
 |----|----------------------------------|----------------|
 | 27 | Fuzzy Festival (Ginger & Wasabi) | N/A (Paid DLC) |
+| ?? | Frosty (Aurora)                  | February 2026  |
+| ?? | School Spirit (Kyoko)            | March 2026     |
 | ?? | Spring Fling (Penny)             | April 2026     |
 | ?? | Spooky (Nightingale)             | April 2026     |
 | ?? | Outer Space (Loola)              | May 2026       |
@@ -23,12 +25,12 @@ The table below lists known parallel events and their event IDs:
 All event keys are prefixed with `pes` and their event ID (`pes<NN>`). The following table is an inferred generic schema
 for parallel events based on only one dataset (excluding the mirrored keys from the root schema):
 
-| Sub-key                                                                      | Shape   | Represents                                                                                                              |
-|------------------------------------------------------------------------------|---------|-------------------------------------------------------------------------------------------------------------------------|
-| `Goals`                                                                      | `int`   | Bitmask, purpose unconfirmed; likely a bitmask of the goals culminating in unlocking whatever the parallel event is for |
-| `PurchasedTime`                                                              | `int`   |                                                                                                                         |
-| `Start` (note: prefix is capital `P`, unlike every other parallel event key) | `long`  | Timestamp, shape consistent with `DateTime.ToBinary()` — when the event was started by the player                       |
-| `TimeMultiplier`                                                             | `float` | Same meaning as root `TimeMultiplier`, scoped to this event                                                             |
+| Sub-key                                                                      | Shape   | Represents                                                                                        |
+|------------------------------------------------------------------------------|---------|---------------------------------------------------------------------------------------------------|
+| `Goals`                                                                      | `int`   | Bitmask of the goals culminating in unlocking whatever the parallel event is for                  |
+| `PurchasedTime`                                                              | `int`   |                                                                                                   |
+| `Start` (note: prefix is capital `P`, unlike every other parallel event key) | `long`  | Timestamp, shape consistent with `DateTime.ToBinary()` — when the event was started by the player |
+| `TimeMultiplier`                                                             | `float` | Same meaning as root `TimeMultiplier`, scoped to this event                                       |
 
 For the known events, the following describes the keys unique to that event.
 
