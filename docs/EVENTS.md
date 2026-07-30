@@ -84,7 +84,7 @@ The table below maps event IDs to known events and gives their duration:
 | 307 | Roxxy                 | 14 Days  |
 | 308 | Roxxy's Outfits       | 14 Days  |
 | 309 | Peanut Phone Pinup    | 7 Days   |
-| ??? | Sirina                | 14 Days  |
+| 310 | Sirina                | 14 Days  |
 | ??? | Sirina's Outfits      | 14 Days  |
 | ??? | Sawyer and Lake Pinup | 7 Days   |
 | ??? | Tessa                 | 14 Days  |

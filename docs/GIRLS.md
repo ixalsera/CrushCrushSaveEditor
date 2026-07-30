@@ -26,6 +26,8 @@ The below table lists the currently suspected mapping between bit index and girl
 | 10    | Nina                      |
 | 11    | Alpha                     |
 | 12    | Pamu                      |
+| 13    | Luna                      |
+| 16    | Sutra                     |
 | 20    | Jelle                     |
 | 21    | Quillzone                 |
 | 22    | Bonchovy                  |
@@ -38,11 +40,11 @@ The below table lists the currently suspected mapping between bit index and girl
 | 52    | Nova/Lustat (Unconfirmed) |
 | 68    | Ginger & Wasabi           |
 | 71    | Mortha (Unconfirmed)      |
-| 72    | Sephia  (Unconfirmed)     |
-| 73    | Liz (Unconfirmed)         |
+| 72    | Sephia                    |
+| 73    | Liz                       |
 | 82    | Lydia (Unconfirmed)       |
 | 84    | Lumi                      |
-| 85    | Nixie (Unconfirmed)       |
+| 85    | Nixie                     |
 
 These IDs are used to reference girls in `GirlsUnlocked`, `GirlsPreviouslyUnlocked` and `CurrentGirl`, at the very
 least. It is likely that if a bitmask represents a girl or girls, the bit index will match the above table. This can be
@@ -111,4 +113,5 @@ A Girl's `Dates` field holds a single bit marking the specific date currently re
 | 3   | Movie Theater    |
 | 4   | Beach            |
 
-[^1]: While the save still refers to Ayeka as Ayano, I prefer to use the name as displayed in the game.
+[^1]: While the save still refers to Ayeka as Ayano, I prefer to use the name as displayed in the game. If editing or
+adding fields for Ayeka, make sure they go under `GirlAyano`.
