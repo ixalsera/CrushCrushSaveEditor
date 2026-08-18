@@ -31,6 +31,7 @@ The table below attempts to map the fling ID with the girl it represents:
 | 12       | Willow       |
 | 13       | Nova         |
 | 14       | Blanche      |
+| 15       | Babybelle    |
 | 16       | Renee        |
 | 17       | Francine     |
 | 19       | Amelia       |

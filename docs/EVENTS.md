@@ -19,6 +19,7 @@ The table below lists known parallel events and their event IDs:
 | ?? | High Fantasy (Moonbeam)          | June 2026      |
 | 53 | Valentine's (Marybelle)          | June 2026      |
 | 54 | Beach Bash (Nixie)               | July 2026      |
+| 55 | Time Warp (Polly)                | August 2026    |
 
 ### Schemas
 
@@ -53,6 +54,27 @@ Lustat, Shibuki, Sutra and Nixie.
 Its `Hobby<Name>` instances use a **different 12 names** than the root profile: `Adventurous`, `Brave`, `Buff`,
 `Competetive`, `Cool`, `Culinary`, `Easygoing`, `Healthy`, `Independent`, `Patience`, `Sentimental`, `Thorough`.
 
+#### Time Warp (`pes55`)
+
+##### Girls
+
+The following Girls are available in the Time Warp parallel event, with corresponding entries: Polly, Bearverly, Vellatrix,
+Shibuki and Honey.
+
+##### Hobbies
+
+Its `Hobby<Name>` instances use a **different 12 names** than the root profile: `Communication`, `Creativity`,
+`Elegance`, `Experimentation`, `Fashion`, `Focus`, `Observant`, `Patience`, `Science`, `Stamina`, `Strength`, `Taste`.
+
+##### Other keys
+
+`Girl<name>LoveHighMark` (`int`) tracks each girl's highest `Love` value reached, with the girl's name lowercased
+instead of the usual `Girl<Name>` capitalization, e.g. `Girl` + `bearverly` + `LoveHighMark`. This is likely used to
+prevent you from getting Time Crystals for progress after a soft reset (as opposed to tracking this with achievements as
+I suspect the main game does).
+
+`GameStateTimeline` tracks the current Timeline you are in for the event (currently unconfirmed).
+
 ---------
 
 ## Limited-time Events (LTEs)
@@ -70,9 +92,9 @@ according to the event.
 
 ### Duration
 
-LTEs that unlock either a Girl or her outfits seem to run for 14 days while Pinup LTEs only run for 7. THe singular known
-exception to this rule is the "Newcomer" event which is only 1 day long (presumably so you can finish it in a single sitting
-and not miss out if you forget to play the game subsequently).
+LTEs that unlock either a Girl or her outfits seem to run for 14 days while Pinup LTEs only run for 7. THe singular
+known exception to this rule is the "Newcomer" event which is only 1 day long (presumably so you can finish it in a
+single sitting and not miss out if you forget to play the game subsequently).
 
 ### Known LTEs:
 
@@ -85,7 +107,7 @@ The table below maps event IDs to known events and gives their duration:
 | 308 | Roxxy's Outfits       | 14 Days  |
 | 309 | Peanut Phone Pinup    | 7 Days   |
 | 310 | Sirina                | 14 Days  |
-| ??? | Sirina's Outfits      | 14 Days  |
+| 311 | Sirina's Outfits      | 14 Days  |
 | ??? | Sawyer and Lake Pinup | 7 Days   |
 | ??? | Tessa                 | 14 Days  |
 | ??? | Tessa's Outfits       | 14 Days  |

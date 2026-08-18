@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Reconstruct full key:value pairs from the prefix-compressed decoded save
-text (undoing the `::` section compression - see AGENTS.md) and either dump
+text (undoing the `::` section compression - see CLAUDE.md) and either dump
 one file's reconstructed pairs or diff two snapshots as key sets.
 
 A plain `diff` on the raw decoded text is noisy because the `::`

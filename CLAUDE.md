@@ -44,16 +44,8 @@ base64( MAGIC + lzf_compress(plaintext_save_data) )
 
 ### LZF stream format (classic liblzf-compatible)
 
-Implemented in `utils/lzf.py`. Per control byte `ctrl`:
-
-- `ctrl < 32`: literal run, `ctrl + 1` raw bytes follow.
-- `ctrl >= 32`: back-reference.
-    - `length_field = ctrl >> 5` (0-7)
-    - if `length_field == 7`: an extra length byte follows; `length = 7 + extra_byte + 2`
-    - else: `length = length_field + 2`
-    - `offset = ((ctrl & 0x1f) << 8) + next_byte + 1` (1..8192 bytes back from current output position)
-    - copy `length` bytes from `output[-offset:]`, byte-by-byte (overlapping copies for run-length-style repeats are
-      valid and expected).
+Control-byte encoding (literal run vs. back-reference) is documented in `utils/lzf.py`'s module docstring - read that
+instead of re-deriving it here.
 
 `utils/lzf.py`:
 
@@ -110,24 +102,8 @@ Use `utils/timestamp.py` instead of re-deriving this inline - `decode` takes raw
 `DateTimeKind` + ISO datetime (sentinels print as `N/A`/`never`); `encode` reverses it. Uses exact integer tick
 arithmetic, not `timedelta.total_seconds()` (loses sub-second precision here via float rounding).
 
-### Investigating an unconfirmed field
-
-Keep a `*.prev.sav`/`*.prev.txt` snapshot from before a play session (`python3 tools/rotate_save.py` rotates), take a
-new save after, and diff the two **reconstructed key sets** - not a raw line diff (`::` prefix-compression reshuffles
-line order, so plain `diff` is noisy). Use `scripts/diff_saves.py <prev.txt> <cur.txt>` (or single-arg
-`scripts/diff_saves.py <file.txt>` to just dump one file's reconstructed pairs, e.g. for grepping by
-`Job<Name>`/`Girl<Name>` prefix) rather than re-deriving the reconstruction inline.
-
-For base64 `blob` fields that are bitmasks or pipe-delimited text (`GirlsUnlocked`, `GirlsPreviouslyUnlocked`,
-`UnlockedPFS`, `BlayfapAwardedItems`), use `scripts/decode_blob.py` rather than re-deriving inline - `bits`/`text`
-decode a single value, `diff-bits`/`diff-text` decode two and print what was added/removed (handles the bitmask growing
-a byte between saves, as `GirlsUnlocked`/`UnlockedPFS` both do).
-
-For a Phone Fling specifically, diff the `C<N>D`/`C<N>P` keys directly (e.g. `grep -oE '^C[0-9]+[DP]:.*'` over both
-files) rather than grepping for a girl's name - the save has no name-keyed fling data, so a name search only confirms
-the `Girl<Name>` block exists, not whether her fling changed. Use `tools/phone_fling.py decode` to break down a
-`C<N>P` blob - it already handles the "never started" (empty blob) and "locked/gated" (sentinel countdown) states that a
-naive parse will otherwise crash or get confused on.
+Investigating an unconfirmed field (diffing saves before/after a play session, decoding blob bitmasks, diffing Phone
+Fling state) is its own workflow - see the `investigate-save-field` skill instead of repeating it here.
 
 ## Utils (`utils/`, Python 3, no third-party deps)
 

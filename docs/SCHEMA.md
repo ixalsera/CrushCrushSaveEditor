@@ -1,13 +1,13 @@
 # Save Data Schema
 
-This documents the schema of the plaintext produced by decoding a save file (see [AGENTS.md](../AGENTS.md) for the
+This documents the schema of the plaintext produced by decoding a save file (see [CLAUDE.md](../CLAUDE.md) for the
 decode format itself). It's derived from a `../decoded/crushcrush.txt`. Cells are left **blank** where the key's purpose
 isn't immediately identifiable from the data alone - these will be filled in as and when they are determined.
 
 ## How to read these tables
 
 - **Key** is the *logical* key name. In the raw decoded text, a `::Name` line starts a section, and every following bare
-  line (until the next `::`) is really `Name` + that line's own key concatenated together (see AGENTS.md). The tables
+  line (until the next `::`) is really `Name` + that line's own key concatenated together (see CLAUDE.md). The tables
   below already show the reconstructed logical key.
 - **Shape** uses these type labels, inferred from the value-suffix convention observed in the file:
 
@@ -224,11 +224,11 @@ Prefix: `Playfab`.
 [Playfab](https://playfab.com) is a common third-party game-backend service; these keys are almost certainly related to
 it. It's unlikely whether these fields can be edited as they will likely re-sync from PlayFab at next launch.
 
-| Sub-key          | Shape            | Represents                                                                       |
-|------------------|------------------|----------------------------------------------------------------------------------|
-| `FlingPurchases` | `long`           | A purchase counter? Potentially which Core Flings have been purchased            |
-| `Inventory`      | `int` (bitmask)  | Playfab-tracked inventory item bitmask                                           |
-| `Participation`  | `blob` (bitmask) | Bitmask tracking the parallel event(s) that have been participated in (at least) |
+| Sub-key          | Shape            | Represents                                                                                         |
+|------------------|------------------|----------------------------------------------------------------------------------------------------|
+| `FlingPurchases` | `long` (bitmask) | Bitmask of purchased Core Girl flings, one bit per fling, filled low-to-high in fixed roster order |
+| `Inventory`      | `int` (bitmask)  | Playfab-tracked inventory item bitmask                                                             |
+| `Participation`  | `blob` (bitmask) | Bitmask tracking the parallel event(s) that have been participated in                              |
 
 ## Settings schema
 
@@ -285,7 +285,7 @@ schemas.
 
 ## Open questions
 
-These need to be confirmed against the game itself (or an authoritative source) rather than assumed — see AGENTS.md's
+These need to be confirmed against the game itself (or an authoritative source) rather than assumed — see CLAUDE.md's
 note on not guessing at strings:
 
 - Which achievement ID (`ACH.<id>`) corresponds to which in-game achievement.

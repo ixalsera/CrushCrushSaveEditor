@@ -33,6 +33,7 @@ The below table lists the currently suspected mapping between bit index and girl
 | 22    | Bonchovy                  |
 | 23    | Spectrum                  |
 | 26    | Shibuki                   |
+| 27    | Sirina                    |
 | 30    | Peanut                    |
 | 31    | Roxxy                     |
 | 40    | Nova/Lustat (Unconfirmed) |
@@ -45,6 +46,7 @@ The below table lists the currently suspected mapping between bit index and girl
 | 82    | Lydia (Unconfirmed)       |
 | 84    | Lumi                      |
 | 85    | Nixie                     |
+| 86    | Polly (Unconfirmed)       |
 
 These IDs are used to reference girls in `GirlsUnlocked`, `GirlsPreviouslyUnlocked` and `CurrentGirl`, at the very
 least. It is likely that if a bitmask represents a girl or girls, the bit index will match the above table. This can be

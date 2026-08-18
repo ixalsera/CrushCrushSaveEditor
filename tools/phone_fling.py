@@ -3,7 +3,7 @@
 still-unknown constituent parts (see FLINGS.md).
 
 Byte layout, established by diffing C<N>P blobs before/after a play session
-across two different flings (see AGENTS.md's fling-diffing note):
+across two different flings (see CLAUDE.md's fling-diffing note):
 
     offset 0, u16  message_counter          the conversation/message counter
                                              confirmed by FLINGS.md; whether

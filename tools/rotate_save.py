@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Rotate the current save + its decoded dump into *.prev.* before a new
 play session, so the next decode can be diffed against what's "prev" now
-(see AGENTS.md's "Investigating an unconfirmed field" note).
+(see CLAUDE.md's "Investigating an unconfirmed field" note).
 
 Moves:
     saves/<name>.sav   -> saves/<name>.prev.sav

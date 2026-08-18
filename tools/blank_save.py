@@ -5,11 +5,11 @@ shaped sections (84 Girls, 20 Jobs, 12 Hobbies, 12 Skills, 42 Tasks, 46
 Phone Flings...) - reproducing that structure from the schema docs by hand
 risks silently dropping or misnaming an entry. Transforming a real,
 known-good decode preserves the exact key set and `::` prefix/suffix
-structure (see AGENTS.md) while rewriting every value to its zero/locked
+structure (see CLAUDE.md) while rewriting every value to its zero/locked
 state.
 
 This is a best-effort reconstruction against the documented+observed schema
-(SCHEMA.md/FLINGS.md/EVENTS.md/AGENTS.md), NOT something verified by
+(SCHEMA.md/FLINGS.md/EVENTS.md/CLAUDE.md), NOT something verified by
 actually loading it in-game. Fields SCHEMA.md marks unconfirmed are handled
 with the most conservative reading available; see the module-level RULES
 comments for the specific call made on each.
@@ -270,7 +270,7 @@ def blank_out(template_text, now):
         result.append([prefix, lines])
 
     # A "::" or "::Name" header is only valid grammar if at least one
-    # content line follows it (see AGENTS.md's `::` rules) - segments that
+    # content line follows it (see CLAUDE.md's `::` rules) - segments that
     # got filtered down to nothing above must be dropped entirely, not
     # rendered as a bare, content-less "::"
     result = [(p, l) for p, l in result if l]
