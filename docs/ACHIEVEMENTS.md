@@ -8,9 +8,13 @@ actual-achievement mapping, which isn't available from the save alone.
 Each `ACH.<id>` value is a bitmask where one bit = one tier/level of that achievement, not a single flag. Every bit that
 gets newly set increments the root-level `AchievementCount` by exactly 1.
 
+Achievements for girls track the highest Love level ever reached for that Girl across resets. Similarly, Job
+achievements track the highest Job level ever achieved across resets.
+
 ## Mapping (Incomplete)
 
-| ID | Name           |
-|----|----------------|
-| 14 | Eva (Level)    |
-| 55 | Catara (Level) |
+| ID | Name                         |
+|----|------------------------------|
+| 14 | Eva (Level)                  |
+| 55 | Catara (Level)               |
+| 57 | Peanut (Level) (Unconfirmed) |

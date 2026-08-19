@@ -45,11 +45,12 @@ The below table lists the currently suspected mapping between bit index and girl
 | 40    | Nova/Lustat (Unconfirmed) |
 | 45    | Mallory                   |
 | 47    | ?????                     |
+| 49    | Lotus                     |
 | 52    | Nova/Lustat (Unconfirmed) |
 | 56    | ?????                     |
 | 64    | Honey                     |
 | 68    | Ginger & Wasabi           |
-| 71    | Mortha (Unconfirmed)      |
+| 71    | Mortha                    |
 | 72    | Sephia                    |
 | 73    | Liz                       |
 | 74    | Polly                     |

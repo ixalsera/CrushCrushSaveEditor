@@ -5,14 +5,14 @@ format discovery isn't repeated.
 
 Per-key docs - check before re-deriving what a field means:
 
-| File              | Covers                                                                                                                                                                                                        |
-|-------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `docs/SCHEMA.md`  | Every top-level key + nested object schemas (`Girl`, `Job`, `Hobby`, `Task`, `ACH`, Phone Fling, etc).                                                                                                        |
-| `docs/EVENTS.md`  | `pes<N>` parallel-event prefix→event mapping + event-scoped schemas, plus LTE IDs.                                                                                                                            |
-| `docs/FLINGS.md`  | Phone Fling (`C<N>D`/`C<N>P`): fling-ID→girl mapping + `C<N>P` blob decoding. The save stores only the numeric fling index - never a girl's name - and a fling need not correspond to any `Girl<Name>` block. |
-| `docs/GIRLS.md`   | `GirlsUnlocked`/`GirlsPreviouslyUnlocked` bit-index→girl mapping, plus per-girl `Clothing`/`LifeOutfits` outfit-bit findings.                                                                                 |
-| `docs/UNLOCKS.md` | Same bitmask/list analysis as `docs/GIRLS.md`, but for account-level `Playfab`/`BlayfapAwardedItems` - both are server-synced on launch, not derived from the local save.                                     |
-| `docs/ACHIEVEMENTS.md` | `ACH.<id>` bitmask-per-tier mechanism + achievement ID→name mapping.                                                                                                                                |
+| File                   | Covers                                                                                                                                                                                                        |
+|------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `docs/SCHEMA.md`       | Every top-level key + nested object schemas (`Girl`, `Job`, `Hobby`, `Task`, `ACH`, Phone Fling, etc).                                                                                                        |
+| `docs/EVENTS.md`       | `pes<N>` parallel-event prefix→event mapping + event-scoped schemas, plus LTE IDs.                                                                                                                            |
+| `docs/FLINGS.md`       | Phone Fling (`C<N>D`/`C<N>P`): fling-ID→girl mapping + `C<N>P` blob decoding. The save stores only the numeric fling index - never a girl's name - and a fling need not correspond to any `Girl<Name>` block. |
+| `docs/GIRLS.md`        | `GirlsUnlocked`/`GirlsPreviouslyUnlocked` bit-index→girl mapping, plus per-girl `Clothing`/`LifeOutfits` outfit-bit findings.                                                                                 |
+| `docs/UNLOCKS.md`      | Same bitmask/list analysis as `docs/GIRLS.md`, but for account-level `Playfab`/`BlayfapAwardedItems` - both are server-synced on launch, not derived from the local save.                                     |
+| `docs/ACHIEVEMENTS.md` | `ACH.<id>` bitmask-per-tier mechanism + achievement ID→name mapping.                                                                                                                                          |
 
 ## Directory layout
 
@@ -116,8 +116,8 @@ utils/timestamp.py         decode(value: int) -> (kind: str, dt: datetime | None
                             encode(dt: datetime, kind: str = "utc") -> int
 
 CLI:
-  python3 utils/timestamp.py decode <value> [value ...]
-  python3 utils/timestamp.py encode <iso-datetime> [local|utc|unspecified]
+  uv run utils/timestamp.py decode <value> [value ...]
+  uv run utils/timestamp.py encode <iso-datetime> [local|utc|unspecified]
 ```
 
 ## Tools (`tools/`, Python 3, no third-party deps)
@@ -130,8 +130,8 @@ tools/crushcrush_save.py   MAGIC = bytes.fromhex("9737dc")
                             encode_file(in_path, out_path=None) -> bytes
 
 CLI:
-  python3 tools/crushcrush_save.py decode <in.sav> [out.txt]
-  python3 tools/crushcrush_save.py encode <in.txt> [out.sav]
+  uv run tools/crushcrush_save.py decode <in.sav> [out.txt]
+  uv run tools/crushcrush_save.py encode <in.txt> [out.sav]
 
 tools/phone_fling.py       decode_conversation_state(blob_b64: str) -> dict | None
                             (a C<N>P blob's known/unknown fields, or None if
@@ -140,7 +140,7 @@ tools/phone_fling.py       decode_conversation_state(blob_b64: str) -> dict | No
                             sweeping every fling in a real save)
 
 CLI:
-  python3 tools/phone_fling.py decode <C<N>P-blob> [<C<N>D-value>]
+  uv run tools/phone_fling.py decode <C<N>P-blob> [<C<N>D-value>]
 
 tools/rotate_save.py       rotate(name: str = "crushcrush") -> list[(src, dst)]
                             (moves saves/<name>.sav -> saves/<name>.prev.sav
@@ -150,7 +150,7 @@ tools/rotate_save.py       rotate(name: str = "crushcrush") -> list[(src, dst)]
                             missing, so a rotation never happens half-done)
 
 CLI:
-  python3 tools/rotate_save.py [name]   (default: crushcrush)
+  uv run tools/rotate_save.py [name]   (default: crushcrush)
 
 tools/blank_save.py        blank_out(template_text: str, now: datetime) -> str
                             (transforms a real decoded save into a
@@ -160,7 +160,7 @@ tools/blank_save.py        blank_out(template_text: str, now: datetime) -> str
                             call made on each unconfirmed field)
 
 CLI:
-  python3 tools/blank_save.py [template.txt] [output.txt]
+  uv run tools/blank_save.py [template.txt] [output.txt]
     (default: decoded/crushcrush.prev.txt -> decoded/crushcrush.blank.txt)
 ```
 
@@ -173,17 +173,17 @@ scripts/diff_saves.py      reconstruct(path) -> dict[str, str]
                             above)
 
 CLI:
-  python3 scripts/diff_saves.py <file.txt>              dump reconstructed pairs, sorted
-  python3 scripts/diff_saves.py <prev.txt> <cur.txt>     diff two snapshots (added/removed/changed)
+  uv run scripts/diff_saves.py <file.txt>              dump reconstructed pairs, sorted
+  uv run scripts/diff_saves.py <prev.txt> <cur.txt>     diff two snapshots (added/removed/changed)
 
 scripts/decode_blob.py     bits(b64) -> list[int]        (bitmask -> set bit indices)
                             text(b64) -> str              (base64-of-ASCII -> decoded text)
 
 CLI:
-  python3 scripts/decode_blob.py bits <base64>                    decoded bit indices set, and count
-  python3 scripts/decode_blob.py text <base64>                    decoded pipe-delimited text
-  python3 scripts/decode_blob.py diff-bits <base64_a> <base64_b>  bits added/removed, a -> b
-  python3 scripts/decode_blob.py diff-text <base64_a> <base64_b>  pipe items added/removed, a -> b
+  uv run scripts/decode_blob.py bits <base64>                    decoded bit indices set, and count
+  uv run scripts/decode_blob.py text <base64>                    decoded pipe-delimited text
+  uv run scripts/decode_blob.py diff-bits <base64_a> <base64_b>  bits added/removed, a -> b
+  uv run scripts/decode_blob.py diff-text <base64_a> <base64_b>  pipe items added/removed, a -> b
 
 scripts/parse_prefs.py     load_prefs(path) -> dict         (Unity `prefs` XML -> {name: {v, h}})
                             resolve(entries) -> dict[str, tuple]  (collapsed to one (kind, value) per key)
@@ -191,17 +191,17 @@ scripts/parse_prefs.py     load_prefs(path) -> dict         (Unity `prefs` XML -
                             see the module docstring for the full base64/int-pair encoding this undoes)
 
 CLI:
-  python3 scripts/parse_prefs.py dump <prefs-file>                  dump resolved key:value pairs, sorted
-  python3 scripts/parse_prefs.py compare <prefs-file> <decoded.txt> cross-check against a reconstructed save
+  uv run scripts/parse_prefs.py dump <prefs-file>                  dump resolved key:value pairs, sorted
+  uv run scripts/parse_prefs.py compare <prefs-file> <decoded.txt> cross-check against a reconstructed save
 ```
 
 ## Standard edit workflow
 
-1. Decode: `python3 tools/crushcrush_save.py decode "saves/<save_game_filename>.sav" "decoded/<save_game_filename>.txt"`
+1. Decode: `uv run tools/crushcrush_save.py decode "saves/<save_game_filename>.sav" "decoded/<save_game_filename>.txt"`
 2. Edit `decoded/<save_game_filename>.txt` as plain text (respect the `::` prefix-section rules above - don't break the
    prefix/suffix pairing).
 3. Encode back:
-   `python3 tools/crushcrush_save.py encode "decoded/<save_game_filename>.txt" "saves/<save_game_filename>.edited.sav"`
+   `uv run tools/crushcrush_save.py encode "decoded/<save_game_filename>.txt" "saves/<save_game_filename>.edited.sav"`
 4. **Always verify before overwriting a real save**: decode the newly encoded file again and diff its plaintext against
    the edited text (byte for byte). Validated to round-trip exactly for both sample files - if it doesn't match, the
    edit broke something (e.g. a broken `::` section), not the tooling.
