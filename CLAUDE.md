@@ -12,6 +12,7 @@ Per-key docs - check before re-deriving what a field means:
 | `docs/FLINGS.md`  | Phone Fling (`C<N>D`/`C<N>P`): fling-ID→girl mapping + `C<N>P` blob decoding. The save stores only the numeric fling index - never a girl's name - and a fling need not correspond to any `Girl<Name>` block. |
 | `docs/GIRLS.md`   | `GirlsUnlocked`/`GirlsPreviouslyUnlocked` bit-index→girl mapping, plus per-girl `Clothing`/`LifeOutfits` outfit-bit findings.                                                                                 |
 | `docs/UNLOCKS.md` | Same bitmask/list analysis as `docs/GIRLS.md`, but for account-level `Playfab`/`BlayfapAwardedItems` - both are server-synced on launch, not derived from the local save.                                     |
+| `docs/ACHIEVEMENTS.md` | `ACH.<id>` bitmask-per-tier mechanism + achievement ID→name mapping.                                                                                                                                |
 
 ## Directory layout
 

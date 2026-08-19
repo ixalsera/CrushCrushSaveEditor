@@ -189,7 +189,7 @@ One block for each of the core jobs (`ART`, `CASINO`, `CLEANING`, `COMPUTERS`, `
 Prefix: `ACH`.
 
 Sub-keys are numeric achievement IDs, internal to the game; no name mapping is available from the save alone but can be
-inferred (there will be a map at a later point).
+inferred. See [ACHIEVEMENTS.md](ACHIEVEMENTS.md) for the ID→name mapping.
 
 | Sub-key pattern | Shape           | Represents                                  |
 |-----------------|-----------------|---------------------------------------------|
@@ -210,12 +210,14 @@ See [FLINGS.md](FLINGS.md) for the mapping between fling ID and the actual Girl 
 
 Prefix: `Completed`.
 
-| Sub-key      | Shape            | Represents                                                                                                   |
-|--------------|------------------|--------------------------------------------------------------------------------------------------------------|
-| `2018Events` | `long`           | likely a bitmask of 2018 limited-time events completed (I wasn't playing during those times to confirm this) |
-| `2019Events` | `long`           | likely a bitmask of 2019 limited-time events completed (I wasn't playing during those times to confirm this) |
-| `2020Events` | `long`           | likely a bitmask of 2020 limited-time events completed (I wasn't playing during those times to confirm this) |
-| `Events`     | `blob` (bitmask) | Bitmask of completed limited-time events (only one bit set in the sample)                                    |
+See [EVENTS.md](EVENTS.md) for more information about events.
+
+| Sub-key      | Shape            | Represents                               |
+|--------------|------------------|------------------------------------------|
+| `2018Events` | `long` (bitmask) | Bitmask of completed weekly events       |
+| `2019Events` | `long` (bitmask) | Bitmask of completed weekly events       |
+| `2020Events` | `long` (bitmask) | Bitmask of completed weekly events       |
+| `Events`     | `blob` (bitmask) | Bitmask of completed limited-time events |
 
 ## Playfab schema
 

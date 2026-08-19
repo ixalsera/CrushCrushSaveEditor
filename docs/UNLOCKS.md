@@ -24,6 +24,8 @@ not revoke or hide anything the account actually owns.
   `jellequillzone` (`jelle`+`quillzone`) and `bonchovyspectrum` (`bonchovy`+`spectrum`)
 - Associated field changes: when a new entry marks the unlocking of a new Girl/Girls, `GirlsUnlocked`/
   `GirlsPreviouslyUnlocked` flip their corresponding bits.
+- While this value is server-authoritative and fetched anew on launch, adding an identifier to the list **will** unlock
+  the corresponding Girl at launch **before** the entitlement is cleared but **only for that session**.
 - `july2017` has been seen appearing and disappearing across different syncs of the *same* account with no corresponding
   local edit - the list the server returns isn't perfectly stable/deterministic run to run.
 
@@ -49,9 +51,7 @@ not revoke or hide anything the account actually owns.
 
 ## Open questions
 
-- Whether manually setting a `Playfab.Inventory` bit or adding a
-  `BlayfapAwardedItems` entry for something the account doesn't actually own would work client-side or get silently
+- Whether manually setting a `Playfab.Inventory` bit for something the account doesn't actually own would work client-side or get silently
   clobbered by a server-side ownership check on next launch - untested (and, per `GIRLS.md`, not something this project
   condones trying for paid DLC either way).
 - Full bit-index → costume-name mapping for `Playfab.Inventory` beyond 20/29/30.
-- What `Playfab.Participation` actually tracks.

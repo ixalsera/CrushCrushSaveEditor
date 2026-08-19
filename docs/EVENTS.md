@@ -1,8 +1,8 @@
 # Events
 
-Events appear to come in two forms: parallel events (PEs) and limited-time events (LTEs). Parallel events appear to
-track their own state in a `pes`-prefixed set of keys, likely because there is a separate game section for these (such
-as Fuzzy Festival). LTEs are simply task based token accumulation and therefore do not get their own `pes` "namespace".
+Events come in two forms: parallel events (PEs) and limited-time events (LTEs). Parallel events track their own state in
+a `pes`-prefixed set of keys, likely because there is a separate game section for these (such as Fuzzy Festival). LTEs
+are simply task based token accumulation and therefore do not get their own `pes` "namespace".
 
 ## Parallel Events
 
@@ -23,8 +23,8 @@ The table below lists known parallel events and their event IDs:
 
 ### Schemas
 
-All event keys are prefixed with `pes` and their event ID (`pes<NN>`). The following table is an inferred generic schema
-for parallel events based on only one dataset (excluding the mirrored keys from the root schema):
+All parallel event keys are prefixed with `pes` and their event ID (`pes<NN>`). The following table is an inferred generic schema
+for parallel events (excluding the mirrored keys from the root schema):
 
 | Sub-key                                                                      | Shape   | Represents                                                                                        |
 |------------------------------------------------------------------------------|---------|---------------------------------------------------------------------------------------------------|
@@ -58,8 +58,8 @@ Its `Hobby<Name>` instances use a **different 12 names** than the root profile: 
 
 ##### Girls
 
-The following Girls are available in the Time Warp parallel event, with corresponding entries: Polly, Bearverly, Vellatrix,
-Shibuki and Honey.
+The following Girls are available in the Time Warp parallel event, with corresponding entries: Polly, Bearverly,
+Vellatrix, Shibuki and Honey.
 
 ##### Hobbies
 
@@ -73,7 +73,11 @@ instead of the usual `Girl<Name>` capitalization, e.g. `Girl` + `bearverly` + `L
 prevent you from getting Time Crystals for progress after a soft reset (as opposed to tracking this with achievements as
 I suspect the main game does).
 
-`GameStateTimeline` tracks the current Timeline you are in for the event (currently unconfirmed).
+`GameStateTimeline` tracks the current Timeline you are in for the event.
+
+`GameStateTimeCrystalCount` (`int`) tracks the count of Time Crystals obtained throughout the event -
+one is awarded per novel Love-level-up across any of the event's Girls (re-reaching a level already
+hit before does not grant another). TimeCrystals are consumed to "Time Warp" (soft reset).
 
 ---------
 
@@ -92,13 +96,19 @@ according to the event.
 
 ### Duration
 
-LTEs that unlock either a Girl or her outfits seem to run for 14 days while Pinup LTEs only run for 7. THe singular
+LTEs that unlock either a Girl or her outfits seem to run for 14 days while Pinup LTEs only run for 7. The singular
 known exception to this rule is the "Newcomer" event which is only 1 day long (presumably so you can finish it in a
 single sitting and not miss out if you forget to play the game subsequently).
 
+When first introduced (2017), all LTEs were ~7 days long and alternated roughly between Outfit and Pinup LTEs. As of
+2019, the current Girl-Outfit-Pinup pattern commenced, although still at 7 days each.
+
 ### Known LTEs:
 
-The table below maps event IDs to known events and gives their duration:
+For a full list of historical LTEs, see the [Crush Crush Wiki](https://crush-crush.fandom.com/wiki/Weekly_Event). This
+includes LTEs that are tracked in the `Completed.20nnEvents` keys.
+
+The table below maps current event IDs (i.e. those for `Completed.Events`) to known events and gives their duration:
 
 | ID  | Event                 | Duration |
 |-----|-----------------------|----------|
