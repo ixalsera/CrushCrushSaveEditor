@@ -158,6 +158,7 @@ One block per each of the 12 core game hobbies (`Angst`, `Badass`, `Buff`, `Funn
 
 This is the base tracking data for a Hobby. Each Hobby is paired with a [Skill](#skill-schema) based on its _in-game
 order_ - i.e. `Suave` maps to `Skill1` etc. - where the Skill tracks the total level of the Hobby.
+See [Skill schema](#skill-schema) below.
 
 **Notes** — Parallel events that incorporate hobbies use a **different** set of hobby names (see [EVENTS.md](EVENTS.md)
 for a list of known Event hobbies).
@@ -256,16 +257,17 @@ Prefix: `Settings`.
 
 Prefix: `Skill`
 
-Skill represents the level of a [Hobby](#hobby-schema). It seems to relate to other data about the player/avatar as well
-since the customization options are rolled in to this too.
+Skill represents the level of a [Hobby](#hobby-schema); these map to the hobby's internal ID, **NOT** to its
+alphabetical ordinal. It seems to relate to other data about the player/avatar as well since the customization options
+are rolled in to this too.
 
-| Sub-key pattern | Shape            | Represents                                                                                                                          |
-|-----------------|------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| `Skill<N>`      | `int` (`0`-`75`) | Skill/stat level for the hobby represented by `N`; these map to the hobby's internal ID, **NOT** to its alphabetical ordinal        |
-| `Gender`        | `int`            | Player gender selection; seen as `0i` on a fresh account. Confirmed `int`, not a `flag` as previously guessed - meaning unconfirmed |
-| `Hair`          | `int`            | Selected player hairstyle ID                                                                                                        |
-| `Hat`           | `int`            | Selected hat ID; seen as `-1i` on a fresh account (no hat selected). Confirmed `int`, not a `flag` as previously guessed            |
-| `Plushy`        | `int`            | Selected plushy/collectible ID (although I've not seen this in-game); this could also just be the hat ID                            |
+| Sub-key pattern | Shape            | Represents                                                                                               |
+|-----------------|------------------|----------------------------------------------------------------------------------------------------------|
+| `Skill<N>`      | `int` (`0`-`75`) | Skill/stat level for the hobby represented by `N`                                                        |
+| `Gender`        | `int`            | Player gender selection                                                                                  |
+| `Hair`          | `int`            | Selected player hairstyle ID                                                                             |
+| `Hat`           | `int`            | Selected hat ID                                                                                          |
+| `Plushy`        | `int`            | Selected plushy/collectible ID (although I've not seen this in-game); this could also just be the hat ID |
 
 ## Task schema
 
@@ -286,11 +288,3 @@ LTE, there will likely be no Task entries (such as with a fresh save).
 Parallel events have their own set of key/values that are seemingly prefixed with `pes` - likely standing for Parallel
 Event State - and the event number. See [EVENTS.md](EVENTS.md) for the event table, schema, and individual event
 schemas.
-
-## Open questions
-
-These need to be confirmed against the game itself (or an authoritative source) rather than assumed — see CLAUDE.md's
-note on not guessing at strings:
-
-- Which achievement ID (`ACH.<id>`) corresponds to which in-game achievement.
-- The exact meaning of `dchk`, `ana.ev`, `ana.vid`.
