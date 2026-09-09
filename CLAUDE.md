@@ -43,6 +43,25 @@ base64( MAGIC + lzf_compress(plaintext_save_data) )
   format/version marker, **not** a length field or checksum. Don't parse it as one.
 - Base64 alphabet is standard (`+`, `/`, `=` padding) - nothing custom.
 
+### Nintendo Switch container variant
+
+The Switch build stores the same plaintext/LZF payload in a different container - confirmed by full round-trip
+against a real Switch save (`saves/CrushSaveData1.sav`):
+
+```
+<4-byte little-endian uint32, only value observed: 1><base64(MAGIC)><base64(lzf_compress(plaintext_save_data))>
+```
+
+- The leading 4 bytes are raw binary, not base64 - meaning unconfirmed (only one save sampled).
+- Unlike PC, `MAGIC` and the compressed body are base64-encoded **separately** and concatenated as text, not combined
+  into one base64 blob. `base64(MAGIC)` happens to render as the ASCII text `lzfc` (3 bytes divides evenly into
+  base64's 4-char groups, so no padding) - which is why this looks like a distinct "lzfc" marker rather than the same
+  MAGIC bytes.
+- `decode_bytes`/`decode_file` in `tools/crushcrush_save.py` already handle Switch saves with no changes needed:
+  `base64.b64decode()` silently drops the leading non-base64 header bytes, and decoding "lzfc" alone reproduces
+  `MAGIC` exactly. Only `encode` needed a separate path, since PC's encode wraps everything in one base64 call and
+  has no room for the leading header (`tools/crushcrush_save.py encode --nintendo`).
+
 ### LZF stream format (classic liblzf-compatible)
 
 Control-byte encoding (literal run vs. back-reference) is documented in `utils/lzf.py`'s module docstring - read that
@@ -106,95 +125,6 @@ arithmetic, not `timedelta.total_seconds()` (loses sub-second precision here via
 Investigating an unconfirmed field (diffing saves before/after a play session, decoding blob bitmasks, diffing Phone
 Fling state) is its own workflow - see the `investigate-save-field` skill instead of repeating it here.
 
-## Utils (`utils/`, Python 3, no third-party deps)
-
-```
-utils/lzf.py               compress(data: bytes) -> bytes
-                            decompress(buf: bytes) -> bytes
-
-utils/timestamp.py         decode(value: int) -> (kind: str, dt: datetime | None)
-                            encode(dt: datetime, kind: str = "utc") -> int
-
-CLI:
-  uv run utils/timestamp.py decode <value> [value ...]
-  uv run utils/timestamp.py encode <iso-datetime> [local|utc|unspecified]
-```
-
-## Tools (`tools/`, Python 3, no third-party deps)
-
-```
-tools/crushcrush_save.py   MAGIC = bytes.fromhex("9737dc")
-                            decode_bytes(raw_b64_text: str) -> bytes   # plaintext
-                            encode_bytes(plaintext_bytes: bytes) -> bytes  # b64 text
-                            decode_file(in_path, out_path=None) -> str
-                            encode_file(in_path, out_path=None) -> bytes
-
-CLI:
-  uv run tools/crushcrush_save.py decode <in.sav> [out.txt]
-  uv run tools/crushcrush_save.py encode <in.txt> [out.sav]
-
-tools/phone_fling.py       decode_conversation_state(blob_b64: str) -> dict | None
-                            (a C<N>P blob's known/unknown fields, or None if
-                            the blob is empty - see the module docstring for
-                            the byte layout and two sentinel values found by
-                            sweeping every fling in a real save)
-
-CLI:
-  uv run tools/phone_fling.py decode <C<N>P-blob> [<C<N>D-value>]
-
-tools/rotate_save.py       rotate(name: str = "crushcrush") -> list[(src, dst)]
-                            (moves saves/<name>.sav -> saves/<name>.prev.sav
-                            and decoded/<name>.txt -> decoded/<name>.prev.txt,
-                            overwriting any existing .prev. files; refuses to
-                            rotate either file if the other's source is
-                            missing, so a rotation never happens half-done)
-
-CLI:
-  uv run tools/rotate_save.py [name]   (default: crushcrush)
-
-tools/blank_save.py        blank_out(template_text: str, now: datetime) -> str
-                            (transforms a real decoded save into a
-                            zero-progress/no-unlocks one, keyed off the
-                            template's own key set rather than a hardcoded
-                            schema copy - see the module docstring for the
-                            call made on each unconfirmed field)
-
-CLI:
-  uv run tools/blank_save.py [template.txt] [output.txt]
-    (default: decoded/crushcrush.prev.txt -> decoded/crushcrush.blank.txt)
-```
-
-## Scripts (`scripts/`, Python 3, no third-party deps)
-
-```
-scripts/diff_saves.py      reconstruct(path) -> dict[str, str]
-                            (undoes the `::` prefix-compression into flat
-                            key:value pairs - see "Plaintext save structure"
-                            above)
-
-CLI:
-  uv run scripts/diff_saves.py <file.txt>              dump reconstructed pairs, sorted
-  uv run scripts/diff_saves.py <prev.txt> <cur.txt>     diff two snapshots (added/removed/changed)
-
-scripts/decode_blob.py     bits(b64) -> list[int]        (bitmask -> set bit indices)
-                            text(b64) -> str              (base64-of-ASCII -> decoded text)
-
-CLI:
-  uv run scripts/decode_blob.py bits <base64>                    decoded bit indices set, and count
-  uv run scripts/decode_blob.py text <base64>                    decoded pipe-delimited text
-  uv run scripts/decode_blob.py diff-bits <base64_a> <base64_b>  bits added/removed, a -> b
-  uv run scripts/decode_blob.py diff-text <base64_a> <base64_b>  pipe items added/removed, a -> b
-
-scripts/parse_prefs.py     load_prefs(path) -> dict         (Unity `prefs` XML -> {name: {v, h}})
-                            resolve(entries) -> dict[str, tuple]  (collapsed to one (kind, value) per key)
-                            compare(prefs_path, save_path)   (cross-check against a reconstructed save;
-                            see the module docstring for the full base64/int-pair encoding this undoes)
-
-CLI:
-  uv run scripts/parse_prefs.py dump <prefs-file>                  dump resolved key:value pairs, sorted
-  uv run scripts/parse_prefs.py compare <prefs-file> <decoded.txt> cross-check against a reconstructed save
-```
-
 ## Standard edit workflow
 
 1. Decode: `uv run tools/crushcrush_save.py decode "saves/<save_game_filename>.sav" "decoded/<save_game_filename>.txt"`
@@ -216,5 +146,4 @@ CLI:
   `Girl`/`Job`/`Hobby` blocks (e.g. whether editing them affects anything once the event ends) are unconfirmed - treat
   edits there as out of scope unless asked.
 - `docs/FLINGS.md`'s fling-ID → girl mapping is WIP (most IDs unmapped/unconfirmed) - don't treat it as complete.
-- See `docs/SCHEMA.md`'s "Open questions" section for unidentified fields (`dchk`, `ana.ev`/`ana.vid`, achievement ID
-  mapping) rather than duplicating here.
+- `dchk`, `ana.ev`/`ana.vid` appear to be irrelevant or analytics; ignore them.
