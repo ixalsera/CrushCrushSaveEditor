@@ -20,7 +20,7 @@ The below table lists the currently suspected mapping between bit index and girl
 | 4     | Nutaku                    |
 | 5     | Iro                       |
 | 6     | Bonnibel                  |
-| 7     | Ayeka[^1]                 |
+| 7     | Ayeka/Ayano[^1]           |
 | 8     | Fumi                      |
 | 9     | Bearverly                 |
 | 10    | Nina                      |
@@ -30,6 +30,8 @@ The below table lists the currently suspected mapping between bit index and girl
 | 14    | Eva                       |
 | 15    | Karma                     |
 | 16    | Sutra                     |
+| 17    | Dark One (Unconfirmed)    |
+| 18    | Q-Piddy (Unconfirmed)     |
 | 20    | Jelle                     |
 | 21    | Quillzone                 |
 | 22    | Bonchovy                  |
@@ -125,5 +127,5 @@ A Girl's `Dates` field holds a single bit marking the specific date currently re
 | 3   | Movie Theater    |
 | 4   | Beach            |
 
-[^1]: While the save still refers to Ayeka as Ayano, I prefer to use the name as displayed in the game. If editing or
+[^1]: The PC save file still refers to Ayeka as Ayano (the Switch version still has her as Ayano). If editing or
 adding fields for Ayeka, make sure they go under `GirlAyano`.

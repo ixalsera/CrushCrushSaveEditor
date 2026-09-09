@@ -1,8 +1,10 @@
 # Save Data Schema
 
-This documents the schema of the plaintext produced by decoding a save file (see [CLAUDE.md](../CLAUDE.md) for the
-decode format itself). It's derived from a `../decoded/crushcrush.txt`. Cells are left **blank** where the key's purpose
-isn't immediately identifiable from the data alone - these will be filled in as and when they are determined.
+This documents the schema of the plaintext produced by decoding a save file. It's derived from a
+`../decoded/crushcrush.txt`. Cells are left **blank** where the key's purpose isn't immediately identifiable from the
+data alone - these will be filled in as and when they are determined.
+
+For Nintendo Switch-specific entries, see [SWITCH.md](SWITCH.md).
 
 ## How to read these tables
 
@@ -173,7 +175,7 @@ Prefix: `Job<Name>` (e.g. `JobART`, `JobZOO`).
 
 One block for each of the core jobs (`ART`, `CASINO`, `CLEANING`, `COMPUTERS`, `FAST FOOD`, `HUNTING`, `LEGAL`,
 `LIFEGUARD`, `LOVE`, `MOVIES`, `RESTAURANT`, `SLAYING`, `SPACE`, `SPORTS`, `WIZARD`, `ZOO`) and any DLC exclusive jobs
-(`DIGGER` (Charlotte), `PLANTER` (Suzu), `MECH` (Kaiju), `UNKNOWN` (Frost Event)). 
+(`DIGGER` (Charlotte), `PLANTER` (Suzu), `MECH` (Kaiju), `UNKNOWN` (Frost Event)).
 
 | Sub-key      | Shape           | Represents                                                                                      |
 |--------------|-----------------|-------------------------------------------------------------------------------------------------|

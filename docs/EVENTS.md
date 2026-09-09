@@ -1,30 +1,31 @@
 # Events
 
-Events come in two forms: parallel events (PEs) and limited-time events (LTEs). Parallel events track their own state in
-a `pes`-prefixed set of keys, likely because there is a separate game section for these (such as Fuzzy Festival). LTEs
-are simply task based token accumulation and therefore do not get their own `pes` "namespace".
+Events come in two forms: ***parallel events** (PEs) and **limited-time events** (LTEs). Parallel events track their own
+state in a `pes`-prefixed set of keys, likely because there is a separate game section for these (such as Fuzzy
+Festival). LTEs are simply task-based token accumulation and therefore do not get their own "namespace".
 
 ## Parallel Events
 
 The table below lists known parallel events and their event IDs:
 
-| ID | Event                            | Date           |
-|----|----------------------------------|----------------|
-| 27 | Fuzzy Festival (Ginger & Wasabi) | N/A (Paid DLC) |
-| ?? | Frosty (Aurora)                  | February 2026  |
-| ?? | School Spirit (Kyoko)            | March 2026     |
-| ?? | Spring Fling (Penny)             | April 2026     |
-| ?? | Spooky (Nightingale)             | April 2026     |
-| ?? | Outer Space (Loola)              | May 2026       |
-| ?? | High Fantasy (Moonbeam)          | June 2026      |
-| 53 | Valentine's (Marybelle)          | June 2026      |
-| 54 | Beach Bash (Nixie)               | July 2026      |
-| 55 | Time Warp (Polly)                | August 2026    |
+| ID | Event          | Date           | Girl            |
+|----|----------------|----------------|-----------------|
+| 27 | Fuzzy Festival | N/A (Paid DLC) | Ginger & Wasabi |
+| ?? | Frosty         | February 2026  | Aurora          |
+| ?? | School Spirit  | March 2026     | Kyoko           |
+| ?? | Spring Fling   | April 2026     | Penny           |
+| ?? | Spooky         | April 2026     | Nightingale     |
+| ?? | Outer Space    | May 2026       | Loola           |
+| ?? | High Fantasy   | June 2026      | Moonbeam        |
+| 53 | Valentine's    | June 2026      | Marybelle       |
+| 54 | Beach Bash     | July 2026      | Nixie           |
+| 55 | Time Warp      | August 2026    | Polly           |
+| 56 | School Spirit  | September 2026 | Ling Ling       |
 
 ### Schemas
 
-All parallel event keys are prefixed with `pes` and their event ID (`pes<NN>`). The following table is an inferred generic schema
-for parallel events (excluding the mirrored keys from the root schema):
+All parallel event keys are prefixed with `pes` and their event ID (`pes<NN>`; see above). The following table is an
+inferred generic schema for parallel events (excluding the mirrored keys from the root schema):
 
 | Sub-key                                                                      | Shape   | Represents                                                                                        |
 |------------------------------------------------------------------------------|---------|---------------------------------------------------------------------------------------------------|
@@ -35,14 +36,14 @@ for parallel events (excluding the mirrored keys from the root schema):
 
 For the known events, the following describes the keys unique to that event.
 
-#### Fuzzy Festival (`pes27`)
+#### Fuzzy Festival
 
 ##### Hobbies
 
 Its `Hobby<Name>` instances use a **different 12 names** than the root profile: `Bravery`, `Caring`, `Charisma`,
 `Creative`, `Focus`, `Innovation`, `Luck`, `Optimism`, `Peaceful`, `Responsible`, `Tenderness`, `Trustworthy`.
 
-#### Beach Bash (`pes54`)
+#### Beach Bash
 
 ##### Girls
 
@@ -54,7 +55,7 @@ Lustat, Shibuki, Sutra and Nixie.
 Its `Hobby<Name>` instances use a **different 12 names** than the root profile: `Adventurous`, `Brave`, `Buff`,
 `Competetive`, `Cool`, `Culinary`, `Easygoing`, `Healthy`, `Independent`, `Patience`, `Sentimental`, `Thorough`.
 
-#### Time Warp (`pes55`)
+#### Time Warp
 
 ##### Girls
 
@@ -75,9 +76,9 @@ I suspect the main game does).
 
 `GameStateTimeline` tracks the current Timeline you are in for the event.
 
-`GameStateTimeCrystalCount` (`int`) tracks the count of Time Crystals obtained throughout the event -
-one is awarded per novel Love-level-up across any of the event's Girls (re-reaching a level already
-hit before does not grant another). TimeCrystals are consumed to "Time Warp" (soft reset).
+`GameStateTimeCrystalCount` (`int`) tracks the count of Time Crystals obtained throughout the event - one is awarded per
+novel Love-level-up across any of the event's Girls (re-reaching a level already hit before does not grant another).
+TimeCrystals are consumed to "Time Warp" (soft reset).
 
 ---------
 
@@ -105,8 +106,23 @@ When first introduced (2017), all LTEs were ~7 days long and alternated roughly 
 
 ### Known LTEs:
 
-For a full list of historical LTEs, see the [Crush Crush Wiki](https://crush-crush.fandom.com/wiki/Weekly_Event). This
-includes LTEs that are tracked in the `Completed.20nnEvents` keys.
+For a full list of historical LTEs, see the [Crush Crush Wiki](https://crush-crush.fandom.com/wiki/Weekly_Event)
+or [Sad Panda Studios Wiki](https://wiki.sadpandastudios.com/Weekly_Event). This includes LTEs that are tracked in the
+`Completed.20nnEvents` keys.
+
+#### Weekly Events (PC)
+
+The table below is derived from the information at the wiki above. It may or may not be correct. If you are going to use
+this information to flip bits for `Completed.20xx.Events`, bear in mind that it is unlikely that a real save would have
+every bit flipped since the bring-backs/repeats would be skipped in subsequent years.
+
+| Year | Events | Of Which Bring-Backs |
+|------|--------|----------------------|
+| 2017 | 12     | 0                    |
+| 2018 | 48     | 2                    |
+| 2019 | 41     | 9                    |
+| 2020 | 32     | 7                    |
+| 2021 | 21     | 8                    |
 
 The table below maps current event IDs (i.e. those for `Completed.Events`) to known events and gives their duration:
 
@@ -118,8 +134,8 @@ The table below maps current event IDs (i.e. those for `Completed.Events`) to kn
 | 309 | Peanut Phone Pinup    | 7 Days   |
 | 310 | Sirina                | 14 Days  |
 | 311 | Sirina's Outfits      | 14 Days  |
-| ??? | Sawyer and Lake Pinup | 7 Days   |
-| ??? | Tessa                 | 14 Days  |
+| 312 | Sawyer and Lake Pinup | 7 Days   |
+| 313 | Tessa                 | 14 Days  |
 | ??? | Tessa's Outfits       | 14 Days  |
 | ??? | Alpha's Pinup         | 7 Days   |
 | ??? | Esper                 | 14 Days  |
@@ -130,3 +146,14 @@ The table below maps current event IDs (i.e. those for `Completed.Events`) to kn
 | ??? | Holiday Pinup         | 7 Days   |
 | ??? | Odango                | 14 Days  |
 | ??? | Odango's Outfits      | 14 Days  |
+
+#### Weekly Events (Switch)
+
+Switch LTEs always seem to run for 7 days instead of the 7/14 for PC.
+
+| ID | Event               |
+|----|---------------------|
+| 47 | Jelle (Unconfirmed) |
+| 48 | Quillzone           |
+| 49 | Bonchovy            |
+| 50 | Spectrum            |
