@@ -316,12 +316,19 @@ SETTINGS_FIELDS = {
 }
 
 SKILL_FIELDS = {str(n): FieldSpec("int") for n in range(12)}
-SKILL_FIELDS.update({
+
+# Avatar/player-identity fields -- raw keys are Skill-prefixed (SkillGender
+# etc) but conceptually belong to the player, not a per-hobby skill level,
+# so they're pulled out into their own root Player object. Root-only: a
+# hypothetical pes<N>SkillGender (never observed) stays inside that PE's
+# Skill object via the generic unregistered-suffix fallback rather than
+# being promoted, since there's no such thing as a per-event avatar.
+PLAYER_FIELDS = {
     "Gender": FieldSpec("int"),
     "Hair": FieldSpec("int"),
     "Hat": FieldSpec("int"),
     "Plushy": FieldSpec("int"),
-})
+}
 
 JOB_FIELDS = {
     "Active": FieldSpec("flag", sparse=True),
@@ -468,6 +475,19 @@ def flatten_segments(segments):
             else:
                 out.append(("", None, full_key, v))
     return out
+
+
+def try_player(origin_prefix, origin_suffix, full_key, raw, data):
+    if origin_prefix == "Skill":
+        suffix = origin_suffix
+    elif origin_prefix == "" and full_key.startswith("Skill"):
+        suffix = full_key[len("Skill"):]
+    else:
+        return False
+    if suffix not in PLAYER_FIELDS:
+        return False
+    set_field(data.setdefault("Player", {}), suffix, PLAYER_FIELDS[suffix], raw)
+    return True
 
 
 def try_fixed_prefix_object(origin_prefix, origin_suffix, full_key, raw, data):
@@ -766,6 +786,8 @@ def decode_save_text(text):
             continue
         if try_pe(origin_prefix, origin_suffix, full_key, raw, data):
             continue
+        if try_player(origin_prefix, origin_suffix, full_key, raw, data):
+            continue
         if try_root_specials(origin_prefix, full_key, raw, data):
             continue
         if try_fling(origin_prefix, full_key, raw, data):
@@ -934,6 +956,16 @@ def encode_save_text(data, nintendo=False):
         emit_object("Settings", data["Settings"], SETTINGS_FIELDS, emit, nintendo)
     if "Skill" in data:
         emit_object("Skill", data["Skill"], SKILL_FIELDS, emit, nintendo)
+
+    player = data.get("Player", {})
+    for suffix, spec in PLAYER_FIELDS.items():
+        if suffix in player:
+            emit(f"Skill{suffix}", render_value(spec, player[suffix], nintendo))
+    for suffix, value in player.items():
+        if suffix in PLAYER_FIELDS:
+            continue
+        if isinstance(value, dict) and "raw_suffix" in value:
+            emit(f"Skill{suffix}", encode_unknown(value))
 
     playfab = data.get("Playfab", {})
     if "Inventory" in playfab:
