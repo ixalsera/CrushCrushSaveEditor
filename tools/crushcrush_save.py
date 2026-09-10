@@ -37,6 +37,7 @@ Usage:
     crushcrush_save.py encode <in.json> [out.sav] [--nintendo]
 """
 import json
+import os
 import struct
 import sys
 import base64
@@ -97,6 +98,12 @@ def main():
     if mode == "decode":
         text = decode_bytes(Path(in_path).read_text()).decode("utf-8")
         data = save_schema.decode_save_text(text)
+        if out_path:
+            # Editor IntelliSense hint, not save data -- crushed.schema.json
+            # explicitly allows this key and encode_save_text ignores it.
+            schema_path = Path(__file__).resolve().parent.parent / "crushed.schema.json"
+            rel = os.path.relpath(schema_path, Path(out_path).resolve().parent)
+            data["$schema"] = rel.replace(os.sep, "/")
         out = json.dumps(data, indent=2, sort_keys=True)
         if out_path:
             Path(out_path).write_text(out)

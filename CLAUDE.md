@@ -135,6 +135,13 @@ from** - fields the target platform doesn't have are just never written, fields 
 left absent too (nothing is fabricated except `GameState.Created`, defaulted from `DateUTC` when missing, since a
 PC→Switch conversion has no better source for it).
 
+`crushed.schema.json` (project root) is a JSON Schema for this exact shape, kept in sync by hand with
+`tools/save_schema.py`'s field tables - update it alongside any schema change. `decode` stamps a `"$schema"` key into
+every file it writes (a relative path back to it, editor-IntelliSense-only, ignored on `encode` and not itself part
+of the save data) so editors with JSON Schema support (VS Code out of the box; JetBrains IDEs via Preferences →
+Languages & Frameworks → Schemas and DTDs → JSON Schema Mappings, if not auto-detected) get autocomplete/validation
+with no extra config for the common case (`decoded/<name>.json`, one level under the project root).
+
 General per-field transform, applied recursively:
 
 - Timestamps → ISO-8601 strings, or the literal string `"N/A"` / `"never"` for the two sentinels. **Lossy below

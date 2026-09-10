@@ -1,0 +1,417 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/crushcrushsaveedit/crushed.schema.json",
+  "title": "Crush Crush decoded save",
+  "description": "Structured JSON produced by `tools/crushcrush_save.py decode` / consumed by `tools/crushcrush_save.py encode` (see tools/save_schema.py and CLAUDE.md's \"JSON schema\" section). One JSON file can be re-encoded to either PC or Switch format regardless of which platform it was decoded from.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Editor schema-association hint, not save data. Ignored on encode."
+    },
+    "GameState": { "$ref": "#/$defs/gameStateObject" },
+    "Settings": { "$ref": "#/$defs/settingsObject" },
+    "Skill": { "$ref": "#/$defs/skillObject" },
+    "Player": {
+      "type": "object",
+      "description": "Avatar/player-identity fields. Raw keys are Skill-prefixed (SkillGender etc) but are not per-hobby skill levels.",
+      "properties": {
+        "Gender": { "type": "integer" },
+        "Hair": { "type": "integer" },
+        "Hat": { "type": "integer" },
+        "Plushy": { "type": "integer" }
+      },
+      "additionalProperties": { "$ref": "#/$defs/unknownField" }
+    },
+    "Playfab": {
+      "type": "object",
+      "properties": {
+        "Inventory": { "$ref": "#/$defs/bitmask", "description": "Account-wide owned-costume bitmask, shares bit indices with girls' LifeOutfits/Clothing." },
+        "Participation": { "$ref": "#/$defs/bitmaskOrRawFallback", "description": "Bit index = parallel event ID (pes<N>); one bit permanently set per PE ever started." },
+        "AwardedItems": { "$ref": "#/$defs/stringArrayOrRawFallback", "description": "Normalized name for PC's BlayfapAwardedItems / Switch's PlayfabAwardedItems. Server-authoritative - local edits get overwritten on next launch." }
+      },
+      "additionalProperties": { "$ref": "#/$defs/unknownField" }
+    },
+    "Girls": {
+      "type": "object",
+      "description": "Keyed by each girl's exact internal save name (e.g. \"Cassie\", \"Pamulzebub\", \"Ayano\" - never a display name).",
+      "properties": {
+        "Unlocked": { "$ref": "#/$defs/bitmaskOrRawFallback", "description": "Unlocked within the current reset." },
+        "PreviouslyUnlocked": { "$ref": "#/$defs/bitmaskOrRawFallback", "description": "Unlocked at least once this save, persists across resets." },
+        "Current": { "type": "integer", "description": "Index of the currently active girl." }
+      },
+      "additionalProperties": { "$ref": "#/$defs/girlEntry" }
+    },
+    "Jobs": {
+      "type": "object",
+      "description": "Keyed by exact job name, including \"FAST FOOD\" with its literal space.",
+      "properties": {
+        "Available": { "$ref": "#/$defs/bitmask", "description": "Unlocked jobs bitmask." }
+      },
+      "additionalProperties": { "$ref": "#/$defs/jobEntry" }
+    },
+    "Hobby": {
+      "type": "object",
+      "description": "Keyed by hobby name (12 at root; different vocabulary per Parallel Event, see Events.PE).",
+      "additionalProperties": { "$ref": "#/$defs/hobbyEntry" }
+    },
+    "Flings": {
+      "type": "object",
+      "description": "Phone Flings. Keyed by numeric fling ID (string) - the ID has no fixed relationship to a girl's Girls-object entry.",
+      "properties": {
+        "Unlocked": { "$ref": "#/$defs/bitmaskOrRawFallback", "description": "Which fling IDs are unlocked at all." },
+        "Purchased": { "$ref": "#/$defs/bitmask", "description": "Purchased Core Girl flings, in fixed roster order (not fling ID order)." }
+      },
+      "additionalProperties": { "$ref": "#/$defs/flingEntry" }
+    },
+    "Achievement": {
+      "type": "object",
+      "description": "Keyed by achievement ID (string, see docs/ACHIEVEMENTS.md). Each value is a bitmask where bit = tier reached; an ID with zero tiers earned is simply absent.",
+      "additionalProperties": { "$ref": "#/$defs/bitmask" }
+    },
+    "Bonuses": {
+      "type": "object",
+      "description": "Shop bonus pricing/quantities. PC-only in practice - absent on Switch saves.",
+      "properties": {
+        "Time Blocks": { "$ref": "#/$defs/bonusCategory" },
+        "Speed Boost": { "$ref": "#/$defs/bonusCategory" },
+        "Time Skip": { "$ref": "#/$defs/bonusCategory" }
+      },
+      "additionalProperties": false
+    },
+    "Albums": {
+      "type": "object",
+      "description": "Memory Album unlock trackers (Switch-only in the samples seen). Keyed by album ID (0-5).",
+      "additionalProperties": {
+        "type": "object",
+        "description": "Byte index (little-endian) -> bit index within that byte -> true for set bits. Sparse: an absent byte/bit means unset.",
+        "additionalProperties": {
+          "type": "object",
+          "patternProperties": { "^[0-7]$": { "type": "boolean" } },
+          "additionalProperties": false
+        }
+      }
+    },
+    "Events": {
+      "type": "object",
+      "properties": {
+        "Completed": {
+          "type": "object",
+          "properties": {
+            "2018": { "$ref": "#/$defs/bitmask", "description": "Completed 2018 weekly events." },
+            "2019": { "$ref": "#/$defs/bitmask", "description": "Completed 2019 weekly events." },
+            "2020": { "$ref": "#/$defs/bitmask", "description": "Completed 2020 weekly events." },
+            "LTE": { "$ref": "#/$defs/bitmaskOrRawFallback", "description": "Completed limited-time events (bit index = LTE ID). Was the raw format's Completed.Events - renamed to avoid an Events.Completed.Events repeat." }
+          },
+          "additionalProperties": { "$ref": "#/$defs/unknownField" }
+        },
+        "PE": {
+          "type": "object",
+          "description": "Parallel events, keyed by PE ID (string, see docs/EVENTS.md). Each mirrors the same per-type shapes as root.",
+          "additionalProperties": { "$ref": "#/$defs/eventsPeEntry" }
+        },
+        "LTE": {
+          "type": "object",
+          "description": "Limited-time events, keyed by LTE ID (string). Tasks present only for the LTE matching Events.Current.",
+          "additionalProperties": { "$ref": "#/$defs/eventsLteEntry" }
+        },
+        "Current": { "type": "integer", "description": "Active LTE ID (was root EventID)." }
+      },
+      "additionalProperties": false
+    },
+    "AchievementCount": { "type": "integer", "description": "Total achievement tiers unlocked across all IDs (derived total, redundant with Achievement)." },
+    "dchk": { "type": "integer", "description": "Unconfirmed - likely analytics/checksum, safe to ignore." },
+    "ana.ev": { "type": "integer", "description": "Unconfirmed - likely analytics, safe to ignore." },
+    "ana.vid": { "type": "integer", "description": "Unconfirmed - likely analytics, safe to ignore." },
+    "Prereg": { "type": "boolean", "description": "Unconfirmed - likely pre-registration content unlock." },
+    "SaveFileVersion": { "type": "boolean", "description": "Unconfirmed - a version number was expected here, not a flag." },
+    "TermsVersionAccepted": { "type": "boolean" },
+    "ticketboothSeen": { "type": "boolean" },
+    "Tutorial": { "type": "integer", "description": "Tutorial progress step/stage." },
+    "HasSeenFuzzyExternalPurchaseConfirmation": { "type": "boolean" },
+    "CabinFeverSave": { "type": "integer", "description": "Switch-observed. Whether a \"Cabin Fever\" save was detected; unlocks Mallory." },
+    "PendingTimelord": { "type": "integer", "description": "Switch-observed. Meaning unconfirmed." },
+    "UserLteOffset": { "type": "integer", "description": "Switch-observed. Meaning unconfirmed." },
+    "AyanoChibi2017": { "type": "integer", "description": "Switch-observed. Likely tracker for the 2017 \"Don't Notice Me, Senpai\" event." },
+    "AyanoTimeBlock": { "type": "integer", "description": "Switch-observed. Meaning unconfirmed." },
+    "CurrentPanel": { "type": "string", "description": "Switch-observed. Likely which UI panel/tab was open when the save was written." },
+    "NutakuItems2019": { "type": "integer", "description": "Switch-observed. Meaning unconfirmed." },
+    "ActiveTutorial": { "type": "integer", "description": "Switch-observed. Meaning unconfirmed." },
+    "TutorialStep": { "type": "integer", "description": "Switch-observed. Separate step counter from Tutorial." },
+    "TutorialAffection": { "type": "boolean", "description": "Switch-observed. Likely completion flag for an \"affection\" tutorial step." },
+    "PurchasedTime": { "type": "integer", "description": "Meaning undocumented; also appears per-Parallel-Event under Events.PE.<id>." },
+    "LastPesId0": { "type": "string" }, "LastPesId1": { "type": "string" },
+    "LastPesId2": { "type": "string" }, "LastPesId3": { "type": "string" },
+    "LastPesId4": { "type": "string" }, "LastPesId5": { "type": "string" },
+    "LastPesId6": { "type": "string" }, "LastPesId7": { "type": "string" },
+    "LastPesId8": { "type": "string" }, "LastPesId9": { "type": "string" },
+    "events.popupinfo": {
+      "type": "object",
+      "description": "Per-event popup display tracking, e.g. {\"<event-key>\": {\"shownCount\": int, \"shownAt\": ISO-8601}}. Passed through as-is, not validated by the tooling.",
+      "additionalProperties": true
+    },
+    "Unknown": {
+      "type": "object",
+      "description": "Forward-compatibility bucket for root-level keys the schema doesn't recognize yet - preserved losslessly rather than dropped.",
+      "additionalProperties": {
+        "anyOf": [
+          { "$ref": "#/$defs/unknownField" },
+          {
+            "type": "object",
+            "description": "Rare fallback: pending Task entries when no active LTE (Events.Current) was found to attach them to.",
+            "additionalProperties": { "$ref": "#/$defs/taskEntry" }
+          }
+        ]
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "bitmask": {
+      "type": "object",
+      "description": "Bit index (string) -> true for set bits. A missing key means that bit is unset - this is sparse, not dense.",
+      "patternProperties": { "^[0-9]+$": { "const": true } },
+      "additionalProperties": false
+    },
+    "unknownField": {
+      "type": "object",
+      "description": "Forward-compat escape hatch for a raw key not yet in tools/save_schema.py's registry. raw_suffix preserves the original int(\"i\")/float(\"f\")/long(\"\")/bare(null) distinction so it round-trips exactly.",
+      "properties": {
+        "value": { "type": ["integer", "number", "string", "boolean"] },
+        "raw_suffix": { "enum": ["i", "f", "", null] }
+      },
+      "required": ["value", "raw_suffix"],
+      "additionalProperties": false
+    },
+    "bitmaskOrRawFallback": {
+      "description": "Normally a bitmask object; falls back to a raw-preserving wrapper on the rare save where this blob field doesn't decode as expected (observed real examples: GirlsUnlocked:19i as a plain int, PlayfabAwardedItems as a bare non-base64 scalar).",
+      "anyOf": [
+        { "$ref": "#/$defs/bitmask" },
+        {
+          "type": "object",
+          "properties": { "_raw_fallback": { "$ref": "#/$defs/unknownField" } },
+          "required": ["_raw_fallback"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "stringArrayOrRawFallback": {
+      "anyOf": [
+        { "type": "array", "items": { "type": "string" } },
+        {
+          "type": "object",
+          "properties": { "_raw_fallback": { "$ref": "#/$defs/unknownField" } },
+          "required": ["_raw_fallback"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "ISO-8601 datetime (microsecond precision - the raw format's 100ns ticks are truncated on decode), or the literal sentinel \"N/A\" (raw int64.max, \"needs an unlock requirement\"/no history) or \"never\" (raw 0, not yet reached).",
+      "examples": ["2026-07-20T09:38:42.400484", "N/A", "never"]
+    },
+    "taskEntry": {
+      "type": "object",
+      "properties": {
+        "Start": { "$ref": "#/$defs/timestamp", "description": "Unspecified-kind (untagged) raw ticks - 0 renders as \"never\"." },
+        "Complete": { "type": "boolean" },
+        "Claimed": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "flingProgress": {
+      "description": "Decoded C<N>P conversation-state blob (see tools/phone_fling.py), or null when the blob is empty (fling never started, Date == \"never\").",
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "properties": {
+            "message_counter": { "type": "integer" },
+            "unknown_1": { "type": "integer", "description": "Unconfirmed meaning - possibly a sent-only message counter." },
+            "next_message_countdown": { "type": "integer", "description": "4294967292 (0xFFFFFFFC) is a \"conversation gated, no countdown running\" sentinel, not a literal countdown." },
+            "trailing": { "type": "string", "pattern": "^[0-9a-f]*$", "description": "Unparsed trailing bytes as lowercase hex - meaning unconfirmed." }
+          },
+          "required": ["message_counter", "unknown_1", "next_message_countdown", "trailing"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "flingEntry": {
+      "type": "object",
+      "properties": {
+        "Date": { "$ref": "#/$defs/timestamp", "description": "Utc-kind. Time of last message received/viewed." },
+        "Progress": { "$ref": "#/$defs/flingProgress" }
+      },
+      "additionalProperties": false
+    },
+    "gameStateCounts": {
+      "type": "object",
+      "properties": {
+        "Date": { "type": "integer", "description": "Raw GameState.DateCount - unconfirmed whether this truly means total dates gone on." },
+        "Gift": { "type": "integer", "description": "Raw GameState.GiftCount - total gifts given across all girls." },
+        "Heart": { "type": "integer", "description": "Raw GameState.HeartCount - total affection points across all girls." },
+        "Poke": { "type": "integer", "description": "Raw GameState.PokeCount - times girls have been poked." }
+      },
+      "additionalProperties": false
+    },
+    "gameStateMultipliers": {
+      "type": "object",
+      "properties": {
+        "Pending": { "type": "number", "description": "Raw GameState.PendingMultiplier - current pending Reset Boost multiplier." },
+        "Purchased": { "type": "number", "description": "Raw GameState.PurchasedMultiplier - multiplier obtained via purchase." },
+        "Time": { "type": "number", "description": "Raw root TimeMultiplier (or per-PE pes<N>TimeMultiplier) - moved here despite not being GameState-prefixed in the raw save." }
+      },
+      "additionalProperties": false
+    },
+    "gameStateObject": {
+      "type": "object",
+      "description": "Shared shape for root GameState and each Parallel Event's own mirrored GameState block.",
+      "properties": {
+        "Build": { "type": "string", "description": "Game build identifier, e.g. \"447_d0d00b4\"." },
+        "Date": { "$ref": "#/$defs/timestamp", "description": "Local-kind. Matches DateUTC to the millisecond." },
+        "DateUTC": { "$ref": "#/$defs/timestamp", "description": "Utc-kind save timestamp." },
+        "Diamonds": { "type": "integer", "description": "Premium currency balance." },
+        "Hobbies": { "type": "integer", "description": "Count or bitmask of unlocked hobbies - shape unconfirmed." },
+        "Ids": { "type": "string", "description": "SPS account ID." },
+        "LoginDate": { "$ref": "#/$defs/timestamp", "description": "Utc-kind. Last game-launch time." },
+        "Money": { "type": "integer", "description": "Soft currency balance." },
+        "NSFW": { "type": "boolean" },
+        "Seconds": { "type": "number", "description": "Elapsed seconds counter - reference point unconfirmed." },
+        "TotalIncome": { "type": "integer", "description": "Lifetime total money earned." },
+        "TotalTime": { "type": "integer", "description": "Lifetime total play time - unit unconfirmed." },
+        "Timeline": { "type": "string", "description": "Time Warp PE only - current Timeline the player is in." },
+        "TimeCrystalCount": { "type": "integer", "description": "Time Warp PE only - Time Crystals obtained this event." },
+        "TimelineComplete": { "type": "boolean", "description": "Undocumented, seen on the Switch sample - meaning unconfirmed." },
+        "Boost2EndTime": { "type": "integer", "description": "Likely a mobile-version holdover; ad-powered Speed Boost end timestamp. Observed on PC too despite the name." },
+        "TimeSkip2EndTime": { "type": "integer", "description": "Likely a mobile-version holdover; ad-powered Time Skip end timestamp." },
+        "Created": { "$ref": "#/$defs/timestamp", "description": "Utc-kind. Likely save/account creation timestamp. Defaulted from DateUTC when encoding a PC-sourced JSON to Switch, since no real history exists to draw from." },
+        "DateOffset": { "type": "integer", "description": "Likely clock-drift/timezone offset paired with Date/DateUTC." },
+        "Covid2020": { "type": "integer", "description": "Likely a flag for the short COVID-themed phone fling." },
+        "Counts": { "$ref": "#/$defs/gameStateCounts" },
+        "Multipliers": { "$ref": "#/$defs/gameStateMultipliers" }
+      },
+      "additionalProperties": { "$ref": "#/$defs/unknownField" }
+    },
+    "settingsObject": {
+      "type": "object",
+      "properties": {
+        "Alphabetic": { "type": "boolean", "description": "Girls sorted alphabetically in lists." },
+        "DisableCloud": { "type": "boolean", "description": "Cloud backup disabled for this save file." },
+        "Effects": { "type": "number", "description": "SFX volume, 0-1." },
+        "Music": { "type": "number", "description": "Music volume, 0-1." },
+        "Voice": { "type": "number", "description": "Voice volume, 0-1." },
+        "IntrosOff": { "type": "boolean", "description": "Switch-observed. Intro cutscenes disabled." },
+        "ParticlesOff": { "type": "boolean", "description": "Switch-observed. Particle effects disabled." },
+        "PopupsOff": { "type": "boolean", "description": "Switch-observed. Image popups disabled." },
+        "Language": { "type": "string", "description": "Switch-observed. Selected UI language." },
+        "MusicMute": { "type": "boolean", "description": "Switch-observed, undocumented elsewhere." },
+        "SoundMute": { "type": "boolean", "description": "Switch-observed, undocumented elsewhere." }
+      },
+      "additionalProperties": { "$ref": "#/$defs/unknownField" }
+    },
+    "skillObject": {
+      "type": "object",
+      "description": "Hobby-skill levels 0-75, keyed by internal hobby ID (not alphabetical) as a numeric string \"0\"-\"11\", paired with Hobby entries by in-game order.",
+      "patternProperties": { "^[0-9]+$": { "type": "integer", "minimum": 0, "maximum": 75 } },
+      "additionalProperties": { "$ref": "#/$defs/unknownField" }
+    },
+    "jobEntry": {
+      "type": "object",
+      "properties": {
+        "Active": { "type": "boolean", "description": "Currently working this job." },
+        "Experience": { "type": "integer", "description": "Total XP earned in this job." },
+        "Gilded": { "type": "boolean", "description": "Bonus-earnings modifier applied." },
+        "Level": { "type": "integer", "minimum": 0, "maximum": 9 },
+        "Locked": { "type": "boolean", "description": "Naming is inverted from its meaning in the raw save - likely a dev typo, per docs/SCHEMA.md." },
+        "Time": { "type": "number", "description": "Current work timer/progress." }
+      },
+      "additionalProperties": { "$ref": "#/$defs/unknownField" }
+    },
+    "hobbyEntry": {
+      "type": "object",
+      "properties": {
+        "Active": { "type": "boolean" },
+        "MultiplierCount": { "type": "boolean", "description": "Whether this Hobby is \"Gilded\"." },
+        "Time": { "type": "number", "description": "Total time invested in this Hobby." },
+        "TimeL": { "type": "integer", "description": "Time invested in this Hobby for the current level." }
+      },
+      "additionalProperties": { "$ref": "#/$defs/unknownField" }
+    },
+    "girlEntry": {
+      "type": "object",
+      "properties": {
+        "Hearts": { "type": "integer", "description": "Accumulated Hearts for this level." },
+        "Love": { "type": "integer", "minimum": 0, "maximum": 9, "description": "Relationship tier; 9 = \"Lover\"." },
+        "Clothing": { "$ref": "#/$defs/bitmask", "description": "Currently equipped outfit bit." },
+        "Dates": { "$ref": "#/$defs/bitmask", "description": "The Date required for progression this level." },
+        "Life": {
+          "type": "object",
+          "description": "Lifetime-accumulated bitmasks, as opposed to this girl's current Dates/Clothing above.",
+          "properties": {
+            "Dates": { "$ref": "#/$defs/bitmask", "description": "Was raw LifeDates - all Dates completed lifetime for this girl." },
+            "Outfits": { "$ref": "#/$defs/bitmask", "description": "Was raw LifeOutfits - lifetime unlocked outfits/costumes." },
+            "Gifts": { "$ref": "#/$defs/bitmask", "description": "Was raw LifeGifts - meaning unconfirmed, handled the same shape as Dates/Outfits." }
+          },
+          "additionalProperties": false
+        },
+        "LoveHighMark": { "type": "integer", "description": "Time Warp PE only. Highest Love reached this event, prevents re-earning Time Crystals for already-hit levels after a soft reset." }
+      },
+      "patternProperties": {
+        "^GiftCount[0-9]*$": { "type": "integer", "description": "Sparse - only present slots have made progress." },
+        "^DateCount[0-9]*$": { "type": "integer", "description": "Sparse - only present slots have made progress." }
+      },
+      "additionalProperties": { "$ref": "#/$defs/unknownField" }
+    },
+    "eventsPeEntry": {
+      "type": "object",
+      "description": "One Parallel Event's mirrored state. Not every PE populates every field - e.g. only Time Warp uses GameState.Timeline/TimeCrystalCount and Girls.<name>.LoveHighMark.",
+      "properties": {
+        "GameState": { "$ref": "#/$defs/gameStateObject" },
+        "Settings": { "$ref": "#/$defs/settingsObject" },
+        "Skill": { "$ref": "#/$defs/skillObject" },
+        "Jobs": { "type": "object", "additionalProperties": { "$ref": "#/$defs/jobEntry" } },
+        "Girls": { "type": "object", "additionalProperties": { "$ref": "#/$defs/girlEntry" } },
+        "Hobby": { "type": "object", "additionalProperties": { "$ref": "#/$defs/hobbyEntry" }, "description": "Each PE uses its own 12-hobby name vocabulary, different from root's." },
+        "Goals": { "$ref": "#/$defs/bitmask", "description": "Bitmask of goals culminating in unlocking the PE's reward." },
+        "PurchasedTime": { "type": "integer", "description": "Meaning undocumented." },
+        "Start": { "$ref": "#/$defs/timestamp", "description": "Utc-kind. When the player started this event." },
+        "Unknown": {
+          "type": "object",
+          "description": "Forward-compatibility bucket for this PE's unrecognized keys.",
+          "additionalProperties": { "$ref": "#/$defs/unknownField" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "eventsLteEntry": {
+      "type": "object",
+      "properties": {
+        "Tokens": { "type": "integer", "description": "Token/currency count for this LTE. The save typically only populates the current and previous event's Tokens." },
+        "Tasks": {
+          "type": "object",
+          "description": "Present only for the LTE matching Events.Current - keyed by task number (string).",
+          "additionalProperties": { "$ref": "#/$defs/taskEntry" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "bonusSize": {
+      "type": "object",
+      "properties": {
+        "Price": { "type": "integer", "description": "Raw value passed through unchanged - not decoded from its ~(x+1) shop-cost encoding." },
+        "Quantity": { "type": "integer", "description": "Raw value passed through unchanged - not decoded from its ~(x+1) shop-cost encoding." }
+      },
+      "additionalProperties": false
+    },
+    "bonusCategory": {
+      "type": "object",
+      "properties": {
+        "Small": { "$ref": "#/$defs/bonusSize" },
+        "Medium": { "$ref": "#/$defs/bonusSize" },
+        "Large": { "$ref": "#/$defs/bonusSize" }
+      },
+      "additionalProperties": false
+    }
+  }
+}
