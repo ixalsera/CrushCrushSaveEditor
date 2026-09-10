@@ -1,37 +1,6 @@
 #!/usr/bin/env python3
 """Decode/encode Crush Crush .sav files.
 
-File format (reverse-engineered from saves/*.sav):
-    ASCII text file (no trailing newline) containing:
-        base64( MAGIC + lzf_compress(plaintext_save_data) )
-    where MAGIC is the fixed 3-byte sequence 97 37 dc (identical across every
-    save observed so far -- a format marker, not a length or checksum).
-
-The plaintext_save_data is itself a flat, newline-delimited list of
-"key:value" style entries, with bare "::" lines acting as section
-separators/prefix resets (keys after a "::<Name>" line are logically
-prefixed by <Name> until the next "::").
-
-The Nintendo Switch version uses a different container for the same
-plaintext/compression: a raw 4-byte little-endian header (only value observed
-so far: 1, meaning unconfirmed) followed by MAGIC and the lzf-compressed body
-base64-encoded *separately* rather than as one combined blob -- MAGIC's own
-base64 encoding happens to render as the ASCII text "lzfc" (3 bytes divides
-evenly into base64's 4-char groups, so no padding). decode_bytes already
-handles Switch saves as-is: base64.b64decode() silently drops the leading
-non-base64 header bytes, and decoding "lzfc" alone reproduces MAGIC exactly.
-Only encode needs a separate path (--nintendo), since PC's encode wraps
-everything in one base64 call and has no room for that leading header.
-
-decode/encode's CLI produces/consumes structured JSON (see tools/save_schema.py)
-rather than the raw flat plaintext -- timestamps, bitmasks, and blobs are all
-converted to human-editable JSON shapes, and Girl/Job/Hobby/Fling/Achievement/
-Event data is grouped into dedicated objects. encode(nintendo=...) picks the
-target platform independently of where the JSON originated, dropping/defaulting
-platform-specific fields as needed. decode_bytes/encode_bytes/decode_file/
-encode_file below remain a lower-level flat-text API (used by scripts/diff_saves.py's
-reconstruct() and verification tooling), unaffected by any of this.
-
 Usage:
     crushcrush_save.py decode <in.sav> [out.json]
     crushcrush_save.py encode <in.json> [out.sav] [--nintendo]
@@ -52,9 +21,6 @@ MAGIC = bytes.fromhex("9737dc")
 NINTENDO_HEADER = struct.pack("<I", 1)
 NINTENDO_MAGIC = base64.b64encode(MAGIC)
 
-# Published alongside crushed.schema.json at the repo root -- raw.githubusercontent.com
-# serves the actual JSON content (github.com's own URL is an HTML page, not usable as
-# a $schema value). Points at `main`, not a pinned commit, so it tracks schema edits.
 SCHEMA_URL = "https://raw.githubusercontent.com/ixalsera/CrushCrushSaveEditor/main/crushed.schema.json"
 
 

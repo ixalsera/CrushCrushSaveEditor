@@ -1,39 +1,12 @@
 #!/usr/bin/env python3
 """[DEPRECATED]
 
-Parse a Unity `prefs` file (Linux: `~/.config/unity3d/<Company>/<Product>/prefs`)
-and reconstruct the same logical key:value pairs `scripts/diff_saves.py` produces
+Parse a Unity `prefs` file and reconstruct the same logical key:value pairs `scripts/diff_saves.py` produces
 from a decoded `.sav`, so the two can be cross-checked against each other.
 
-Confirmed encoding (100% cross-validated against a real decoded save - see
-module-level notes below for the one open question):
-
-- Every `<pref name="...">` name is base64 of the logical key name (same names
-  `scripts/diff_saves.py reconstruct()` produces, e.g. `CurrentGirl`,
-  `GirlCassieHearts`).
-- Every `string`-typed *value* is ALSO base64-encoded, one extra layer on top
-  of whatever the real value already was (plain text, JSON, or a blob that's
-  itself already base64 in the `.sav`, e.g. `GirlsUnlocked`).
-- A 64-bit `long` field is represented one of two ways:
-    1. Split across two `int` prefs entries: `<key>` holds the low 32 bits,
-       and a second entry - the SAME base64 key-name string with a literal
-       `h` character appended after it (not itself valid base64 on its own) -
-       holds the high 32 bits. Reconstruct as
-       `(unsigned_high32 << 32) | unsigned_low32`, read as signed 64-bit.
-       Confirmed exactly against `C<N>D` (including the `int64.MaxValue`
-       gated-fling sentinel) and `GameStateLoginDate`.
-    2. Or, for some longs (`GameStateDate`/`Diamonds`/`Money`/`TotalIncome`
-       and the `pes<N>` equivalents), stored as a plain `string` type holding
-       the base64-wrapped decimal text instead of the two-int split. What
-       decides which representation a given `long` field gets is not yet
-       known - still an open question.
-- Unity's own `type="int"/"float"/"string"` attributes independently confirm
-  every type inference `SCHEMA.md` already made from the `.sav`'s suffix
-  convention (`i`->int, `f`->float, unsuffixed->long).
-
-CLI:
-  python3 scripts/parse_prefs.py dump <prefs-file>                  dump resolved key:value pairs, sorted
-  python3 scripts/parse_prefs.py compare <prefs-file> <decoded.txt> cross-check against a reconstructed save
+usage:
+  python3 parse_prefs.py dump <prefs-file>                  dump resolved key:value pairs, sorted
+  python3 parse_prefs.py compare <prefs-file> <decoded.txt> cross-check against a reconstructed save
 """
 import base64
 import sys
@@ -112,17 +85,17 @@ def resolve(entries):
 def _parse_real_value(raw):
     """Parse a `scripts/diff_saves.py reconstruct()` raw value into (kind, value)."""
     if raw == "":
-        return ("flag", None)
+        return "flag", None
     if raw.endswith("i") and raw[:-1].lstrip("-").isdigit():
-        return ("int32", int(raw[:-1]))
+        return "int32", int(raw[:-1])
     if raw.endswith("f"):
         try:
-            return ("float", float(raw[:-1]))
+            return "float", float(raw[:-1])
         except ValueError:
             pass
     if raw.lstrip("-").isdigit():
-        return ("long64", int(raw))
-    return ("string", raw)
+        return "long64", int(raw)
+    return "string", raw
 
 
 def compare(prefs_path, save_path):
