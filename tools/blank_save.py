@@ -5,27 +5,11 @@ Two modes:
 
 - Template mode (a template JSON path is given): transforms a real decode
   into a zero-progress/no-unlocks one, keyed off the template's own key set.
-  A save has a *lot* of repeating sections (84 Girls, 20 Jobs, 12 Hobbies,
-  46 Phone Flings...) that aren't enumerated anywhere in tools/save_schema.py
-  (they're matched dynamically by regex against whatever a real save
-  contains, never hardcoded as a name list) - a real decode is the only
-  source for that roster, so this preserves it while resetting every value
-  to its zero/locked state. Fields old callers never reasoned about (Build,
-  Albums, anything not covered by RULES below) pass through unchanged
-  rather than being guessed at.
 - Bare mode (no template given): there's no roster to draw from, so this
   builds the smallest coherent blank instead - GameState/Settings/Skill/
-  Player/Playfab populated from tools/save_schema.py's own field tables
-  (`FieldSpec.kind` decides the generic per-kind zero; RULES below override
-  the handful that need something else, e.g. GameState.Date needs "now",
-  not zero), and every name-keyed roster (Girls, Jobs, Hobby, Flings,
-  Achievement, Events.PE/LTE) left empty - which is also the more accurate
-  reading of "zero progress" for those: a real fresh account's save has no
-  Girl<Name>/Job<Name>/... keys at all until you first interact with that
-  entity.
+  Player/Playfab populated from tools/save_schema.py's own field tables.
 
-This is a best-effort reconstruction against the documented+observed schema
-(docs/SCHEMA.md, docs/structure/JSON.md, CLAUDE.md), NOT something verified
+This is a best-effort reconstruction against the observed schema, NOT something verified
 by actually loading it in-game. Fields the docs mark unconfirmed are
 handled with the most conservative reading available; see the RULES tables
 for the specific call made on each.

@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
-"""Decode the two recurring `blob` shapes seen in save values (see
-SCHEMA.md's Shape column): a little-endian bitmask (e.g. `GirlsUnlocked`,
-`GirlsPreviouslyUnlocked`, `UnlockedPFS`) or base64-of-ASCII pipe-delimited
-text (e.g. `BlayfapAwardedItems`). Bit 0 is the LSB of the first byte.
+"""Decodes a base64 `blob` in to a bitmask or pipe-delimited text, or
+compares two blobs against one another.
 
-CLI:
-  python3 scripts/decode_blob.py bits <base64>                decoded bit indices set, and count
-  python3 scripts/decode_blob.py text <base64>                decoded pipe-delimited text
-  python3 scripts/decode_blob.py diff-bits <base64_a> <base64_b>   bits added/removed, a -> b
-  python3 scripts/decode_blob.py diff-text <base64_a> <base64_b>   pipe items added/removed, a -> b
+Usage:
+  python3 decode_blob.py bits <base64>                decoded bit indices set, and count
+  python3 decode_blob.py text <base64>                decoded pipe-delimited text
+  python3 decode_blob.py diff-bits <base64_a> <base64_b>   bits added/removed, a -> b
+  python3 decode_blob.py diff-text <base64_a> <base64_b>   pipe items added/removed, a -> b
 """
 import base64
 import sys

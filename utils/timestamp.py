@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Decode/encode the .NET DateTime.ToBinary() timestamps used throughout
-Crush Crush saves (GameState.Date, DateUTC, LoginDate, Task<N>Start, C<N>D,
-etc. -- see CLAUDE.md's "Timestamp fields" section for the format).
+Crush Crush saves.
 
 Given the raw 64-bit value stored in the save:
     bit 63 set -> DateTimeKind.Local

@@ -8,9 +8,9 @@ This flattens every nested object/array into a single-line path first (e.g.
 `Girls.Cassie.Clothing.29`), so the diff reflects actual state changes, not
 structural reshuffling.
 
-CLI:
-  python3 scripts/diff_saves.py <file.json>            dump flattened pairs, sorted
-  python3 scripts/diff_saves.py <prev.json> <cur.json>  diff two snapshots (added/removed/changed)
+Usage:
+  python3 diff_saves.py <file.json>            dump flattened pairs, sorted
+  python3 diff_saves.py <prev.json> <cur.json>  diff two snapshots (added/removed/changed)
 """
 import json
 import sys

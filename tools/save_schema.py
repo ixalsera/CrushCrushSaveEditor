@@ -1,33 +1,11 @@
 #!/usr/bin/env python3
-"""Typed JSON <-> flat `::`-text schema layer for Crush Crush saves.
+"""Converts a raw Crush Crush decoded save text to JSON.
 
 Sits between `tools/crushcrush_save.py`'s container-format layer (which only
 ever sees/produces the flat plaintext) and the CLI: `decode_save_text` turns
 that flat text into a structured, human-editable dict ready for
 `json.dumps`; `encode_save_text` reverses it, targeting either PC or Switch
 (`nintendo=True`) regardless of which platform the JSON originated from.
-
-Key design facts (see CLAUDE.md and the per-key docs for the underlying
-reverse-engineering; this module assumes that background):
-
-- `::` grouping in the flat text is cosmetic, not semantic -- the same
-  field can appear inside a named `::Prefix` section in one save and as an
-  individually-bare line in another (confirmed: `JobMECH` has all six of
-  its fields bare in a real sample, in the same file where other jobs get a
-  proper block). So encoding never tries to reconstruct original grouping;
-  every field is rendered as its own independent `::` + line.
-- PC and Switch differ in sparse-vs-dense serialization for *some* fields
-  (PC omits at the zero/false default; Switch writes it explicitly) but not
-  others (fixed-struct fields like GameState/Settings/Skill/Girl.Hearts are
-  dense on both). `FieldSpec.sparse` marks which fields are ever eligible
-  for omission; `dense=nintendo` decides whether omission actually happens.
-- A field valued exactly 1 (for `int`-family kinds) renders as a bare key,
-  same shape as a true flag -- confirmed on real data for `ACH.<id>`,
-  `GirlAyanoDates`, `SkillGender`/`Hat`. `long`/`float` fields are always
-  written explicitly (never bare, never omitted at 0).
-- Bitmask blob byte-width is not a fixed constant in practice -- encode by
-  shrink-to-fit (highest set bit) with a small per-field safety floor,
-  never a hardcoded width.
 """
 import base64
 import json
@@ -50,15 +28,7 @@ class FieldSpec:
     kind: str  # flag|int|long|float|string|bitmask_int|bitmask_long|bitmask_blob|timestamp
     sparse: bool = False
     ts_kind: str | None = None  # local|utc|unspecified -- timestamp only
-    # Documents that this field was only ever observed on Switch saves
-    # (per docs/SWITCH.md and the one real Switch sample). Informational
-    # only -- it does NOT drive encode behavior: real data shows fields
-    # SWITCH.md calls Switch-only (e.g. GameState.Boost2EndTime) can also
-    # appear in PC saves, and genuinely Switch-only fields aren't reliably
-    # present in every real Switch save either (early-game saves lack
-    # several). Dropping or fabricating fields based on this tag destroyed
-    # same-platform round-trips in testing -- see emit_object/emit_gamestate.
-    switch_only: bool = False
+    switch_only: bool = False # informational only -- it does NOT drive encode behavior
     blob_min_bytes: int = 1  # bitmask_blob only -- shrink-to-fit floor
 
 
@@ -91,11 +61,6 @@ def json_to_bits(obj):
 
 
 def blob_bits_to_json(b64):
-    """Decodes a bitmask blob. Some real samples store what SCHEMA.md
-    documents as a base64 blob field as a plain int instead (observed:
-    `GirlsUnlocked:19i` in one PC save) -- fall back to a raw-preserving
-    wrapper rather than crashing, so round-trip stays lossless even for
-    fields that don't match the documented shape in a given save."""
     if not b64:
         return {}
     try:
@@ -319,10 +284,7 @@ SKILL_FIELDS = {str(n): FieldSpec("int") for n in range(12)}
 
 # Avatar/player-identity fields -- raw keys are Skill-prefixed (SkillGender
 # etc) but conceptually belong to the player, not a per-hobby skill level,
-# so they're pulled out into their own root Player object. Root-only: a
-# hypothetical pes<N>SkillGender (never observed) stays inside that PE's
-# Skill object via the generic unregistered-suffix fallback rather than
-# being promoted, since there's no such thing as a per-event avatar.
+# so they're pulled out into their own root Player object. Root-only.
 PLAYER_FIELDS = {
     "Gender": FieldSpec("int"),
     "Hair": FieldSpec("int"),
@@ -402,20 +364,14 @@ EVENT_TOKENS_RE = re.compile(r"^Event(\d+)Tokens$")
 PES_RE = re.compile(r"^[Pp]es(\d+)(.*)$")
 LOVE_HIGH_MARK_RE = re.compile(r"^Girl([a-z]+)LoveHighMark$")
 ALBUM_RE = re.compile(r"^album(\d)$")
-
-# Settings is root-only (a player preference, not per-event state) unlike
-# Skill (hobby-skill levels), which PEs do have their own copy of, paired
-# with that PE's own Hobby name vocabulary -- so these stay two separate
-# tables rather than one, even though both go through the same generic
-# try_fixed_prefix_object dispatch.
 SETTINGS_TABLE = {"Settings": SETTINGS_FIELDS}
 SKILL_TABLE = {"Skill": SKILL_FIELDS}
 
 
 def album_value_to_json(value):
-    """album<N> is a sparse two-level bitmask by user request: byte index ->
-    bit index -> bool, little-endian, shrink-to-fit (same conventions as
-    every other bitmask in this schema, just one level deeper)."""
+    """album<N> is a sparse two-level bitmask: byte index -> bit index -> bool,
+     little-endian, shrink-to-fit (same conventions as every other bitmask in this
+     schema, just one level deeper)."""
     v = int(value) & 0xFFFFFFFFFFFFFFFF  # unsigned 64-bit, mirrors utils/timestamp.py
     result, byte_idx = {}, 0
     while v:
@@ -439,14 +395,10 @@ def json_to_album_value(obj):
 # ---------------------------------------------------------------------------
 
 def parse_segments_lenient(text):
-    """Like the standard `::`-prefix split (see CLAUDE.md's "Plaintext save
-    structure"), but tolerant of a file that never
-    uses `::` markers at all -- confirmed real: the Switch sample
-    (saves/CrushSaveData1.sav) decodes with zero `::` lines anywhere, every
-    key written in fully bare form one per line, unlike PC's convention of
-    a bare `::` reset before every ungrouped key. Lines before the first
-    `::` (or the whole file, if there is none) are treated as their own
-    independent bare entries, same as lines under an explicit bare `::`."""
+    """Like the standard `::`-prefix split but tolerant of a file that never
+    uses `::` markers at all. Lines before the first `::` (or the whole file,
+    if there is none) are treated as their own independent bare entries, same
+    as lines under an explicit bare `::`."""
     segments = [["", []]]
     for line in text.split("\n"):
         if line == "::":
@@ -647,10 +599,9 @@ def try_girl(origin_prefix, origin_suffix, full_key, raw, data):
     # entirely separate girls that only visually nest under `::GirlPamu`/
     # `::GirlQuill` because their names share that prefix substring -- the
     # section header "GirlPamu" is NOT reliable evidence that every line
-    # under it belongs to Pamu (confirmed: real saves have a `lzebubHearts`
-    # suffix line under `::GirlPamu` that's actually Pamulzebub's Hearts).
-    # Full-key regex matching resolves this correctly because "Hearts" only
-    # matches the alternation once the whole "Pamulzebub" name is captured.
+    # under it belongs to Pamu. Full-key regex matching resolves this correctly
+    # because "Hearts" only matches the alternation once the whole "Pamulzebub"
+    # name is captured.
     m = GIRL_BARE_RE.match(full_key)
     if not m:
         return False
@@ -689,11 +640,8 @@ def try_hobby(origin_prefix, origin_suffix, full_key, raw, data):
 
 
 def try_root_specials(origin_prefix, full_key, raw, data):
-    """PE-safe: confirmed real (Time Warp / PE 55) that a Parallel Event can
-    have its own GirlsUnlocked/GirlsPreviouslyUnlocked/CurrentGirl/
-    AvailableJobs, mirroring root exactly -- see try_root_only_specials for
-    the account-wide singleton concepts that do NOT have a per-PE analogue
-    (which includes Flings/Playfab/Albums entirely -- see dispatch_entry)."""
+    """PE-safe: see try_root_only_specials for the account-wide singleton
+     concepts that do NOT have a per-PE analogue."""
     if origin_prefix != "":
         return False
     if full_key == "GirlsUnlocked":
@@ -715,11 +663,7 @@ def try_root_only_specials(origin_prefix, full_key, raw, data):
     """Root-only: EventID/Event<N>Tokens/LastPesId<N> point at whichever LTE
     is globally active, or its recent history -- a save-wide singleton
     concept with no coherent "one per PE" reading, unlike try_root_specials
-    above (PEs and LTEs are entirely separate, mutually exclusive event
-    systems, per docs/EVENTS.md). UnlockedPFS/AwardedItems join them here
-    (not try_root_specials) because Flings and Playfab are whole separate
-    account-wide features -- Phone Flings is its own mini-game, Playfab is
-    IAP entitlement tracking -- neither is per-Parallel-Event state at all."""
+    above."""
     if origin_prefix != "":
         return False
     if full_key == "UnlockedPFS":
@@ -876,14 +820,6 @@ def decode_save_text(text):
 # ---------------------------------------------------------------------------
 
 def emit_object(full_prefix, obj, table, emit, nintendo):
-    # pc_only/switch_only are informational only, they never drive encode
-    # behavior: fields SWITCH.md documents as Switch-only (e.g.
-    # GameState.Boost2EndTime) also show up in real PC saves, and fields
-    # that ARE genuinely Switch-only aren't reliably present in every real
-    # Switch save either (early-game saves lack several of them). So: never
-    # drop a field that's present, and never fabricate one that's absent --
-    # the one deliberate exception is GameState.Created below, since a
-    # PC->Switch conversion has no better source for it than DateUTC.
     obj = dict(obj) if obj else {}
     if full_prefix == "GameState" and nintendo and "Created" not in obj and "DateUTC" in obj:
         obj["Created"] = obj["DateUTC"]
@@ -972,8 +908,7 @@ def emit_player(prefix, player, emit, nintendo):
 
 def emit_scalars(prefix, table, obj, emit, nintendo):
     """Emit a flat {suffix: FieldSpec} table's fields against `obj` -- used
-    for ROOT_SCALAR_FIELDS, shared between root and (confirmed real, e.g.
-    `dchk` inside the Time Warp PE) a Parallel Event's own scalars."""
+    for ROOT_SCALAR_FIELDS, shared between root and a Parallel Event's own scalars."""
     for key, spec in table.items():
         if key in obj:
             emit(f"{prefix}{key}", render_value(spec, obj[key], nintendo))

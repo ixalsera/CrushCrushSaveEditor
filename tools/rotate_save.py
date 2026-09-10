@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
-"""Rotate the current save + its decoded dump into *.prev.* before a new
-play session, so the next decode can be diffed against what's "prev" now
-(see CLAUDE.md's "Investigating an unconfirmed field" note).
+"""Rotates a save file
 
 Moves:
     saves/<name>.sav    -> saves/<name>.prev.sav
     decoded/<name>.json -> decoded/<name>.prev.json
 
 Refuses to rotate at all (rather than rotating one file and not the other)
-if either source file is missing - this is a normal, expected case (e.g.
-no save has been produced yet), not an error, so it's reported as a plain
-message rather than raised as an exception.
+if either source file is missing.
 
 Usage:
     rotate_save.py [name]   (default: crushcrush)

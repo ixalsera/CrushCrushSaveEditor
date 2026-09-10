@@ -2,53 +2,19 @@
 """Decode a C<N>P Phone Fling conversation-state blob into its known and
 still-unknown constituent parts (see FLINGS.md).
 
-Byte layout, established by diffing C<N>P blobs before/after a play session
-across two different flings (see CLAUDE.md's fling-diffing note):
+Byte layout:
 
     offset 0, u16  message_counter          the conversation/message counter
-                                             confirmed by FLINGS.md; whether
-                                             it's specifically sent+received
-                                             combined is a one-data-point
-                                             hypothesis, NOT yet confirmed
-    offset 2, u16  unknown_1                unconfirmed; moved +1 in the one
-                                             sample seen with exactly 1
-                                             player-sent message -- maybe a
+    offset 2, u16  unknown_1                unconfirmed; maybe a
                                              sent-only counter, needs more data
     offset 4, u32  next_message_countdown   ticks/seconds until the next
-                                             message is shown (FLINGS.md:
-                                             "likely"); observed counting
-                                             down towards single digits
-    offset 8, ...  trailing                 unparsed, variable length (2
-                                             bytes on one fling, 3 on
-                                             another) -- FLINGS.md guesses a
+                                             message is shown
+    offset 8, ...  trailing                 unparsed, variable length; possibly a
                                              conversation-choice bitmask
-                                             and/or a seen-photos indicator
-
-This field order matches the `PhoneFlingData` pseudocode in FLINGS.md
-(updated to agree with this module after an earlier version of FLINGS.md
-placed the u32 immediately after the counter with no second u16 in
-between -- that order made next_message_countdown a large 6-digit number
-that never collapsed to single digits, and its fixed 10-byte size couldn't
-fit the 11-byte blob observed on fling 7 at all).
-
-Two more things fell out of running this over every C<N>P in a real save
-(not just the two flings manually diffed so far), included here so nobody
-has to rediscover them:
-
-  - A C<N>P blob is simply empty/absent whenever the paired C<N>D is the
-    "never started" sentinel (0). Treated here as its own state rather
-    than an 8-byte-minimum parse error.
-  - next_message_countdown reads as exactly 4294967292 (0xFFFFFFFC, i.e.
-    -4 as a signed i32) on every fling whose C<N>D is the "needs an
-    unlock requirement" sentinel (int64.max) -- but *also* on several
-    flings with a perfectly ordinary, real C<N>D. So this looks like an
-    independent "conversation currently gated / no countdown running"
-    flag living on the P blob itself, not merely a mirror of D's
-    sentinel. Unconfirmed why an active-looking fling would carry it -
-    flag for a human, don't silently treat those flings as "locked".
+                                             and/or an unlocked photos indicator
 
 Usage:
-    phone_fling.py decode <C<N>P-blob-base64> [<C<N>D-value>]
+    phone_fling.py decode <base64> [<value>]
 
 The blob/value arguments accept either the bare value or a full
 "C<N>P:<blob>" / "C<N>D:<value>" line copy-pasted straight out of a

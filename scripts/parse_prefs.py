@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Parse a Unity `prefs` file (Linux: `~/.config/unity3d/<Company>/<Product>/prefs`)
+"""[DEPRECATED]
+
+Parse a Unity `prefs` file (Linux: `~/.config/unity3d/<Company>/<Product>/prefs`)
 and reconstruct the same logical key:value pairs `scripts/diff_saves.py` produces
 from a decoded `.sav`, so the two can be cross-checked against each other.
 
