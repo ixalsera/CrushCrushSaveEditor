@@ -29,8 +29,8 @@ converted to human-editable JSON shapes, and Girl/Job/Hobby/Fling/Achievement/
 Event data is grouped into dedicated objects. encode(nintendo=...) picks the
 target platform independently of where the JSON originated, dropping/defaulting
 platform-specific fields as needed. decode_bytes/encode_bytes/decode_file/
-encode_file below remain a lower-level flat-text API (used by tools/blank_save.py,
-scripts/diff_saves.py, and verification tooling), unaffected by any of this.
+encode_file below remain a lower-level flat-text API (used by scripts/diff_saves.py's
+reconstruct() and verification tooling), unaffected by any of this.
 
 Usage:
     crushcrush_save.py decode <in.sav> [out.json]

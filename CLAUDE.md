@@ -53,5 +53,3 @@ scripts/   Investigation/analysis helpers used while reverse-engineering the
 
 - No value-specific validation (e.g. `Love` 0-9, `Diamonds` non-negative) is enforced - edits are freeform JSON.
   Building an actual editor UI/CLI for specific fields is new work, not started.
-- `tools/blank_save.py` still targets the old flat-text format, not the new JSON - porting it (zeroing would become
-  direct dict mutation instead of regex text surgery) is a reasonable follow-up, not done here.

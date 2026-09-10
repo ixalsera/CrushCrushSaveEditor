@@ -439,7 +439,8 @@ def json_to_album_value(obj):
 # ---------------------------------------------------------------------------
 
 def parse_segments_lenient(text):
-    """Like blank_save.parse_segments, but tolerant of a file that never
+    """Like the standard `::`-prefix split (see CLAUDE.md's "Plaintext save
+    structure"), but tolerant of a file that never
     uses `::` markers at all -- confirmed real: the Switch sample
     (saves/CrushSaveData1.sav) decodes with zero `::` lines anywhere, every
     key written in fully bare form one per line, unlike PC's convention of
