@@ -3,11 +3,11 @@ name: investigate-save-field
 description: Confirm what an unconfirmed CrushCrushSaveEdit save field means - diffing saves before/after a play session, decoding blob bitmasks, or diffing Phone Fling state. Use when a field in docs/SCHEMA.md, GIRLS.md, FLINGS.md, or EVENTS.md is marked unconfirmed and needs verifying against real save data.
 ---
 
-Keep a `*.prev.sav`/`*.prev.txt` snapshot from before a play session (`python3 tools/rotate_save.py` rotates), take a
-new save after, and diff the two **reconstructed key sets** - not a raw line diff (`::` prefix-compression reshuffles
-line order, so plain `diff` is noisy). Use `scripts/diff_saves.py <prev.txt> <cur.txt>` (or single-arg
-`scripts/diff_saves.py <file.txt>` to just dump one file's reconstructed pairs, e.g. for grepping by
-`Job<Name>`/`Girl<Name>` prefix) rather than re-deriving the reconstruction inline.
+Keep a `*.prev.sav`/`*.prev.json` snapshot from before a play session (`python3 tools/rotate_save.py` rotates), take a
+new save after, and diff the two **flattened JSON path sets** - not a raw text/JSON diff (dict key order isn't
+guaranteed stable and nesting hides which leaf actually changed). Use `scripts/diff_saves.py <prev.json> <cur.json>`
+(or single-arg `scripts/diff_saves.py <file.json>` to just dump one file's flattened `dotted.path: value` pairs, e.g.
+for grepping by `Jobs.<Name>`/`Girls.<Name>` prefix) rather than re-deriving the flattening inline.
 
 For base64 `blob` fields that are bitmasks or pipe-delimited text (`GirlsUnlocked`, `GirlsPreviouslyUnlocked`,
 `UnlockedPFS`, `BlayfapAwardedItems`), use `scripts/decode_blob.py` rather than re-deriving inline - `bits`/`text`

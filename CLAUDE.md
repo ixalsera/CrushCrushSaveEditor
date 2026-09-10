@@ -218,8 +218,11 @@ under a `_raw_fallback` key instead of crashing.
    `<save_game_filename>.backup.sav`).
 
 `decode_bytes`/`encode_bytes`/`decode_file`/`encode_file` in `tools/crushcrush_save.py` remain a lower-level flat-text
-API (unchanged, still what `tools/blank_save.py` and `scripts/diff_saves.py` operate on) - only the CLI's `decode`/
-`encode` modes route through the JSON layer.
+API (unchanged, still what `tools/blank_save.py` operates on, and what `scripts/diff_saves.py reconstruct()` expects
+as input for `scripts/parse_prefs.py`'s Unity-prefs cross-check - prefs are keyed by the save's own raw names, not
+this JSON schema, so that one path stays text-based on purpose) - only the CLI's `decode`/`encode` modes route
+through the JSON layer. `scripts/diff_saves.py`'s own CLI (`dump`/`diff`) targets the JSON output directly - see
+below.
 
 ## Open items / not yet done
 
