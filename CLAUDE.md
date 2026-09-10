@@ -180,15 +180,20 @@ exhaustive per-key list, this is the shape of the grouping itself):
 
 `Events.PE.<id>` is produced by recursively feeding that PE's own `pes<N>`-stripped keys back through the *same*
 per-entry dispatcher root uses (`tools/save_schema.py`'s `dispatch_entry`), not a separate hand-maintained copy - so
-anything with a coherent per-PE reading (`GameState`, `Settings`, `Skill`, `Player`, `Playfab`, `Girls` including its
-`Unlocked`/`PreviouslyUnlocked`/`Current`, `Jobs` including `Available`, `Flings`, `Hobby`, `Bonuses`, `Albums`) is
-handled identically inside a PE, confirmed real for `Bonuses`/`GirlsUnlocked`/`GirlsPreviouslyUnlocked`/`CurrentGirl`/
-`AvailableJobs` inside the Time Warp PE (id 55). A handful of checks are root-only by design (`Achievement`, `Events.
-Completed`, LTE `Task`/`Event<N>Tokens` accumulation, `EventID`, `LastPesId<N>`) since they're save-wide singleton
-concepts - "which LTE is active" has no coherent "one per PE" reading, and LTEs/PEs are mutually exclusive event
-systems per `docs/EVENTS.md`. If one of these ever *does* turn up `pes<N>`-prefixed in a real save, it safely and
-losslessly falls into that PE's own `Unknown` bucket rather than corrupting `Events.PE.<id>` or crashing - it just
-isn't structurally elevated the way root's copy is.
+anything with a coherent per-PE reading (`GameState`, `Settings`, `Skill`, `Player`, `Girls` including its
+`Unlocked`/`PreviouslyUnlocked`/`Current`, `Jobs` including `Available`, `Hobby`, `Bonuses`) is handled identically
+inside a PE, confirmed real for `Bonuses`/`GirlsUnlocked`/`GirlsPreviouslyUnlocked`/`CurrentGirl`/`AvailableJobs`
+inside the Time Warp PE (id 55). Several checks are root-only by design:
+- `Achievement`, `Events.Completed`, LTE `Task`/`Event<N>Tokens` accumulation, `EventID`, `LastPesId<N>` - save-wide
+  singleton concepts ("which LTE is active" has no coherent "one per PE" reading, and LTEs/PEs are mutually exclusive
+  event systems per `docs/EVENTS.md`).
+- `Playfab`, `Flings`, `Albums`, `events.popupinfo` - not singleton *state* so much as whole separate account-wide
+  *features* (Playfab is IAP entitlement tracking, Flings is its own mini-game, Albums is the global Memory Album)
+  that never occur inside a Parallel Event at all.
+
+If one of these ever *does* turn up `pes<N>`-prefixed in a real save, it safely and losslessly falls into that PE's
+own `Unknown` bucket rather than corrupting `Events.PE.<id>` or crashing - it just isn't structurally elevated the
+way root's copy is.
 
 Forward/backward compatibility: a key matching a known object prefix but an unregistered suffix round-trips losslessly
 as `{"value": ..., "raw_suffix": "i"|"f"|""}` rather than being dropped (e.g. the undocumented Switch-only

@@ -688,7 +688,8 @@ def try_root_specials(origin_prefix, full_key, raw, data):
     """PE-safe: confirmed real (Time Warp / PE 55) that a Parallel Event can
     have its own GirlsUnlocked/GirlsPreviouslyUnlocked/CurrentGirl/
     AvailableJobs, mirroring root exactly -- see try_root_only_specials for
-    the account-wide singleton concepts that do NOT have a per-PE analogue."""
+    the account-wide singleton concepts that do NOT have a per-PE analogue
+    (which includes Flings/Playfab/Albums entirely -- see dispatch_entry)."""
     if origin_prefix != "":
         return False
     if full_key == "GirlsUnlocked":
@@ -700,14 +701,8 @@ def try_root_specials(origin_prefix, full_key, raw, data):
     if full_key == "CurrentGirl":
         data.setdefault("Girls", {})["Current"] = int(parse_numeric_token(raw))
         return True
-    if full_key == "UnlockedPFS":
-        data.setdefault("Flings", {})["Unlocked"] = blob_bits_to_json(raw or "")
-        return True
     if full_key == "AvailableJobs":
         data.setdefault("Jobs", {})["Available"] = bits_to_json(int(parse_numeric_token(raw)))
-        return True
-    if full_key in ("BlayfapAwardedItems", "PlayfabAwardedItems"):
-        data.setdefault("Playfab", {})["AwardedItems"] = decode_awarded_items(raw)
         return True
     return False
 
@@ -717,9 +712,18 @@ def try_root_only_specials(origin_prefix, full_key, raw, data):
     is globally active, or its recent history -- a save-wide singleton
     concept with no coherent "one per PE" reading, unlike try_root_specials
     above (PEs and LTEs are entirely separate, mutually exclusive event
-    systems, per docs/EVENTS.md)."""
+    systems, per docs/EVENTS.md). UnlockedPFS/AwardedItems join them here
+    (not try_root_specials) because Flings and Playfab are whole separate
+    account-wide features -- Phone Flings is its own mini-game, Playfab is
+    IAP entitlement tracking -- neither is per-Parallel-Event state at all."""
     if origin_prefix != "":
         return False
+    if full_key == "UnlockedPFS":
+        data.setdefault("Flings", {})["Unlocked"] = blob_bits_to_json(raw or "")
+        return True
+    if full_key in ("BlayfapAwardedItems", "PlayfabAwardedItems"):
+        data.setdefault("Playfab", {})["AwardedItems"] = decode_awarded_items(raw)
+        return True
     if full_key == "EventID":
         data.setdefault("Events", {})["Current"] = int(parse_numeric_token(raw))
         return True
@@ -739,33 +743,39 @@ def dispatch_entry(origin_prefix, origin_suffix, full_key, raw, data, pending_ta
     origin_suffix, full_key, raw) tuple -- used both for root-level entries
     and, recursively via try_pe, for a Parallel Event's own pes<N>-stripped
     keys. Whatever is handled at root that has a coherent per-PE reading
-    (GameState, Bonuses, GirlsUnlocked, Jobs, Girls, Hobby, ...) is handled
+    (GameState, Settings, Skill, Player, Bonuses, GirlsUnlocked/
+    PreviouslyUnlocked/CurrentGirl, AvailableJobs, Hobby, ...) is handled
     identically inside a PE through this same chain, so there is exactly
     one place that knows how to parse any given key -- no separate,
     easy-to-forget copy of the dispatch logic for PE context.
 
-    A handful of checks are root-only (try_task, try_ach, try_completed,
-    try_root_only_specials, and try_pe itself): they represent save-wide
-    singleton state -- which LTE is active, lifetime achievement tiers,
-    weekly/LTE completion -- with no "one per PE" analogue, gated behind
-    `pe_unknown is not None` (true only for the root call; a recursive PE
-    call passes None, which also prevents a pes<N> key recursing twice)."""
+    Several checks are root-only (try_task, try_ach, try_playfab, try_fling,
+    try_completed, try_root_only_specials, the Album/events.popupinfo
+    checks, and try_pe itself): some represent save-wide singleton state
+    with no "one per PE" reading (which LTE is active, lifetime achievement
+    tiers, weekly/LTE completion); Playfab (IAP entitlement tracking),
+    Flings (its own separate mini-game), and Albums (the global Memory
+    Album) are simply unrelated secondary features that never occur inside
+    a Parallel Event at all. Gated behind `pe_unknown is not None` (true
+    only for the root call; a recursive PE call passes None, which also
+    prevents a pes<N> key recursing twice)."""
     is_root = pe_unknown is not None
     if full_key == "":
         return  # artifact of a trailing/blank line, not real data
     if full_key in ROOT_SCALAR_FIELDS:
         set_field(data, full_key, ROOT_SCALAR_FIELDS[full_key], raw)
         return
-    if full_key == "events.popupinfo":
+    if is_root and full_key == "events.popupinfo":
         data["events.popupinfo"] = json.loads(raw) if raw else {}
         return
     if full_key == "TimeMultiplier":
         data.setdefault("GameState", {}).setdefault("Multipliers", {})["Time"] = float(parse_numeric_token(raw))
         return
-    m = ALBUM_RE.match(full_key)
-    if m:
-        data.setdefault("Albums", {})[m.group(1)] = album_value_to_json(parse_numeric_token(raw))
-        return
+    if is_root:
+        m = ALBUM_RE.match(full_key)
+        if m:
+            data.setdefault("Albums", {})[m.group(1)] = album_value_to_json(parse_numeric_token(raw))
+            return
     m = SHOP_TABLE_RE.match(full_key)
     if m:
         cat, size, field = m.groups()
@@ -778,13 +788,13 @@ def dispatch_entry(origin_prefix, origin_suffix, full_key, raw, data, pending_ta
         return
     if try_root_specials(origin_prefix, full_key, raw, data):
         return
-    if try_fling(origin_prefix, full_key, raw, data):
+    if is_root and try_fling(origin_prefix, full_key, raw, data):
         return
     if is_root and try_task(origin_prefix, origin_suffix, full_key, raw, pending_tasks):
         return
     if is_root and try_ach(origin_prefix, origin_suffix, full_key, raw, data):
         return
-    if try_playfab(origin_prefix, origin_suffix, full_key, raw, data):
+    if is_root and try_playfab(origin_prefix, origin_suffix, full_key, raw, data):
         return
     if is_root and try_completed(origin_prefix, origin_suffix, full_key, raw, data):
         return
@@ -1057,14 +1067,15 @@ def encode_pe(pe_id, pe, emit, nintendo):
         emit_object(f"{prefix}Skill", pe["Skill"], SKILL_FIELDS, emit, nintendo)
     if "Player" in pe:
         emit_player(prefix, pe["Player"], emit, nintendo)
-    if "Playfab" in pe:
-        emit_playfab(prefix, pe["Playfab"], emit, nintendo)
+    # Playfab/Flings/Albums/events.popupinfo are deliberately NOT emitted
+    # here -- they're whole separate account-wide features (IAP entitlement
+    # tracking, the Phone Fling mini-game, the global Memory Album, popup
+    # display tracking), never per-Parallel-Event state, matching
+    # dispatch_entry's root-only gating for the same fields on decode.
     if "Girls" in pe:
         emit_girls(prefix, pe["Girls"], emit, nintendo, pe_id=pe_id)
     if "Jobs" in pe:
         emit_jobs(prefix, pe["Jobs"], emit, nintendo)
-    if "Flings" in pe:
-        emit_flings(prefix, pe["Flings"], emit, nintendo)
     for name, hobby in pe.get("Hobby", {}).items():
         emit_object(f"{prefix}Hobby{name}", hobby, HOBBY_FIELDS, emit, nintendo)
     for suffix, spec in PE_EXTRA_FIELDS.items():
@@ -1077,9 +1088,6 @@ def encode_pe(pe_id, pe, emit, nintendo):
     emit_scalars(prefix, ROOT_SCALAR_FIELDS, pe, emit, nintendo)
     if "Bonuses" in pe:
         emit_bonuses(prefix, pe["Bonuses"], emit)
-    if "Albums" in pe:
-        emit_albums(prefix, pe["Albums"], emit)
-    emit_popupinfo(prefix, pe, emit)
     for suffix, value in pe.get("Unknown", {}).items():
         emit(f"{prefix}{suffix}", encode_unknown(value))
 
