@@ -1,4 +1,4 @@
-# Phone Flings
+# Phone Flings (WIP)
 
 Phone flings are simple text and photo conversations in the style of MMS messaging between the player and certain girls.
 For the most part, these flings do not relate to an actual Core Girl but some of them may have unlockable Event Girls for

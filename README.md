@@ -73,7 +73,7 @@ Leave off the output path and `decode`/`encode` print straight to your terminal 
    ```
 
 6. **Back up your original save** somewhere outside this project, then copy the edited file over it — renamed to match
-   what the game expects (e.g. `crushcrush.sav` for Steam or `CrushCrushData1` for Switch). Start Crush Crush and
+   what the game expects (e.g. `crushcrush.sav` for Steam or `CrushSaveData1` for Switch). Start Crush Crush and
    confirm your changes loaded correctly.
 
 ## Project Layout
