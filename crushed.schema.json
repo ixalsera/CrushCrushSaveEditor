@@ -12,87 +12,23 @@
     "GameState": { "$ref": "#/$defs/gameStateObject" },
     "Settings": { "$ref": "#/$defs/settingsObject" },
     "Skill": { "$ref": "#/$defs/skillObject" },
-    "Player": {
-      "type": "object",
-      "description": "Avatar appearance configuration.",
-      "properties": {
-        "Gender": { "type": "integer" },
-        "Hair": { "type": "integer" },
-        "Hat": { "type": "integer" },
-        "Plushy": { "type": "integer" }
-      },
-      "additionalProperties": { "$ref": "#/$defs/unknownField" }
-    },
-    "Playfab": {
-      "type": "object",
-      "description": "Azure PlayFab related state. Assume everything is server-authoritative.",
-      "properties": {
-        "Inventory": { "$ref": "#/$defs/bitmask", "description": "Account-wide owned-Outfits." },
-        "Participation": { "$ref": "#/$defs/bitmaskOrRawFallback", "description": "Parallel Event participation record." },
-        "AwardedItems": { "$ref": "#/$defs/stringArrayOrRawFallback", "description": "Unlocked items." }
-      },
-      "additionalProperties": { "$ref": "#/$defs/unknownField" }
-    },
-    "Girls": {
-      "type": "object",
-      "description": "Structural representation of a Girl's progress in the current reset, keyed by name.",
-      "properties": {
-        "Unlocked": { "$ref": "#/$defs/bitmaskOrRawFallback", "description": "Unlocked within the current reset." },
-        "PreviouslyUnlocked": { "$ref": "#/$defs/bitmaskOrRawFallback", "description": "Unlocked at least once during this save, persists across resets." },
-        "Current": { "type": "integer", "description": "Index of the currently active Girl." }
-      },
-      "additionalProperties": { "$ref": "#/$defs/girlEntry" }
-    },
-    "Jobs": {
-      "type": "object",
-      "description": "Structural representation of a Job's progress in the current reset, keyed by Job name.",
-      "properties": {
-        "Available": { "$ref": "#/$defs/bitmask", "description": "Unlocked jobs. Uses the Job's ID instead of its name." }
-      },
-      "additionalProperties": { "$ref": "#/$defs/jobEntry" }
-    },
+    "Player": { "$ref": "#/$defs/playerObject" },
+    "Playfab": { "$ref": "#/$defs/playfabObject" },
+    "Girls": { "$ref": "#/$defs/girlsObject" },
+    "Jobs": { "$ref": "#/$defs/jobsObject" },
     "Hobby": {
       "type": "object",
       "description": "Structural representation of a Hobby's progress in the current reset, keyed by Hobby name.",
       "additionalProperties": { "$ref": "#/$defs/hobbyEntry" }
     },
-    "Flings": {
-      "type": "object",
-      "description": "Phone Flings. Keyed by numeric fling ID.",
-      "properties": {
-        "Unlocked": { "$ref": "#/$defs/bitmaskOrRawFallback", "description": "Which fling IDs are unlocked at all." },
-        "Purchased": { "$ref": "#/$defs/bitmask", "description": "Purchased Core Girl flings, in fixed roster order (not fling ID order)." }
-      },
-      "additionalProperties": { "$ref": "#/$defs/flingEntry" }
-    },
+    "Flings": { "$ref": "#/$defs/flingsObject" },
     "Achievement": {
       "type": "object",
-      "description": "Keyed by achievement ID.",
+      "description": "Keyed by achievement ID. Save-wide (lifetime tracking) - never appears per-Parallel-Event.",
       "additionalProperties": { "$ref": "#/$defs/bitmask" }
     },
-    "Bonuses": {
-      "type": "object",
-      "description": "Shop bonus pricing/quantities. PC-only in practice - absent on Switch saves.",
-      "properties": {
-        "Time Blocks": { "$ref": "#/$defs/bonusCategory" },
-        "Speed Boost": { "$ref": "#/$defs/bonusCategory" },
-        "Time Skip": { "$ref": "#/$defs/bonusCategory" }
-      },
-      "additionalProperties": false
-    },
-    "Albums": {
-      "type": "object",
-      "description": "Memory Album unlock trackers (Switch-only). Keyed by album ID (0-5).",
-      "additionalProperties": {
-        "type": "object",
-        "description": "Byte index (little-endian) -> bit index within that byte -> true for set bits. Sparse: an absent byte/bit means unset.",
-        "additionalProperties": {
-          "type": "object",
-          "patternProperties": { "^[0-7]$": { "type": "boolean" } },
-          "additionalProperties": false
-        }
-      }
-    },
+    "Bonuses": { "$ref": "#/$defs/bonusesObject" },
+    "Albums": { "$ref": "#/$defs/albumsObject" },
     "Events": {
       "type": "object",
       "properties": {
@@ -366,24 +302,30 @@
     },
     "eventsPeEntry": {
       "type": "object",
-      "description": "Parallel Event's mirrored state.",
+      "description": "Parallel Event's mirrored state. Anything handled at root with a coherent per-PE reading is handled identically here (tools/save_schema.py's dispatch_entry is shared between root and PE decode/encode) - confirmed real for Bonuses, GirlsUnlocked/PreviouslyUnlocked/CurrentGirl and AvailableJobs inside the Time Warp PE. Save-wide singleton concepts (Achievement, Events.Completed, LTE Task/Token tracking, EventID/LastPesId<N>) have no per-PE analogue and never appear here.",
       "properties": {
         "GameState": { "$ref": "#/$defs/gameStateObject" },
         "Settings": { "$ref": "#/$defs/settingsObject" },
         "Skill": { "$ref": "#/$defs/skillObject" },
-        "Jobs": { "type": "object", "additionalProperties": { "$ref": "#/$defs/jobEntry" } },
-        "Girls": { "type": "object", "additionalProperties": { "$ref": "#/$defs/girlEntry" } },
+        "Player": { "$ref": "#/$defs/playerObject" },
+        "Playfab": { "$ref": "#/$defs/playfabObject" },
+        "Girls": { "$ref": "#/$defs/girlsObject" },
+        "Jobs": { "$ref": "#/$defs/jobsObject" },
+        "Flings": { "$ref": "#/$defs/flingsObject" },
         "Hobby": { "type": "object", "additionalProperties": { "$ref": "#/$defs/hobbyEntry" }, "description": "Each PE uses its own 12-hobby name vocabulary." },
+        "Bonuses": { "$ref": "#/$defs/bonusesObject" },
+        "Albums": { "$ref": "#/$defs/albumsObject" },
         "Goals": { "$ref": "#/$defs/bitmask", "description": "Bitmask of goals culminating in unlocking the PE's reward." },
         "PurchasedTime": { "type": "integer", "description": "Meaning undocumented." },
         "Start": { "$ref": "#/$defs/timestamp", "description": "Utc-kind. When the player started this event." },
+        "events.popupinfo": { "type": "object", "additionalProperties": true },
         "Unknown": {
           "type": "object",
           "description": "Forward-compatibility bucket for this PE's unrecognized keys.",
           "additionalProperties": { "$ref": "#/$defs/unknownField" }
         }
       },
-      "additionalProperties": false
+      "additionalProperties": { "$ref": "#/$defs/rootScalarOrUnknown" }
     },
     "eventsLteEntry": {
       "type": "object",
@@ -413,6 +355,84 @@
         "Large": { "$ref": "#/$defs/bonusSize" }
       },
       "additionalProperties": false
+    },
+    "playerObject": {
+      "type": "object",
+      "description": "Avatar appearance configuration.",
+      "properties": {
+        "Gender": { "type": "integer" },
+        "Hair": { "type": "integer" },
+        "Hat": { "type": "integer" },
+        "Plushy": { "type": "integer" }
+      },
+      "additionalProperties": { "$ref": "#/$defs/unknownField" }
+    },
+    "playfabObject": {
+      "type": "object",
+      "description": "Azure PlayFab related state. Assume everything is server-authoritative.",
+      "properties": {
+        "Inventory": { "$ref": "#/$defs/bitmask", "description": "Account-wide owned-Outfits." },
+        "Participation": { "$ref": "#/$defs/bitmaskOrRawFallback", "description": "Parallel Event participation record." },
+        "AwardedItems": { "$ref": "#/$defs/stringArrayOrRawFallback", "description": "Unlocked items." }
+      },
+      "additionalProperties": { "$ref": "#/$defs/unknownField" }
+    },
+    "girlsObject": {
+      "type": "object",
+      "description": "Structural representation of a Girl's progress, keyed by name.",
+      "properties": {
+        "Unlocked": { "$ref": "#/$defs/bitmaskOrRawFallback", "description": "Unlocked within the current reset." },
+        "PreviouslyUnlocked": { "$ref": "#/$defs/bitmaskOrRawFallback", "description": "Unlocked at least once during this save, persists across resets." },
+        "Current": { "type": "integer", "description": "Index of the currently active Girl." }
+      },
+      "additionalProperties": { "$ref": "#/$defs/girlEntry" }
+    },
+    "jobsObject": {
+      "type": "object",
+      "description": "Structural representation of a Job's progress, keyed by Job name.",
+      "properties": {
+        "Available": { "$ref": "#/$defs/bitmask", "description": "Unlocked jobs. Uses the Job's ID instead of its name." }
+      },
+      "additionalProperties": { "$ref": "#/$defs/jobEntry" }
+    },
+    "flingsObject": {
+      "type": "object",
+      "description": "Phone Flings, keyed by numeric fling ID.",
+      "properties": {
+        "Unlocked": { "$ref": "#/$defs/bitmaskOrRawFallback", "description": "Which fling IDs are unlocked at all." },
+        "Purchased": { "$ref": "#/$defs/bitmask", "description": "Purchased Core Girl flings, in fixed roster order (not fling ID order)." }
+      },
+      "additionalProperties": { "$ref": "#/$defs/flingEntry" }
+    },
+    "bonusesObject": {
+      "type": "object",
+      "description": "Shop bonus pricing/quantities. PC-only in practice at root - absent on Switch saves.",
+      "properties": {
+        "Time Blocks": { "$ref": "#/$defs/bonusCategory" },
+        "Speed Boost": { "$ref": "#/$defs/bonusCategory" },
+        "Time Skip": { "$ref": "#/$defs/bonusCategory" }
+      },
+      "additionalProperties": false
+    },
+    "albumsObject": {
+      "type": "object",
+      "description": "Memory Album unlock trackers (Switch-only in practice at root). Keyed by album ID (0-5).",
+      "additionalProperties": {
+        "type": "object",
+        "description": "Byte index (little-endian) -> bit index within that byte -> true for set bits. Sparse: an absent byte/bit means unset.",
+        "additionalProperties": {
+          "type": "object",
+          "patternProperties": { "^[0-7]$": { "type": "boolean" } },
+          "additionalProperties": false
+        }
+      }
+    },
+    "rootScalarOrUnknown": {
+      "description": "A plain scalar root-level value (int/float/string/bool) leaking into a Parallel Event's own state - confirmed real (e.g. dchk inside the Time Warp PE) - or the unknown-field wrapper for a genuinely unrecognized key. Not enumerated key-by-key here the way root's own scalar properties are, since any of them could in principle appear per-PE and the set is small/low-value enough not to duplicate.",
+      "anyOf": [
+        { "type": ["integer", "number", "string", "boolean"] },
+        { "$ref": "#/$defs/unknownField" }
+      ]
     }
   }
 }

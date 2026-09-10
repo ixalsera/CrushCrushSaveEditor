@@ -174,13 +174,25 @@ exhaustive per-key list, this is the shape of the grouping itself):
   encode picks the right key per `--nintendo` target.
 - `Events` holds everything event-related: `Events.Completed.{2018,2019,2020,LTE}` (the last renamed from the raw
   format's own `Completed.Events` to avoid an `Events.Completed.Events` repeat), `Events.PE.<id>` (a parallel event's
-  mirrored `GameState`/`Jobs`/`Hobby`/`Girls` blocks, keyed the same way as root), `Events.LTE.<id>` (`Tokens` always,
-  `Tasks` only for whichever id matches `Events.Current`), and `Events.Current` (was root `EventID` - moved here as a
-  judgment call for consistency, not something the raw format itself groups).
+  mirrored state - see below), `Events.LTE.<id>` (`Tokens` always, `Tasks` only for whichever id matches
+  `Events.Current`), and `Events.Current` (was root `EventID` - moved here as a judgment call for consistency, not
+  something the raw format itself groups).
+
+`Events.PE.<id>` is produced by recursively feeding that PE's own `pes<N>`-stripped keys back through the *same*
+per-entry dispatcher root uses (`tools/save_schema.py`'s `dispatch_entry`), not a separate hand-maintained copy - so
+anything with a coherent per-PE reading (`GameState`, `Settings`, `Skill`, `Player`, `Playfab`, `Girls` including its
+`Unlocked`/`PreviouslyUnlocked`/`Current`, `Jobs` including `Available`, `Flings`, `Hobby`, `Bonuses`, `Albums`) is
+handled identically inside a PE, confirmed real for `Bonuses`/`GirlsUnlocked`/`GirlsPreviouslyUnlocked`/`CurrentGirl`/
+`AvailableJobs` inside the Time Warp PE (id 55). A handful of checks are root-only by design (`Achievement`, `Events.
+Completed`, LTE `Task`/`Event<N>Tokens` accumulation, `EventID`, `LastPesId<N>`) since they're save-wide singleton
+concepts - "which LTE is active" has no coherent "one per PE" reading, and LTEs/PEs are mutually exclusive event
+systems per `docs/EVENTS.md`. If one of these ever *does* turn up `pes<N>`-prefixed in a real save, it safely and
+losslessly falls into that PE's own `Unknown` bucket rather than corrupting `Events.PE.<id>` or crashing - it just
+isn't structurally elevated the way root's copy is.
 
 Forward/backward compatibility: a key matching a known object prefix but an unregistered suffix round-trips losslessly
-as `{"value": ..., "raw_suffix": "i"|"f"|""}` rather than being dropped (e.g. `Girl<Name>LifeGifts`, seen in real
-saves but not in any doc above - not yet understood, so left as-is rather than guessed at). A field the docs describe
+as `{"value": ..., "raw_suffix": "i"|"f"|""}` rather than being dropped (e.g. the undocumented Switch-only
+`SettingsMusicMute`/`SettingsSoundMute` - not yet understood, so left as-is rather than guessed at). A field the docs describe
 as bitmask/blob-shaped but that doesn't actually decode as one in a given save (observed: `GirlsUnlocked:19i` as a
 plain int in one PC save, `PlayfabAwardedItems:135516928i` in another) falls back to the same raw-preserving wrapper
 under a `_raw_fallback` key instead of crashing.

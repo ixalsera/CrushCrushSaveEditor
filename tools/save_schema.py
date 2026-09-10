@@ -685,6 +685,10 @@ def try_hobby(origin_prefix, origin_suffix, full_key, raw, data):
 
 
 def try_root_specials(origin_prefix, full_key, raw, data):
+    """PE-safe: confirmed real (Time Warp / PE 55) that a Parallel Event can
+    have its own GirlsUnlocked/GirlsPreviouslyUnlocked/CurrentGirl/
+    AvailableJobs, mirroring root exactly -- see try_root_only_specials for
+    the account-wide singleton concepts that do NOT have a per-PE analogue."""
     if origin_prefix != "":
         return False
     if full_key == "GirlsUnlocked":
@@ -705,6 +709,17 @@ def try_root_specials(origin_prefix, full_key, raw, data):
     if full_key in ("BlayfapAwardedItems", "PlayfabAwardedItems"):
         data.setdefault("Playfab", {})["AwardedItems"] = decode_awarded_items(raw)
         return True
+    return False
+
+
+def try_root_only_specials(origin_prefix, full_key, raw, data):
+    """Root-only: EventID/Event<N>Tokens/LastPesId<N> point at whichever LTE
+    is globally active, or its recent history -- a save-wide singleton
+    concept with no coherent "one per PE" reading, unlike try_root_specials
+    above (PEs and LTEs are entirely separate, mutually exclusive event
+    systems, per docs/EVENTS.md)."""
+    if origin_prefix != "":
+        return False
     if full_key == "EventID":
         data.setdefault("Events", {})["Current"] = int(parse_numeric_token(raw))
         return True
@@ -719,32 +734,84 @@ def try_root_specials(origin_prefix, full_key, raw, data):
     return False
 
 
-def handle_pe_remainder(remainder, raw, pe):
-    if try_gamestate("", None, remainder, raw, pe):
+def dispatch_entry(origin_prefix, origin_suffix, full_key, raw, data, pending_tasks, unknown, pe_unknown):
+    """The single per-entry dispatcher for a flattened (origin_prefix,
+    origin_suffix, full_key, raw) tuple -- used both for root-level entries
+    and, recursively via try_pe, for a Parallel Event's own pes<N>-stripped
+    keys. Whatever is handled at root that has a coherent per-PE reading
+    (GameState, Bonuses, GirlsUnlocked, Jobs, Girls, Hobby, ...) is handled
+    identically inside a PE through this same chain, so there is exactly
+    one place that knows how to parse any given key -- no separate,
+    easy-to-forget copy of the dispatch logic for PE context.
+
+    A handful of checks are root-only (try_task, try_ach, try_completed,
+    try_root_only_specials, and try_pe itself): they represent save-wide
+    singleton state -- which LTE is active, lifetime achievement tiers,
+    weekly/LTE completion -- with no "one per PE" analogue, gated behind
+    `pe_unknown is not None` (true only for the root call; a recursive PE
+    call passes None, which also prevents a pes<N> key recursing twice)."""
+    is_root = pe_unknown is not None
+    if full_key == "":
+        return  # artifact of a trailing/blank line, not real data
+    if full_key in ROOT_SCALAR_FIELDS:
+        set_field(data, full_key, ROOT_SCALAR_FIELDS[full_key], raw)
         return
-    if remainder == "TimeMultiplier":
-        pe.setdefault("GameState", {}).setdefault("Multipliers", {})["Time"] = float(parse_numeric_token(raw))
+    if full_key == "events.popupinfo":
+        data["events.popupinfo"] = json.loads(raw) if raw else {}
         return
-    if try_fixed_prefix_object("", None, remainder, raw, pe):
+    if full_key == "TimeMultiplier":
+        data.setdefault("GameState", {}).setdefault("Multipliers", {})["Time"] = float(parse_numeric_token(raw))
         return
-    m = LOVE_HIGH_MARK_RE.match(remainder)
+    m = ALBUM_RE.match(full_key)
+    if m:
+        data.setdefault("Albums", {})[m.group(1)] = album_value_to_json(parse_numeric_token(raw))
+        return
+    m = SHOP_TABLE_RE.match(full_key)
+    if m:
+        cat, size, field = m.groups()
+        data.setdefault("Bonuses", {}).setdefault(BONUS_CATEGORIES[cat], {}).setdefault(
+            BONUS_SIZES[size], {})[BONUS_FIELDS[field]] = int(parse_numeric_token(raw))
+        return
+    if is_root and try_pe(origin_prefix, origin_suffix, full_key, raw, data, pe_unknown):
+        return
+    if try_player(origin_prefix, origin_suffix, full_key, raw, data):
+        return
+    if try_root_specials(origin_prefix, full_key, raw, data):
+        return
+    if try_fling(origin_prefix, full_key, raw, data):
+        return
+    if is_root and try_task(origin_prefix, origin_suffix, full_key, raw, pending_tasks):
+        return
+    if is_root and try_ach(origin_prefix, origin_suffix, full_key, raw, data):
+        return
+    if try_playfab(origin_prefix, origin_suffix, full_key, raw, data):
+        return
+    if is_root and try_completed(origin_prefix, origin_suffix, full_key, raw, data):
+        return
+    if is_root and try_root_only_specials(origin_prefix, full_key, raw, data):
+        return
+    if try_gamestate(origin_prefix, origin_suffix, full_key, raw, data):
+        return
+    if try_fixed_prefix_object(origin_prefix, origin_suffix, full_key, raw, data):
+        return
+    m = LOVE_HIGH_MARK_RE.match(full_key)
     if m:
         name = m.group(1)[0].upper() + m.group(1)[1:]
-        pe.setdefault("Girls", {}).setdefault(name, {})["LoveHighMark"] = int(parse_numeric_token(raw))
+        data.setdefault("Girls", {}).setdefault(name, {})["LoveHighMark"] = int(parse_numeric_token(raw))
         return
-    if try_job("", None, remainder, raw, pe):
+    if try_job(origin_prefix, origin_suffix, full_key, raw, data):
         return
-    if try_girl("", None, remainder, raw, pe):
+    if try_girl(origin_prefix, origin_suffix, full_key, raw, data):
         return
-    if try_hobby("", None, remainder, raw, pe):
+    if try_hobby(origin_prefix, origin_suffix, full_key, raw, data):
         return
-    if remainder in PE_EXTRA_FIELDS:
-        set_field(pe, remainder, PE_EXTRA_FIELDS[remainder], raw)
+    if full_key in PE_EXTRA_FIELDS:
+        set_field(data, full_key, PE_EXTRA_FIELDS[full_key], raw)
         return
-    pe.setdefault("Unknown", {})[remainder] = decode_unknown(raw)
+    unknown[full_key] = decode_unknown(raw)
 
 
-def try_pe(origin_prefix, origin_suffix, full_key, raw, data):
+def try_pe(origin_prefix, origin_suffix, full_key, raw, data, pe_unknown):
     if origin_prefix != "":
         return False
     m = PES_RE.match(full_key)
@@ -752,7 +819,12 @@ def try_pe(origin_prefix, origin_suffix, full_key, raw, data):
         return False
     pe_id, remainder = m.group(1), m.group(2)
     pe = data.setdefault("Events", {}).setdefault("PE", {}).setdefault(pe_id, {})
-    handle_pe_remainder(remainder, raw, pe)
+    # `unknown` deferred (not pe.setdefault("Unknown", {}) directly) so a PE
+    # with nothing unrecognized doesn't end up with a spurious empty Unknown
+    # key -- folded into pe["Unknown"] only if non-empty, after the main
+    # loop, same lazy-attachment pattern as root's own `unknown` dict.
+    # `pending_tasks`/`pe_unknown` are None: try_task/try_pe are root-only.
+    dispatch_entry("", None, remainder, raw, pe, None, pe_unknown.setdefault(pe_id, {}), None)
     return True
 
 
@@ -762,55 +834,9 @@ def decode_save_text(text):
     data = {}
     pending_tasks = {}
     unknown = {}
+    pe_unknown = {}
     for origin_prefix, origin_suffix, full_key, raw in entries:
-        if full_key == "":
-            continue  # artifact of a trailing/blank line, not real data
-        if full_key in ROOT_SCALAR_FIELDS:
-            set_field(data, full_key, ROOT_SCALAR_FIELDS[full_key], raw)
-            continue
-        if full_key == "events.popupinfo":
-            data["events.popupinfo"] = json.loads(raw) if raw else {}
-            continue
-        if full_key == "TimeMultiplier":
-            data.setdefault("GameState", {}).setdefault("Multipliers", {})["Time"] = float(parse_numeric_token(raw))
-            continue
-        m = ALBUM_RE.match(full_key)
-        if m:
-            data.setdefault("Albums", {})[m.group(1)] = album_value_to_json(parse_numeric_token(raw))
-            continue
-        m = SHOP_TABLE_RE.match(full_key)
-        if m:
-            cat, size, field = m.groups()
-            data.setdefault("Bonuses", {}).setdefault(BONUS_CATEGORIES[cat], {}).setdefault(
-                BONUS_SIZES[size], {})[BONUS_FIELDS[field]] = int(parse_numeric_token(raw))
-            continue
-        if try_pe(origin_prefix, origin_suffix, full_key, raw, data):
-            continue
-        if try_player(origin_prefix, origin_suffix, full_key, raw, data):
-            continue
-        if try_root_specials(origin_prefix, full_key, raw, data):
-            continue
-        if try_fling(origin_prefix, full_key, raw, data):
-            continue
-        if try_task(origin_prefix, origin_suffix, full_key, raw, pending_tasks):
-            continue
-        if try_ach(origin_prefix, origin_suffix, full_key, raw, data):
-            continue
-        if try_playfab(origin_prefix, origin_suffix, full_key, raw, data):
-            continue
-        if try_completed(origin_prefix, origin_suffix, full_key, raw, data):
-            continue
-        if try_gamestate(origin_prefix, origin_suffix, full_key, raw, data):
-            continue
-        if try_fixed_prefix_object(origin_prefix, origin_suffix, full_key, raw, data):
-            continue
-        if try_job(origin_prefix, origin_suffix, full_key, raw, data):
-            continue
-        if try_girl(origin_prefix, origin_suffix, full_key, raw, data):
-            continue
-        if try_hobby(origin_prefix, origin_suffix, full_key, raw, data):
-            continue
-        unknown[full_key] = decode_unknown(raw)
+        dispatch_entry(origin_prefix, origin_suffix, full_key, raw, data, pending_tasks, unknown, pe_unknown)
     if pending_tasks:
         current = data.get("Events", {}).get("Current")
         if current is not None:
@@ -818,6 +844,9 @@ def decode_save_text(text):
             lte["Tasks"] = pending_tasks
         else:
             unknown["Task"] = pending_tasks
+    for pe_id, pe_unk in pe_unknown.items():
+        if pe_unk:
+            data["Events"]["PE"][pe_id].setdefault("Unknown", {}).update(pe_unk)
     if unknown:
         data["Unknown"] = unknown
     return data
@@ -911,6 +940,112 @@ def encode_job_entry(full_prefix, job, emit, nintendo):
             emit(f"{full_prefix}{suffix}", encode_unknown(value))
 
 
+def emit_player(prefix, player, emit, nintendo):
+    for suffix, spec in PLAYER_FIELDS.items():
+        if suffix in player:
+            emit(f"{prefix}Skill{suffix}", render_value(spec, player[suffix], nintendo))
+    for suffix, value in player.items():
+        if suffix in PLAYER_FIELDS:
+            continue
+        if isinstance(value, dict) and "raw_suffix" in value:
+            emit(f"{prefix}Skill{suffix}", encode_unknown(value))
+
+
+def emit_scalars(prefix, table, obj, emit, nintendo):
+    """Emit a flat {suffix: FieldSpec} table's fields against `obj` -- used
+    for ROOT_SCALAR_FIELDS, shared between root and (confirmed real, e.g.
+    `dchk` inside the Time Warp PE) a Parallel Event's own scalars."""
+    for key, spec in table.items():
+        if key in obj:
+            emit(f"{prefix}{key}", render_value(spec, obj[key], nintendo))
+
+
+def emit_bonuses(prefix, bonuses, emit):
+    rev_categories = {v: k for k, v in BONUS_CATEGORIES.items()}
+    rev_sizes = {v: k for k, v in BONUS_SIZES.items()}
+    rev_fields = {v: k for k, v in BONUS_FIELDS.items()}
+    for cat_name, sizes in bonuses.items():
+        cat = rev_categories.get(cat_name)
+        if cat is None:
+            continue
+        for size_name, fields in sizes.items():
+            size = rev_sizes.get(size_name)
+            if size is None:
+                continue
+            for field_name, value in fields.items():
+                field = rev_fields.get(field_name)
+                if field is None:
+                    continue
+                emit(f"{prefix}.{cat}.{size}.{field}", f"{int(value)}i")
+
+
+def emit_albums(prefix, albums, emit):
+    for n, obj in albums.items():
+        emit(f"{prefix}album{n}", str(json_to_album_value(obj)))
+
+
+def emit_popupinfo(prefix, obj, emit):
+    if "events.popupinfo" in obj:
+        emit(f"{prefix}events.popupinfo", json.dumps(obj["events.popupinfo"], separators=(",", ":")))
+
+
+def emit_playfab(prefix, playfab, emit, nintendo):
+    if "Inventory" in playfab:
+        emit(f"{prefix}PlayfabInventory", render_value(FieldSpec("bitmask_int"), playfab["Inventory"], nintendo))
+    if "Participation" in playfab:
+        emit(f"{prefix}PlayfabParticipation",
+             render_value(FieldSpec("bitmask_blob", blob_min_bytes=7), playfab["Participation"], nintendo))
+    if "AwardedItems" in playfab:
+        key = "PlayfabAwardedItems" if nintendo else "BlayfapAwardedItems"
+        emit(f"{prefix}{key}", json_to_blob_text(playfab["AwardedItems"]))
+    for suffix, value in playfab.items():
+        if suffix in ("Inventory", "Participation", "AwardedItems"):
+            continue
+        if isinstance(value, dict) and "raw_suffix" in value:
+            emit(f"{prefix}Playfab{suffix}", encode_unknown(value))
+
+
+def emit_girls(prefix, girls, emit, nintendo, pe_id=None):
+    if "Unlocked" in girls:
+        emit(f"{prefix}GirlsUnlocked", json_to_blob_bits(girls["Unlocked"], min_bytes=11))
+    if "PreviouslyUnlocked" in girls:
+        emit(f"{prefix}GirlsPreviouslyUnlocked", json_to_blob_bits(girls["PreviouslyUnlocked"], min_bytes=11))
+    if "Current" in girls:
+        emit(f"{prefix}CurrentGirl", render_value(FieldSpec("int"), girls["Current"], nintendo))
+    for name, girl in girls.items():
+        if name in ("Unlocked", "PreviouslyUnlocked", "Current"):
+            continue
+        skip_keys = {"LoveHighMark"} if pe_id is not None else frozenset()
+        encode_girl_entry(f"{prefix}Girl{name}", girl, emit, nintendo, skip_keys=skip_keys)
+        if pe_id is not None and "LoveHighMark" in girl:
+            lname = name[0].lower() + name[1:] if name else name
+            emit(f"pes{pe_id}Girl{lname}LoveHighMark",
+                 render_value(FieldSpec("int"), girl["LoveHighMark"], nintendo))
+
+
+def emit_jobs(prefix, jobs, emit, nintendo):
+    if "Available" in jobs:
+        emit(f"{prefix}AvailableJobs", render_value(FieldSpec("bitmask_int"), jobs["Available"], nintendo))
+    for name, job in jobs.items():
+        if name == "Available":
+            continue
+        encode_job_entry(f"{prefix}Job{name}", job, emit, nintendo)
+
+
+def emit_flings(prefix, flings, emit, nintendo):
+    if "Unlocked" in flings:
+        emit(f"{prefix}UnlockedPFS", json_to_blob_bits(flings["Unlocked"], min_bytes=4))
+    if "Purchased" in flings:
+        emit(f"{prefix}PlayfabFlingPurchases", render_value(FieldSpec("bitmask_long"), flings["Purchased"], nintendo))
+    for fid, entry in flings.items():
+        if fid in ("Unlocked", "Purchased"):
+            continue
+        d_val = entry.get("Date")
+        if d_val is not None:
+            emit(f"{prefix}C{fid}D", str(json_to_timestamp(d_val, "utc")))
+        emit(f"{prefix}C{fid}P", json_to_fling_p(entry.get("Progress")))
+
+
 def encode_pe(pe_id, pe, emit, nintendo):
     prefix = f"pes{pe_id}"
     if "GameState" in pe:
@@ -920,14 +1055,16 @@ def encode_pe(pe_id, pe, emit, nintendo):
         emit_object(f"{prefix}Settings", pe["Settings"], SETTINGS_FIELDS, emit, nintendo)
     if "Skill" in pe:
         emit_object(f"{prefix}Skill", pe["Skill"], SKILL_FIELDS, emit, nintendo)
-    for name, job in pe.get("Jobs", {}).items():
-        encode_job_entry(f"{prefix}Job{name}", job, emit, nintendo)
-    for name, girl in pe.get("Girls", {}).items():
-        encode_girl_entry(f"{prefix}Girl{name}", girl, emit, nintendo, skip_keys={"LoveHighMark"})
-        if "LoveHighMark" in girl:
-            lname = name[0].lower() + name[1:] if name else name
-            emit(f"{prefix}Girl{lname}LoveHighMark",
-                 render_value(FieldSpec("int"), girl["LoveHighMark"], nintendo))
+    if "Player" in pe:
+        emit_player(prefix, pe["Player"], emit, nintendo)
+    if "Playfab" in pe:
+        emit_playfab(prefix, pe["Playfab"], emit, nintendo)
+    if "Girls" in pe:
+        emit_girls(prefix, pe["Girls"], emit, nintendo, pe_id=pe_id)
+    if "Jobs" in pe:
+        emit_jobs(prefix, pe["Jobs"], emit, nintendo)
+    if "Flings" in pe:
+        emit_flings(prefix, pe["Flings"], emit, nintendo)
     for name, hobby in pe.get("Hobby", {}).items():
         emit_object(f"{prefix}Hobby{name}", hobby, HOBBY_FIELDS, emit, nintendo)
     for suffix, spec in PE_EXTRA_FIELDS.items():
@@ -937,6 +1074,12 @@ def encode_pe(pe_id, pe, emit, nintendo):
             # PES_RE matches both on decode, this just mirrors it back.
             key_prefix = f"Pes{pe_id}" if suffix == "Start" else prefix
             emit(f"{key_prefix}{suffix}", render_value(spec, pe[suffix], nintendo))
+    emit_scalars(prefix, ROOT_SCALAR_FIELDS, pe, emit, nintendo)
+    if "Bonuses" in pe:
+        emit_bonuses(prefix, pe["Bonuses"], emit)
+    if "Albums" in pe:
+        emit_albums(prefix, pe["Albums"], emit)
+    emit_popupinfo(prefix, pe, emit)
     for suffix, value in pe.get("Unknown", {}).items():
         emit(f"{prefix}{suffix}", encode_unknown(value))
 
@@ -957,66 +1100,15 @@ def encode_save_text(data, nintendo=False):
     if "Skill" in data:
         emit_object("Skill", data["Skill"], SKILL_FIELDS, emit, nintendo)
 
-    player = data.get("Player", {})
-    for suffix, spec in PLAYER_FIELDS.items():
-        if suffix in player:
-            emit(f"Skill{suffix}", render_value(spec, player[suffix], nintendo))
-    for suffix, value in player.items():
-        if suffix in PLAYER_FIELDS:
-            continue
-        if isinstance(value, dict) and "raw_suffix" in value:
-            emit(f"Skill{suffix}", encode_unknown(value))
-
-    playfab = data.get("Playfab", {})
-    if "Inventory" in playfab:
-        emit("PlayfabInventory", render_value(FieldSpec("bitmask_int"), playfab["Inventory"], nintendo))
-    if "Participation" in playfab:
-        emit("PlayfabParticipation",
-             render_value(FieldSpec("bitmask_blob", blob_min_bytes=7), playfab["Participation"], nintendo))
-    if "AwardedItems" in playfab:
-        key = "PlayfabAwardedItems" if nintendo else "BlayfapAwardedItems"
-        emit(key, json_to_blob_text(playfab["AwardedItems"]))
-    for suffix, value in playfab.items():
-        if suffix in ("Inventory", "Participation", "AwardedItems"):
-            continue
-        if isinstance(value, dict) and "raw_suffix" in value:
-            emit(f"Playfab{suffix}", encode_unknown(value))
-
-    girls = data.get("Girls", {})
-    if "Unlocked" in girls:
-        emit("GirlsUnlocked", json_to_blob_bits(girls["Unlocked"], min_bytes=11))
-    if "PreviouslyUnlocked" in girls:
-        emit("GirlsPreviouslyUnlocked", json_to_blob_bits(girls["PreviouslyUnlocked"], min_bytes=11))
-    if "Current" in girls:
-        emit("CurrentGirl", render_value(FieldSpec("int"), girls["Current"], nintendo))
-    for name, girl in girls.items():
-        if name in ("Unlocked", "PreviouslyUnlocked", "Current"):
-            continue
-        encode_girl_entry(f"Girl{name}", girl, emit, nintendo)
-
-    jobs = data.get("Jobs", {})
-    if "Available" in jobs:
-        emit("AvailableJobs", render_value(FieldSpec("bitmask_int"), jobs["Available"], nintendo))
-    for name, job in jobs.items():
-        if name == "Available":
-            continue
-        encode_job_entry(f"Job{name}", job, emit, nintendo)
+    emit_player("", data.get("Player", {}), emit, nintendo)
+    emit_playfab("", data.get("Playfab", {}), emit, nintendo)
+    emit_girls("", data.get("Girls", {}), emit, nintendo)
+    emit_jobs("", data.get("Jobs", {}), emit, nintendo)
 
     for name, hobby in data.get("Hobby", {}).items():
         emit_object(f"Hobby{name}", hobby, HOBBY_FIELDS, emit, nintendo)
 
-    flings = data.get("Flings", {})
-    if "Unlocked" in flings:
-        emit("UnlockedPFS", json_to_blob_bits(flings["Unlocked"], min_bytes=4))
-    if "Purchased" in flings:
-        emit("PlayfabFlingPurchases", render_value(FieldSpec("bitmask_long"), flings["Purchased"], nintendo))
-    for fid, entry in flings.items():
-        if fid in ("Unlocked", "Purchased"):
-            continue
-        d_val = entry.get("Date")
-        if d_val is not None:
-            emit(f"C{fid}D", str(json_to_timestamp(d_val, "utc")))
-        emit(f"C{fid}P", json_to_fling_p(entry.get("Progress")))
+    emit_flings("", data.get("Flings", {}), emit, nintendo)
 
     for aid, bits in data.get("Achievement", {}).items():
         emit(f"ACH{aid}", render_value(FieldSpec("bitmask_int"), bits, nintendo))
@@ -1051,32 +1143,10 @@ def encode_save_text(data, nintendo=False):
     for pe_id, pe in events.get("PE", {}).items():
         encode_pe(pe_id, pe, emit, nintendo)
 
-    for key, spec in ROOT_SCALAR_FIELDS.items():
-        if key in data:
-            emit(key, render_value(spec, data[key], nintendo))
-
-    rev_bonus_categories = {v: k for k, v in BONUS_CATEGORIES.items()}
-    rev_bonus_sizes = {v: k for k, v in BONUS_SIZES.items()}
-    rev_bonus_fields = {v: k for k, v in BONUS_FIELDS.items()}
-    for cat_name, sizes in data.get("Bonuses", {}).items():
-        cat = rev_bonus_categories.get(cat_name)
-        if cat is None:
-            continue
-        for size_name, fields in sizes.items():
-            size = rev_bonus_sizes.get(size_name)
-            if size is None:
-                continue
-            for field_name, value in fields.items():
-                field = rev_bonus_fields.get(field_name)
-                if field is None:
-                    continue
-                emit(f".{cat}.{size}.{field}", f"{int(value)}i")
-
-    for n, obj in data.get("Albums", {}).items():
-        emit(f"album{n}", str(json_to_album_value(obj)))
-
-    if "events.popupinfo" in data:
-        emit("events.popupinfo", json.dumps(data["events.popupinfo"], separators=(",", ":")))
+    emit_scalars("", ROOT_SCALAR_FIELDS, data, emit, nintendo)
+    emit_bonuses("", data.get("Bonuses", {}), emit)
+    emit_albums("", data.get("Albums", {}), emit)
+    emit_popupinfo("", data, emit)
 
     for key in LAST_PES_ID_KEYS:
         if key in data:
