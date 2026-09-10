@@ -4,8 +4,8 @@ play session, so the next decode can be diffed against what's "prev" now
 (see CLAUDE.md's "Investigating an unconfirmed field" note).
 
 Moves:
-    saves/<name>.sav   -> saves/<name>.prev.sav
-    decoded/<name>.txt -> decoded/<name>.prev.txt
+    saves/<name>.sav    -> saves/<name>.prev.sav
+    decoded/<name>.json -> decoded/<name>.prev.json
 
 Refuses to rotate at all (rather than rotating one file and not the other)
 if either source file is missing - this is a normal, expected case (e.g.
@@ -22,13 +22,13 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def rotate(name="crushcrush"):
-    """Rotate saves/<name>.sav and decoded/<name>.txt to their .prev.
+    """Rotate saves/<name>.sav and decoded/<name>.json to their .prev.
     counterparts, overwriting any existing .prev. files. Returns the list
     of (src, dst) pairs actually moved, or None if either source file is
     missing (nothing is rotated in that case)."""
     pairs = [
         (ROOT / "saves" / f"{name}.sav", ROOT / "saves" / f"{name}.prev.sav"),
-        (ROOT / "decoded" / f"{name}.txt", ROOT / "decoded" / f"{name}.prev.txt"),
+        (ROOT / "decoded" / f"{name}.json", ROOT / "decoded" / f"{name}.prev.json"),
     ]
     if any(not src.exists() for src, _ in pairs):
         return None

@@ -23,10 +23,20 @@ non-base64 header bytes, and decoding "lzfc" alone reproduces MAGIC exactly.
 Only encode needs a separate path (--nintendo), since PC's encode wraps
 everything in one base64 call and has no room for that leading header.
 
+decode/encode's CLI produces/consumes structured JSON (see tools/save_schema.py)
+rather than the raw flat plaintext -- timestamps, bitmasks, and blobs are all
+converted to human-editable JSON shapes, and Girl/Job/Hobby/Fling/Achievement/
+Event data is grouped into dedicated objects. encode(nintendo=...) picks the
+target platform independently of where the JSON originated, dropping/defaulting
+platform-specific fields as needed. decode_bytes/encode_bytes/decode_file/
+encode_file below remain a lower-level flat-text API (used by tools/blank_save.py,
+scripts/diff_saves.py, and verification tooling), unaffected by any of this.
+
 Usage:
-    crushcrush_save.py decode <in.sav> [out.txt]
-    crushcrush_save.py encode <in.txt> [out.sav] [--nintendo]
+    crushcrush_save.py decode <in.sav> [out.json]
+    crushcrush_save.py encode <in.json> [out.sav] [--nintendo]
 """
+import json
 import struct
 import sys
 import base64
@@ -34,6 +44,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "utils"))
 import lzf
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import save_schema
 
 MAGIC = bytes.fromhex("9737dc")
 NINTENDO_HEADER = struct.pack("<I", 1)
@@ -82,12 +95,20 @@ def main():
     mode, in_path = args[0], args[1]
     out_path = args[2] if len(args) > 2 else None
     if mode == "decode":
-        text = decode_file(in_path, out_path)
-        if not out_path:
-            sys.stdout.write(text)
+        text = decode_bytes(Path(in_path).read_text()).decode("utf-8")
+        data = save_schema.decode_save_text(text)
+        out = json.dumps(data, indent=2, sort_keys=True)
+        if out_path:
+            Path(out_path).write_text(out)
+        else:
+            sys.stdout.write(out)
     elif mode == "encode":
-        b64 = encode_file(in_path, out_path, nintendo=nintendo)
-        if not out_path:
+        data = json.loads(Path(in_path).read_text())
+        text = save_schema.encode_save_text(data, nintendo=nintendo)
+        b64 = encode_bytes(text.encode("utf-8"), nintendo=nintendo)
+        if out_path:
+            Path(out_path).write_bytes(b64)
+        else:
             sys.stdout.buffer.write(b64)
     else:
         print(__doc__)

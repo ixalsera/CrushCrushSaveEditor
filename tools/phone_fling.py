@@ -90,6 +90,20 @@ def decode_conversation_state(blob_b64):
     }
 
 
+def encode_conversation_state(state):
+    """Inverse of decode_conversation_state: pack a state dict (same shape
+    as decode_conversation_state's return value -- trailing as raw bytes,
+    not hex) back into the raw C<N>P blob bytes. state=None -> b'' (empty
+    blob, matching the never-started convention)."""
+    if state is None:
+        return b""
+    return (
+        struct.pack("<HH", state["message_counter"], state["unknown_1"])
+        + struct.pack("<I", state["next_message_countdown"])
+        + bytes(state["trailing"])
+    )
+
+
 def format_state(state, cd_value=None):
     lines = []
     if cd_value is not None:

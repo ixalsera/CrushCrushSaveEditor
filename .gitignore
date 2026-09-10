@@ -1,4 +1,5 @@
 decoded/*.txt
+decoded/*.json
 saves/*.sav
 
 ### Python template
