@@ -33,15 +33,27 @@ scripts/   Investigation/analysis helpers used while reverse-engineering the
            format (not needed to just edit a save - see `tools/` for that).
 ```
 
+## Standard live save locations
+
+These locations contain live save files for pulling in. Never touch them except to copy in to a working directory like
+`saves/`.
+
+- Steam: User's Steam directory (dependent on platform) -> `userdata/<steamID>/459820/remote/crushcrush.sav`
+- PC (non-Steam): User config directory (`~/.config` or `AppData/LocalLow`) ->
+  `unity3d/Sad Panda Studios/Crush Crush/OfflineSaves/crushcrush.sav`
+- Switch: Not directly accessible; ask for location
+- Web/Nutaku: Not directly accessible; ask for blob
+
 ## Standard edit workflow
 
-1. Decode: `uv run tools/crushcrush_save.py decode "saves/<save_game_filename>.sav" "decoded/<save_game_filename>.json"`
-2. Edit `decoded/<save_game_filename>.json` per `docs/structure/JSON.md`.
-3. Encode back (add `--nintendo` to output a Switch save):
+1. Rotate: `uv run tools/rotate_save.py <save_game_filename>`
+2. Decode: `uv run tools/crushcrush_save.py decode "saves/<save_game_filename>.sav" "decoded/<save_game_filename>.json"`
+3. Edit: `decoded/<save_game_filename>.json` per `docs/structure/JSON.md`.
+4. Encode: (add `--nintendo` to output a Switch save):
    `uv run tools/crushcrush_save.py encode "decoded/<save_game_filename>.json" "saves/<save_game_filename>.edited.sav"`
-4. **Always verify before overwriting a real save**. Decode the newly encoded file again and diff it against the edited
+5. **Always verify before overwriting a real save**. Decode the newly encoded file again and diff it against the edited
    JSON: `uv run scripts/diff_saves.py <prev.json> <cur.json>`.
-5. Only after the diff is clean, replace `saves/<save_game_filename>.sav` (back it up first as
+6. Only after the diff is clean, replace `saves/<save_game_filename>.sav` (back it up first as
    `<save_game_filename>.backup.sav`).
 
 ## Known caveats

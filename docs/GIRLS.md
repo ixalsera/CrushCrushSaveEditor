@@ -32,10 +32,13 @@ The below table lists the currently suspected mapping between bit index and girl
 | 16    | Sutra                     |
 | 17    | Dark One (Unconfirmed)    |
 | 18    | Q-Piddy (Unconfirmed)     |
+| 19    | ?????                     |
 | 20    | Jelle                     |
 | 21    | Quillzone                 |
 | 22    | Bonchovy                  |
 | 23    | Spectrum                  |
+| 24    | ?????                     |
+| 25    | ?????                     |
 | 26    | Shibuki                   |
 | 27    | Sirina                    |
 | 28    | Catara                    |
@@ -43,22 +46,60 @@ The below table lists the currently suspected mapping between bit index and girl
 | 30    | Peanut                    |
 | 31    | Roxxy                     |
 | 32    | ?????                     |
+| 33    | ?????                     |
+| 34    | ?????                     |
+| 35    | ?????                     |
+| 36    | ?????                     |
+| 37    | Ruri                      |
+| 38    | ?????                     |
 | 39    | ?????                     |
 | 40    | Nova/Lustat (Unconfirmed) |
+| 41    | Sawyer                    |
+| 42    | ?????                     |
+| 43    | ?????                     |
+| 44    | ?????                     |
 | 45    | Mallory                   |
+| 46    | Lake                      |
 | 47    | ?????                     |
+| 48    | ?????                     |
 | 49    | Lotus                     |
+| 50    | ?????                     |
+| 51    | ?????                     |
 | 52    | Nova/Lustat (Unconfirmed) |
+| 53    | ?????                     |
+| 54    | ?????                     |
+| 55    | ?????                     |
 | 56    | ?????                     |
+| 57    | ?????                     |
+| 58    | ?????                     |
+| 59    | ?????                     |
+| 60    | ?????                     |
+| 61    | ?????                     |
+| 62    | ?????                     |
+| 63    | ?????                     |
 | 64    | Honey                     |
+| 65    | ?????                     |
+| 66    | ?????                     |
+| 67    | ?????                     |
 | 68    | Ginger & Wasabi           |
+| 69    | ?????                     |
+| 70    | ?????                     |
 | 71    | Mortha                    |
 | 72    | Sephia                    |
 | 73    | Liz                       |
 | 74    | Polly                     |
+| 75    | ?????                     |
+| 76    | ?????                     |
+| 77    | ?????                     |
+| 78    | ?????                     |
+| 79    | ?????                     |
+| 80    | ?????                     |
+| 81    | ?????                     |
 | 82    | Lydia (Unconfirmed)       |
+| 83    | ?????                     |
 | 84    | Lumi                      |
 | 85    | Nixie                     |
+| 86    | Ling Ling                 |
 
 These IDs are used to reference girls in `GirlsUnlocked`, `GirlsPreviouslyUnlocked` and `CurrentGirl`, at the very
 least. It is likely that if a bitmask represents a girl or girls, the bit index will match the above table. This can be
