@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/ixalsera/CrushCrushSaveEditor/main/crushed.schema.json",
-  "title": "Crush Crush decoded save",
+  "title": "Crush Crush Save Schema",
   "description": "Structured JSON representation of a Crush Crush save file contents.",
   "type": "object",
   "properties": {
@@ -302,12 +302,10 @@
     },
     "eventsPeEntry": {
       "type": "object",
-      "description": "Parallel Event's mirrored state. Anything handled at root with a coherent per-PE reading is handled identically here (tools/save_schema.py's dispatch_entry is shared between root and PE decode/encode) - confirmed real for Bonuses, GirlsUnlocked/PreviouslyUnlocked/CurrentGirl and AvailableJobs inside the Time Warp PE. Save-wide singleton concepts (Achievement, Events.Completed, LTE Task/Token tracking, EventID/LastPesId<N>) never appear here, and neither do Playfab/Flings/Albums/events.popupinfo - those are whole separate account-wide features (IAP entitlement tracking, the Phone Fling mini-game, the global Memory Album, popup display tracking), not per-Parallel-Event state at all.",
+      "description": "Parallel Event state container.",
       "properties": {
         "GameState": { "$ref": "#/$defs/gameStateObject" },
-        "Settings": { "$ref": "#/$defs/settingsObject" },
         "Skill": { "$ref": "#/$defs/skillObject" },
-        "Player": { "$ref": "#/$defs/playerObject" },
         "Girls": { "$ref": "#/$defs/girlsObject" },
         "Jobs": { "$ref": "#/$defs/jobsObject" },
         "Hobby": { "type": "object", "additionalProperties": { "$ref": "#/$defs/hobbyEntry" }, "description": "Each PE uses its own 12-hobby name vocabulary." },
@@ -424,7 +422,7 @@
       }
     },
     "rootScalarOrUnknown": {
-      "description": "A plain scalar root-level value (int/float/string/bool) leaking into a Parallel Event's own state - confirmed real (e.g. dchk inside the Time Warp PE) - or the unknown-field wrapper for a genuinely unrecognized key. Not enumerated key-by-key here the way root's own scalar properties are, since any of them could in principle appear per-PE and the set is small/low-value enough not to duplicate.",
+      "description": "A plain scalar root-level value (int/float/string/bool).",
       "anyOf": [
         { "type": ["integer", "number", "string", "boolean"] },
         { "$ref": "#/$defs/unknownField" }

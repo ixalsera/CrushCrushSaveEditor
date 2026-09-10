@@ -403,10 +403,13 @@ PES_RE = re.compile(r"^[Pp]es(\d+)(.*)$")
 LOVE_HIGH_MARK_RE = re.compile(r"^Girl([a-z]+)LoveHighMark$")
 ALBUM_RE = re.compile(r"^album(\d)$")
 
-FIXED_PREFIX_TABLES = {
-    "Settings": SETTINGS_FIELDS,
-    "Skill": SKILL_FIELDS,
-}
+# Settings is root-only (a player preference, not per-event state) unlike
+# Skill (hobby-skill levels), which PEs do have their own copy of, paired
+# with that PE's own Hobby name vocabulary -- so these stay two separate
+# tables rather than one, even though both go through the same generic
+# try_fixed_prefix_object dispatch.
+SETTINGS_TABLE = {"Settings": SETTINGS_FIELDS}
+SKILL_TABLE = {"Skill": SKILL_FIELDS}
 
 
 def album_value_to_json(value):
@@ -490,8 +493,8 @@ def try_player(origin_prefix, origin_suffix, full_key, raw, data):
     return True
 
 
-def try_fixed_prefix_object(origin_prefix, origin_suffix, full_key, raw, data):
-    for prefix, table in FIXED_PREFIX_TABLES.items():
+def try_fixed_prefix_object(origin_prefix, origin_suffix, full_key, raw, data, tables):
+    for prefix, table in tables.items():
         if origin_prefix == prefix:
             suffix = origin_suffix
         elif origin_prefix == "" and full_key.startswith(prefix):
@@ -743,22 +746,25 @@ def dispatch_entry(origin_prefix, origin_suffix, full_key, raw, data, pending_ta
     origin_suffix, full_key, raw) tuple -- used both for root-level entries
     and, recursively via try_pe, for a Parallel Event's own pes<N>-stripped
     keys. Whatever is handled at root that has a coherent per-PE reading
-    (GameState, Settings, Skill, Player, Bonuses, GirlsUnlocked/
-    PreviouslyUnlocked/CurrentGirl, AvailableJobs, Hobby, ...) is handled
-    identically inside a PE through this same chain, so there is exactly
-    one place that knows how to parse any given key -- no separate,
-    easy-to-forget copy of the dispatch logic for PE context.
+    (GameState, Skill, Bonuses, GirlsUnlocked/PreviouslyUnlocked/
+    CurrentGirl, AvailableJobs, Hobby, ...) is handled identically inside a
+    PE through this same chain, so there is exactly one place that knows
+    how to parse any given key -- no separate, easy-to-forget copy of the
+    dispatch logic for PE context.
 
     Several checks are root-only (try_task, try_ach, try_playfab, try_fling,
-    try_completed, try_root_only_specials, the Album/events.popupinfo
-    checks, and try_pe itself): some represent save-wide singleton state
-    with no "one per PE" reading (which LTE is active, lifetime achievement
-    tiers, weekly/LTE completion); Playfab (IAP entitlement tracking),
-    Flings (its own separate mini-game), and Albums (the global Memory
-    Album) are simply unrelated secondary features that never occur inside
-    a Parallel Event at all. Gated behind `pe_unknown is not None` (true
-    only for the root call; a recursive PE call passes None, which also
-    prevents a pes<N> key recursing twice)."""
+    try_completed, try_root_only_specials, try_player, the Settings/Album/
+    events.popupinfo checks, and try_pe itself): some represent save-wide
+    singleton state with no "one per PE" reading (which LTE is active,
+    lifetime achievement tiers, weekly/LTE completion); Playfab (IAP
+    entitlement tracking), Flings (its own separate mini-game), Albums (the
+    global Memory Album), Player (avatar identity), and Settings (a player
+    preference) are simply unrelated secondary/account-wide state that
+    never occurs inside a Parallel Event at all -- unlike Skill, which a PE
+    genuinely does mirror its own copy of, paired with that PE's own Hobby
+    name vocabulary. Gated behind `pe_unknown is not None` (true only for
+    the root call; a recursive PE call passes None, which also prevents a
+    pes<N> key recursing twice)."""
     is_root = pe_unknown is not None
     if full_key == "":
         return  # artifact of a trailing/blank line, not real data
@@ -784,7 +790,7 @@ def dispatch_entry(origin_prefix, origin_suffix, full_key, raw, data, pending_ta
         return
     if is_root and try_pe(origin_prefix, origin_suffix, full_key, raw, data, pe_unknown):
         return
-    if try_player(origin_prefix, origin_suffix, full_key, raw, data):
+    if is_root and try_player(origin_prefix, origin_suffix, full_key, raw, data):
         return
     if try_root_specials(origin_prefix, full_key, raw, data):
         return
@@ -800,9 +806,11 @@ def dispatch_entry(origin_prefix, origin_suffix, full_key, raw, data, pending_ta
         return
     if is_root and try_root_only_specials(origin_prefix, full_key, raw, data):
         return
+    if is_root and try_fixed_prefix_object(origin_prefix, origin_suffix, full_key, raw, data, SETTINGS_TABLE):
+        return
     if try_gamestate(origin_prefix, origin_suffix, full_key, raw, data):
         return
-    if try_fixed_prefix_object(origin_prefix, origin_suffix, full_key, raw, data):
+    if try_fixed_prefix_object(origin_prefix, origin_suffix, full_key, raw, data, SKILL_TABLE):
         return
     m = LOVE_HIGH_MARK_RE.match(full_key)
     if m:
@@ -1061,14 +1069,11 @@ def encode_pe(pe_id, pe, emit, nintendo):
     if "GameState" in pe:
         emit_gamestate(f"{prefix}GameState", pe["GameState"], emit, nintendo,
                         time_multiplier_key=f"pes{pe_id}TimeMultiplier")
-    if "Settings" in pe:
-        emit_object(f"{prefix}Settings", pe["Settings"], SETTINGS_FIELDS, emit, nintendo)
     if "Skill" in pe:
         emit_object(f"{prefix}Skill", pe["Skill"], SKILL_FIELDS, emit, nintendo)
-    if "Player" in pe:
-        emit_player(prefix, pe["Player"], emit, nintendo)
-    # Playfab/Flings/Albums/events.popupinfo are deliberately NOT emitted
-    # here -- they're whole separate account-wide features (IAP entitlement
+    # Settings/Player/Playfab/Flings/Albums/events.popupinfo are deliberately
+    # NOT emitted here -- Settings (a player preference) and Player (avatar
+    # identity) are account-wide state same as the others (IAP entitlement
     # tracking, the Phone Fling mini-game, the global Memory Album, popup
     # display tracking), never per-Parallel-Event state, matching
     # dispatch_entry's root-only gating for the same fields on decode.
