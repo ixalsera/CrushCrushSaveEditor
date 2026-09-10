@@ -13,6 +13,7 @@ Per-key docs - check before re-deriving what a field means:
 | `docs/GIRLS.md`        | `GirlsUnlocked`/`GirlsPreviouslyUnlocked` bit-index→girl mapping, plus per-girl `Clothing`/`LifeOutfits` outfit-bit findings.                                                                                 |
 | `docs/UNLOCKS.md`      | Same bitmask/list analysis as `docs/GIRLS.md`, but for account-level `Playfab`/`BlayfapAwardedItems` - both are server-synced on launch, not derived from the local save.                                     |
 | `docs/ACHIEVEMENTS.md` | `ACH.<id>` bitmask-per-tier mechanism + achievement ID→name mapping.                                                                                                                                          |
+| `docs/SWITCH.md`       | Keys present in a Switch save that are absent from the sampled PC saves (root `GameState`/`Settings` gaps, etc.).                                                                                            |
 
 ## Directory layout
 
@@ -161,15 +162,29 @@ exhaustive per-key list, this is the shape of the grouping itself):
   internal save name, e.g. `"Pamulzebub"`/`"Ayano"` - never translated to a display name) alongside the
   account-level bitmasks/pointers that conceptually belong with them (`Girls.Unlocked`/`PreviouslyUnlocked`/`Current`,
   `Jobs.Available`, `Flings.Unlocked`/`Purchased`).
-- A girl's `LifeDates`/`LifeOutfits` nest under `Life.{Dates,Outfits}`, separate from her current `Dates`/`Clothing`.
-  `Job`/`Hobby` entries are unified into one shape per name regardless of whether the raw save happened to group that
-  entity's fields under a `::` section or leave them as bare individual lines (confirmed: this is a purely cosmetic
-  choice the game's own serializer makes inconsistently, e.g. `JobMECH` has all six fields bare in one real save where
-  every other job gets a proper block - the JSON never tries to preserve or infer which form the source used).
+- A girl's `LifeDates`/`LifeOutfits`/`LifeGifts` nest under `Life.{Dates,Outfits,Gifts}`, separate from her current
+  `Dates`/`Clothing`. `Job`/`Hobby` entries are unified into one shape per name regardless of whether the raw save
+  happened to group that entity's fields under a `::` section or leave them as bare individual lines (confirmed: this
+  is a purely cosmetic choice the game's own serializer makes inconsistently, e.g. `JobMECH` has all six fields bare
+  in one real save where every other job gets a proper block - the JSON never tries to preserve or infer which form
+  the source used).
+- `GameState.Counts`/`GameState.Multipliers` pull the raw format's `-Count`/`-Multiplier`-suffixed keys
+  (`DateCount`/`GiftCount`/`HeartCount`/`PokeCount`, `PendingMultiplier`/`PurchasedMultiplier`) off `GameState` itself
+  into two sub-objects, stripped of the redundant suffix (`GameState.Counts.Date`, `GameState.Multipliers.Pending`,
+  etc). Root `TimeMultiplier` (and each PE's own `pes<N>TimeMultiplier`) is an exception folded in as
+  `GameState.Multipliers.Time` despite not sharing that suffix convention.
+- `Bonuses` replaces the raw format's `.speedboost.*`/`.timeblocks.*`/`.timeskip.*` dotted keys with
+  `Bonuses["Time Blocks"|"Speed Boost"|"Time Skip"]["Small"|"Medium"|"Large"]["Quantity"|"Price"]` - pure structural
+  regrouping, values passed through unchanged.
+- `Albums` replaces root `album0`-`album5` with an object keyed by album index, each value a sparse two-level object
+  (byte index → bit index → `true`) rather than a flat bitmask, since these are wider than the other bitmask fields.
+- `Player` holds the avatar-identity fields (`Gender`, `Hair`, `Hat`, `Plushy`) split out of the raw format's `Skill`
+  block, since they represent the player's own identity rather than a skill level.
 - `Achievement` is keyed by achievement ID; each value is still a bitmask (bit = tier), per `docs/ACHIEVEMENTS.md`'s
   bitmask-per-tier mechanism.
-- `Flings.<id>.P` is fully decoded via `tools/phone_fling.py` into `{message_counter, unknown_1,
-  next_message_countdown, trailing: "<hex>"}`, or `null` when the blob is empty (`D` == `"never"`).
+- `Flings.<id>.Progress` (raw `C<N>P`) is fully decoded via `tools/phone_fling.py` into `{message_counter, unknown_1,
+  next_message_countdown, trailing: "<hex>"}`, or `null` when the blob is empty (`Flings.<id>.Date`, raw `C<N>D`, ==
+  `"never"`).
 - `Playfab.AwardedItems` is the normalized name for PC's `BlayfapAwardedItems` / Switch's `PlayfabAwardedItems` -
   encode picks the right key per `--nintendo` target.
 - `Events` holds everything event-related: `Events.Completed.{2018,2019,2020,LTE}` (the last renamed from the raw
@@ -233,8 +248,7 @@ below.
   edits there as out of scope unless asked.
 - `docs/FLINGS.md`'s fling-ID → girl mapping is WIP (most IDs unmapped/unconfirmed) - don't treat it as complete.
 - `dchk`, `ana.ev`/`ana.vid` appear to be irrelevant or analytics; ignore them.
-- `Girl<Name>LifeGifts` (seen in real saves, both PC and Switch) isn't in any doc above and isn't in
-  `tools/save_schema.py`'s registry - round-trips losslessly via the unrecognized-suffix fallback, but its meaning is
-  unconfirmed. A good `investigate-save-field` candidate.
+- `Girl<Name>LifeGifts` (seen in real saves, both PC and Switch) is registered and round-trips as `Girls.<name>.Life.Gifts`,
+  but its meaning is otherwise unconfirmed. A good `investigate-save-field` candidate.
 - `tools/blank_save.py` still targets the old flat-text format, not the new JSON - porting it (zeroing would become
   direct dict mutation instead of regex text surgery) is a reasonable follow-up, not done here.
