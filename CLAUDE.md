@@ -14,6 +14,7 @@ Per-key docs - check before re-deriving what a field means:
 | `docs/UNLOCKS.md`        | Same bitmask/list analysis as `docs/GIRLS.md`, but for account-level `Playfab`/`BlayfapAwardedItems` - both are server-synced on launch, not derived from the local save. |
 | `docs/ACHIEVEMENTS.md`   | `ACH.<id>` bitmask-per-tier mechanism + achievement ID→name mapping.                                                                                                      |
 | `docs/SWITCH.md`         | Keys present in a Switch save that are absent from the sampled PC saves (root `GameState`/`Settings` gaps, etc.).                                                         |
+| `docs/NUTAKU.md`         | Nutaku/BlayFap web build: where the save actually lives (server-side, not browser storage) and the fetch/update API that replaces a physical save file.                   |
 | `docs/structure/RAW.md`  | Describes the **raw** structure of a decoded save file (before parsing to JSON).                                                                                          |
 | `docs/structure/JSON.md` | Describes the JSON representation of a decoded save file and how it is derived.                                                                                           |
 
@@ -53,3 +54,5 @@ scripts/   Investigation/analysis helpers used while reverse-engineering the
 
 - No value-specific validation (e.g. `Love` 0-9, `Diamonds` non-negative) is enforced - edits are freeform JSON.
   Building an actual editor UI/CLI for specific fields is new work, not started.
+- A future editor could push/pull saves directly against Nutaku's BlayFap backend (see `docs/NUTAKU.md`) instead of
+  only local `.sav` files - fetch/edit/save round-trip against the live API is confirmed working, not just decode.

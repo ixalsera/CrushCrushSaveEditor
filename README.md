@@ -12,11 +12,11 @@ text back into a save file the game can load.
 
 | Platform | Supported |
 |----------|-----------|
-| Steam    | Y         |
-| Nutaku   | N         |
-| iOS      | N         |
-| Android  | N         |
-| Switch   | Y         |
+| Steam    | Yes       |
+| Nutaku   | Partial   |
+| iOS      | No        |
+| Android  | No        |
+| Switch   | Yes       |
 
 ## Background
 
@@ -36,10 +36,10 @@ Requires [uv](https://docs.astral.sh/uv/) (preferred) or Python 3.13+.
 ### Quick reference
 
 ```shell
-# Decode a save file to plain text
+# Decode a save file to JSON
 uv run tools/crushcrush_save.py decode <path to .sav file> <path to output .json file>
 
-# Encode plain text back into a save file
+# Encode JSON back into a save file
 uv run tools/crushcrush_save.py encode <path to .json file> <path to output .sav file>
 ```
 
