@@ -37,7 +37,6 @@ Usage:
     crushcrush_save.py encode <in.json> [out.sav] [--nintendo]
 """
 import json
-import os
 import struct
 import sys
 import base64
@@ -52,6 +51,11 @@ import save_schema
 MAGIC = bytes.fromhex("9737dc")
 NINTENDO_HEADER = struct.pack("<I", 1)
 NINTENDO_MAGIC = base64.b64encode(MAGIC)
+
+# Published alongside crushed.schema.json at the repo root -- raw.githubusercontent.com
+# serves the actual JSON content (github.com's own URL is an HTML page, not usable as
+# a $schema value). Points at `main`, not a pinned commit, so it tracks schema edits.
+SCHEMA_URL = "https://raw.githubusercontent.com/ixalsera/CrushCrushSaveEditor/main/crushed.schema.json"
 
 
 def decode_bytes(raw_b64_text):
@@ -101,9 +105,7 @@ def main():
         if out_path:
             # Editor IntelliSense hint, not save data -- crushed.schema.json
             # explicitly allows this key and encode_save_text ignores it.
-            schema_path = Path(__file__).resolve().parent.parent / "crushed.schema.json"
-            rel = os.path.relpath(schema_path, Path(out_path).resolve().parent)
-            data["$schema"] = rel.replace(os.sep, "/")
+            data["$schema"] = SCHEMA_URL
         out = json.dumps(data, indent=2, sort_keys=True)
         if out_path:
             Path(out_path).write_text(out)

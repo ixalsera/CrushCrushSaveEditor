@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/crushcrushsaveedit/crushed.schema.json",
+  "$id": "https://raw.githubusercontent.com/ixalsera/CrushCrushSaveEditor/main/crushed.schema.json",
   "title": "Crush Crush decoded save",
-  "description": "Structured JSON produced by `tools/crushcrush_save.py decode` / consumed by `tools/crushcrush_save.py encode` (see tools/save_schema.py and CLAUDE.md's \"JSON schema\" section). One JSON file can be re-encoded to either PC or Switch format regardless of which platform it was decoded from.",
+  "description": "Structured JSON representation of a Crush Crush save file contents.",
   "type": "object",
   "properties": {
     "$schema": {
       "type": "string",
-      "description": "Editor schema-association hint, not save data. Ignored on encode."
+      "description": "Editor schema-association hint. Ignored on encode."
     },
     "GameState": { "$ref": "#/$defs/gameStateObject" },
     "Settings": { "$ref": "#/$defs/settingsObject" },
