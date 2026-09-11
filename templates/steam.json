@@ -216,7 +216,7 @@
     "Multipliers": {
       "Pending": 0.0,
       "Purchased": 1.0,
-      "Time": 0.0
+      "Time": 1.0
     },
     "NSFW": false,
     "Seconds": 0.0,
@@ -645,9 +645,9 @@
   "SaveFileVersion": true,
   "Settings": {
     "DisableCloud": true,
-    "Effects": 1.0,
-    "Music": 1.0,
-    "Voice": 1.0
+    "Effects": 0.7,
+    "Music": 0.1,
+    "Voice": 0.7
   },
   "Skill": {
     "0": 0,

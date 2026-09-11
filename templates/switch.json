@@ -136,7 +136,7 @@
     "Multipliers": {
       "Pending": 0.0,
       "Purchased": 1.0,
-      "Time": 0.0
+      "Time": 1.0
     },
     "Seconds": 0.0,
     "TimeSkip2EndTime": 0,
@@ -1437,7 +1437,7 @@
   "PurchasedTime": 0,
   "Settings": {
     "DisableCloud": true,
-    "Effects": 1.0,
+    "Effects": 0.7,
     "IntrosOff": false,
     "Language": "0i",
     "Music": 0.1,
@@ -1445,7 +1445,7 @@
     "ParticlesOff": false,
     "PopupsOff": false,
     "SoundMute": false,
-    "Voice": 1.0
+    "Voice": 0.7
   },
   "Skill": {
     "0": 0,

@@ -95,7 +95,7 @@ The below table lists the currently suspected mapping between bit index and girl
 | 79    | ?????                     |
 | 80    | ?????                     |
 | 81    | ?????                     |
-| 82    | Lydia (Unconfirmed)       |
+| 82    | Lydia                     |
 | 83    | ?????                     |
 | 84    | Lumi                      |
 | 85    | Nixie                     |

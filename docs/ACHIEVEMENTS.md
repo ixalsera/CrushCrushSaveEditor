@@ -65,5 +65,6 @@ achievements track the highest Job/Hobby level ever achieved across resets.
 | 44 | Reset Bonus (Unconfirmed)      |
 | 55 | Catara (Level)                 |
 | 57 | Peanut (Level) (Unconfirmed)   |
+| 79 | Event Participation            |
 
 [^1]: Not available on Switch.
