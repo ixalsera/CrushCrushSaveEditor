@@ -1,0 +1,1467 @@
+{
+  "$schema": "https://raw.githubusercontent.com/ixalsera/CrushCrushSaveEditor/main/crushed.schema.json",
+  "Achievement": {},
+  "AchievementCount": 0,
+  "ActiveTutorial": 0,
+  "Albums": {
+    "0": {},
+    "1": {},
+    "2": {},
+    "3": {},
+    "4": {},
+    "5": {}
+  },
+  "AyanoChibi2017": 0,
+  "AyanoTimeBlock": 0,
+  "CabinFeverSave": 0,
+  "Events": {
+    "Completed": {
+      "2019": {},
+      "2020": {},
+      "LTE": {}
+    },
+    "LTE": {}
+  },
+  "Flings": {
+    "1": {
+      "Date": "never",
+      "Progress": null
+    },
+    "10": {
+      "Date": "never",
+      "Progress": null
+    },
+    "11": {
+      "Date": "never",
+      "Progress": null
+    },
+    "12": {
+      "Date": "never",
+      "Progress": null
+    },
+    "13": {
+      "Date": "never",
+      "Progress": null
+    },
+    "14": {
+      "Date": "never",
+      "Progress": null
+    },
+    "15": {
+      "Date": "never",
+      "Progress": null
+    },
+    "16": {
+      "Date": "never",
+      "Progress": null
+    },
+    "17": {
+      "Date": "never",
+      "Progress": null
+    },
+    "18": {
+      "Date": "never",
+      "Progress": null
+    },
+    "19": {
+      "Date": "never",
+      "Progress": null
+    },
+    "2": {
+      "Date": "never",
+      "Progress": null
+    },
+    "20": {
+      "Date": "never",
+      "Progress": null
+    },
+    "21": {
+      "Date": "never",
+      "Progress": null
+    },
+    "22": {
+      "Date": "never",
+      "Progress": null
+    },
+    "23": {
+      "Date": "never",
+      "Progress": null
+    },
+    "3": {
+      "Date": "never",
+      "Progress": null
+    },
+    "4": {
+      "Date": "never",
+      "Progress": null
+    },
+    "5": {
+      "Date": "never",
+      "Progress": null
+    },
+    "6": {
+      "Date": "never",
+      "Progress": null
+    },
+    "7": {
+      "Date": "never",
+      "Progress": null
+    },
+    "8": {
+      "Date": "never",
+      "Progress": null
+    },
+    "9": {
+      "Date": "never",
+      "Progress": null
+    }
+  },
+  "GameState": {
+    "Boost2EndTime": 0,
+    "Build": "409_eb02941",
+    "Counts": {
+      "Date": 0,
+      "Gift": 0,
+      "Heart": 0,
+      "Poke": 0
+    },
+    "Covid2020": 0,
+    "Created": null,
+    "Date": null,
+    "DateOffset": 0,
+    "DateUTC": null,
+    "Diamonds": 0,
+    "Hobbies": 0,
+    "LoginDate": null,
+    "Money": 0,
+    "Multipliers": {
+      "Pending": 0.0,
+      "Purchased": 1.0,
+      "Time": 0.0
+    },
+    "Seconds": 0.0,
+    "TimeSkip2EndTime": 0,
+    "TotalIncome": 0,
+    "TotalTime": 0
+  },
+  "Girls": {
+    "Alpha": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Ayano": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Babybelle": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Bearverly": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Bonchovy": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Bonnibel": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Brie": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Cassia": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Cassie": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Catara": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Charlotte": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Claudia": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Current": 0,
+    "DarkOne": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Darya": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Elle": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Esper": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Eva": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Explora": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Fumi": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Generica": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Iro": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Jelle": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Juliet": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Karma": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Lake": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Lotus": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Luna": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Lustat": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Mallory": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Marybelle": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Mio": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Nina": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Nova": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Odango": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Pamu": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Peanut": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Pepper": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "QPiddy": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Quill": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Quillzone": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Ranma": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Renee": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Rosa": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Roxxy": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Ruri": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Sawyer": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Shibuki": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Sirina": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Spectrum": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Sutra": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Suzu": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Tessa": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Unlocked": {
+      "_raw_fallback": {
+        "raw_suffix": "i",
+        "value": 0
+      }
+    },
+    "Vellatrix": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Wendy": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    },
+    "Yuki": {
+      "Clothing": {},
+      "DateCount1": 0,
+      "DateCount2": 0,
+      "DateCount3": 0,
+      "DateCount4": 0,
+      "Dates": {},
+      "GiftCount1": 0,
+      "GiftCount2": 0,
+      "GiftCount3": 0,
+      "GiftCount4": 0,
+      "Hearts": 0,
+      "Life": {
+        "Dates": {},
+        "Gifts": {},
+        "Outfits": {}
+      },
+      "Love": 0
+    }
+  },
+  "Hobby": {
+    "Angst": {
+      "Active": false,
+      "MultiplierCount": false,
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Badass": {
+      "Active": false,
+      "MultiplierCount": false,
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Buff": {
+      "Active": false,
+      "MultiplierCount": false,
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Funny": {
+      "Active": false,
+      "MultiplierCount": false,
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Lucky": {
+      "Active": false,
+      "MultiplierCount": false,
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Motivation": {
+      "Active": false,
+      "MultiplierCount": false,
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Mysterious": {
+      "Active": false,
+      "MultiplierCount": false,
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Smart": {
+      "Active": false,
+      "MultiplierCount": false,
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Suave": {
+      "Active": false,
+      "MultiplierCount": false,
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "TechSavvy": {
+      "Active": false,
+      "MultiplierCount": false,
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Tenderness": {
+      "Active": false,
+      "MultiplierCount": false,
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Wisdom": {
+      "Active": false,
+      "MultiplierCount": false,
+      "Time": 0.0,
+      "TimeL": 0
+    }
+  },
+  "Jobs": {
+    "ART": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "Available": {},
+    "CASINO": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "CLEANING": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "COMPUTERS": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "DIGGER": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "FAST FOOD": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "HUNTING": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "LEGAL": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "LIFEGUARD": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "LOVE": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "MOVIES": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "PLANTER": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "RESTAURANT": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "SLAYING": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "SPACE": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "SPORTS": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "WIZARD": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    },
+    "ZOO": {
+      "Active": false,
+      "Experience": 0,
+      "Gilded": false,
+      "Level": 0,
+      "Locked": false,
+      "Time": 0.0
+    }
+  },
+  "NutakuItems2019": 0,
+  "PendingTimelord": 0,
+  "Player": {
+    "Gender": 0,
+    "Hair": 0,
+    "Hat": 0
+  },
+  "Playfab": {
+    "AwardedItems": {
+      "_raw_fallback": {
+        "raw_suffix": "",
+        "value": 0
+      }
+    },
+    "Inventory": {}
+  },
+  "PurchasedTime": 0,
+  "Settings": {
+    "DisableCloud": true,
+    "Effects": 1.0,
+    "IntrosOff": false,
+    "Language": "0i",
+    "Music": 0.1,
+    "MusicMute": false,
+    "ParticlesOff": false,
+    "PopupsOff": false,
+    "SoundMute": false,
+    "Voice": 1.0
+  },
+  "Skill": {
+    "0": 0,
+    "1": 0,
+    "10": 0,
+    "11": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0
+  },
+  "Tutorial": 0,
+  "TutorialAffection": false
+}

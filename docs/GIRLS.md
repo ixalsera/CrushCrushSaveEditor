@@ -51,7 +51,7 @@ The below table lists the currently suspected mapping between bit index and girl
 | 35    | ?????                     |
 | 36    | ?????                     |
 | 37    | Ruri                      |
-| 38    | ?????                     |
+| 38    | Generica                  |
 | 39    | ?????                     |
 | 40    | Nova/Lustat (Unconfirmed) |
 | 41    | Sawyer                    |

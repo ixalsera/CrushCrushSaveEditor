@@ -1,0 +1,664 @@
+{
+  "$schema": "https://raw.githubusercontent.com/ixalsera/CrushCrushSaveEditor/main/crushed.schema.json",
+  "Achievement": {},
+  "AchievementCount": 0,
+  "Events": {
+    "Completed": {
+      "2018": {},
+      "2019": {},
+      "2020": {},
+      "LTE": {}
+    },
+    "LTE": {},
+    "PE": {}
+  },
+  "Flings": {
+    "1": {
+      "Date": "never",
+      "Progress": null
+    },
+    "10": {
+      "Date": "never",
+      "Progress": null
+    },
+    "11": {
+      "Date": "never",
+      "Progress": null
+    },
+    "12": {
+      "Date": "never",
+      "Progress": null
+    },
+    "13": {
+      "Date": "never",
+      "Progress": null
+    },
+    "14": {
+      "Date": "never",
+      "Progress": null
+    },
+    "15": {
+      "Date": "never",
+      "Progress": null
+    },
+    "16": {
+      "Date": "never",
+      "Progress": null
+    },
+    "17": {
+      "Date": "never",
+      "Progress": null
+    },
+    "18": {
+      "Date": "never",
+      "Progress": null
+    },
+    "19": {
+      "Date": "never",
+      "Progress": null
+    },
+    "2": {
+      "Date": "never",
+      "Progress": null
+    },
+    "20": {
+      "Date": "never",
+      "Progress": null
+    },
+    "21": {
+      "Date": "never",
+      "Progress": null
+    },
+    "22": {
+      "Date": "never",
+      "Progress": null
+    },
+    "23": {
+      "Date": "never",
+      "Progress": null
+    },
+    "24": {
+      "Date": "never",
+      "Progress": null
+    },
+    "25": {
+      "Date": "never",
+      "Progress": null
+    },
+    "26": {
+      "Date": "never",
+      "Progress": null
+    },
+    "27": {
+      "Date": "never",
+      "Progress": null
+    },
+    "28": {
+      "Date": "never",
+      "Progress": null
+    },
+    "29": {
+      "Date": "never",
+      "Progress": null
+    },
+    "3": {
+      "Date": "never",
+      "Progress": null
+    },
+    "30": {
+      "Date": "never",
+      "Progress": null
+    },
+    "31": {
+      "Date": "never",
+      "Progress": null
+    },
+    "32": {
+      "Date": "never",
+      "Progress": null
+    },
+    "33": {
+      "Date": "never",
+      "Progress": null
+    },
+    "34": {
+      "Date": "never",
+      "Progress": null
+    },
+    "35": {
+      "Date": "never",
+      "Progress": null
+    },
+    "36": {
+      "Date": "never",
+      "Progress": null
+    },
+    "37": {
+      "Date": "never",
+      "Progress": null
+    },
+    "38": {
+      "Date": "never",
+      "Progress": null
+    },
+    "39": {
+      "Date": "never",
+      "Progress": null
+    },
+    "4": {
+      "Date": "never",
+      "Progress": null
+    },
+    "40": {
+      "Date": "never",
+      "Progress": null
+    },
+    "41": {
+      "Date": "never",
+      "Progress": null
+    },
+    "42": {
+      "Date": "never",
+      "Progress": null
+    },
+    "43": {
+      "Date": "never",
+      "Progress": null
+    },
+    "44": {
+      "Date": "never",
+      "Progress": null
+    },
+    "45": {
+      "Date": "never",
+      "Progress": null
+    },
+    "46": {
+      "Date": "never",
+      "Progress": null
+    },
+    "5": {
+      "Date": "never",
+      "Progress": null
+    },
+    "6": {
+      "Date": "never",
+      "Progress": null
+    },
+    "7": {
+      "Date": "never",
+      "Progress": null
+    },
+    "8": {
+      "Date": "never",
+      "Progress": null
+    },
+    "9": {
+      "Date": "never",
+      "Progress": null
+    },
+    "Purchased": {},
+    "Unlocked": {}
+  },
+  "GameState": {
+    "Build": "449_4047c77",
+    "Counts": {
+      "Gift": 0,
+      "Heart": 0,
+      "Poke": 0
+    },
+    "Date": null,
+    "DateUTC": null,
+    "Diamonds": 0,
+    "Ids": null,
+    "LoginDate": null,
+    "Money": 0,
+    "Multipliers": {
+      "Pending": 0.0,
+      "Purchased": 1.0,
+      "Time": 0.0
+    },
+    "Seconds": 0.0,
+    "TotalIncome": 0,
+    "TotalTime": 0
+  },
+  "Girls": {
+    "Abby": {
+      "Hearts": 0
+    },
+    "Alpha": {
+      "Hearts": 0
+    },
+    "Amelia": {
+      "Hearts": 0
+    },
+    "Aurora": {
+      "Hearts": 0
+    },
+    "Ayano": {
+      "Hearts": 0
+    },
+    "Babybelle": {
+      "Hearts": 0
+    },
+    "Bearverly": {
+      "Hearts": 0
+    },
+    "Bonchovy": {
+      "Hearts": 0
+    },
+    "Bonnibel": {
+      "Hearts": 0
+    },
+    "Brie": {
+      "Hearts": 0
+    },
+    "Caitlin": {
+      "Hearts": 0
+    },
+    "Cassia": {
+      "Hearts": 0
+    },
+    "Cassie": {
+      "Hearts": 0
+    },
+    "Catara": {
+      "Hearts": 0
+    },
+    "Charlotte": {
+      "Hearts": 0
+    },
+    "Claudia": {
+      "Hearts": 0
+    },
+    "DarkOne": {
+      "Hearts": 0
+    },
+    "Darya": {
+      "Hearts": 0
+    },
+    "Desdemona": {
+      "Hearts": 0
+    },
+    "Elle": {
+      "Hearts": 0
+    },
+    "Esper": {
+      "Hearts": 0
+    },
+    "Eva": {
+      "Hearts": 0
+    },
+    "Explora": {
+      "Hearts": 0
+    },
+    "Fumi": {
+      "Hearts": 0
+    },
+    "Generica": {
+      "Hearts": 0
+    },
+    "GingerWasabi": {
+      "Hearts": 0
+    },
+    "Grace": {
+      "Hearts": 0
+    },
+    "Gwen": {
+      "Hearts": 0
+    },
+    "Honey": {
+      "Hearts": 0
+    },
+    "Iro": {
+      "Hearts": 0
+    },
+    "Jelle": {
+      "Hearts": 0
+    },
+    "Juliet": {
+      "Hearts": 0
+    },
+    "Karma": {
+      "Hearts": 0
+    },
+    "Karyn": {
+      "Hearts": 0
+    },
+    "Kira": {
+      "Hearts": 0
+    },
+    "Kyoko": {
+      "Hearts": 0
+    },
+    "Lake": {
+      "Hearts": 0
+    },
+    "LingLing": {
+      "Hearts": 0
+    },
+    "Liz": {
+      "Hearts": 0
+    },
+    "Loola": {
+      "Hearts": 0
+    },
+    "Lotus": {
+      "Hearts": 0
+    },
+    "Lumi": {
+      "Hearts": 0
+    },
+    "Luna": {
+      "Hearts": 0
+    },
+    "Lustat": {
+      "Hearts": 0
+    },
+    "Lydia": {
+      "Hearts": 0
+    },
+    "Mallory": {
+      "Hearts": 0
+    },
+    "Marybelle": {
+      "Hearts": 0
+    },
+    "Mio": {
+      "Hearts": 0
+    },
+    "MissDesiree": {
+      "Hearts": 0
+    },
+    "Moonbeam": {
+      "Hearts": 0
+    },
+    "Mortha": {
+      "Hearts": 0
+    },
+    "Myro": {
+      "Hearts": 0
+    },
+    "Nightingale": {
+      "Hearts": 0
+    },
+    "Nina": {
+      "Hearts": 0
+    },
+    "Nixie": {
+      "Hearts": 0
+    },
+    "Nova": {
+      "Hearts": 0
+    },
+    "Nutaku": {
+      "Hearts": 0
+    },
+    "Odango": {
+      "Hearts": 0
+    },
+    "Pamu": {
+      "Hearts": 0
+    },
+    "Pamulzebub": {
+      "Hearts": 0
+    },
+    "Peanut": {
+      "Hearts": 0
+    },
+    "Penny": {
+      "Hearts": 0
+    },
+    "Pepper": {
+      "Hearts": 0
+    },
+    "Polly": {
+      "Hearts": 0
+    },
+    "PreviouslyUnlocked": {},
+    "QPiddy": {
+      "Hearts": 0
+    },
+    "Quill": {
+      "Hearts": 0
+    },
+    "Quillzone": {
+      "Hearts": 0
+    },
+    "Ranma": {
+      "Hearts": 0
+    },
+    "Renee": {
+      "Hearts": 0
+    },
+    "Rosa": {
+      "Hearts": 0
+    },
+    "Roxxy": {
+      "Hearts": 0
+    },
+    "Ruri": {
+      "Hearts": 0
+    },
+    "Sawyer": {
+      "Hearts": 0
+    },
+    "Sephia": {
+      "Hearts": 0
+    },
+    "Shelly": {
+      "Hearts": 0
+    },
+    "Shibuki": {
+      "Hearts": 0
+    },
+    "Sirina": {
+      "Hearts": 0
+    },
+    "Sofia": {
+      "Hearts": 0
+    },
+    "Spectrum": {
+      "Hearts": 0
+    },
+    "Sugar": {
+      "Hearts": 0
+    },
+    "Sutra": {
+      "Hearts": 0
+    },
+    "Suzu": {
+      "Hearts": 0
+    },
+    "Tessa": {
+      "Hearts": 0
+    },
+    "Unlocked": {},
+    "Vellatrix": {
+      "Hearts": 0
+    },
+    "Wendy": {
+      "Hearts": 0
+    },
+    "Willow": {
+      "Hearts": 0
+    },
+    "Yuki": {
+      "Hearts": 0
+    }
+  },
+  "Hobby": {
+    "Angst": {
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Badass": {
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Buff": {
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Funny": {
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Lucky": {
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Motivation": {
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Mysterious": {
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Smart": {
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Suave": {
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "TechSavvy": {
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Tenderness": {
+      "Time": 0.0,
+      "TimeL": 0
+    },
+    "Wisdom": {
+      "Time": 0.0,
+      "TimeL": 0
+    }
+  },
+  "Jobs": {
+    "ART": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "Available": {},
+    "CASINO": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "CLEANING": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "COMPUTERS": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "DIGGER": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "FAST FOOD": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "HUNTING": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "LEGAL": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "LIFEGUARD": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "LOVE": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "MECH": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "MOVIES": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "PLANTER": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "RESTAURANT": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "SLAYING": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "SPACE": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "SPORTS": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "UNKNOWN": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "WIZARD": {
+      "Experience": 0,
+      "Time": 0.0
+    },
+    "ZOO": {
+      "Experience": 0,
+      "Time": 0.0
+    }
+  },
+  "LastPesId0": "",
+  "LastPesId1": "",
+  "LastPesId2": "",
+  "LastPesId3": "",
+  "LastPesId4": "",
+  "LastPesId5": "",
+  "LastPesId6": "",
+  "LastPesId7": "",
+  "LastPesId8": "",
+  "LastPesId9": "",
+  "Player": {
+    "Gender": 0,
+    "Hair": 0,
+    "Hat": 0,
+    "Plushy": 0
+  },
+  "Playfab": {
+    "AwardedItems": [],
+    "Participation": {}
+  },
+  "SaveFileVersion": true,
+  "Settings": {
+    "Effects": 1.0,
+    "Music": 1.0,
+    "Voice": 1.0
+  },
+  "Skill": {
+    "0": 0,
+    "1": 0,
+    "10": 0,
+    "11": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0
+  },
+  "Tutorial": 0
+}
