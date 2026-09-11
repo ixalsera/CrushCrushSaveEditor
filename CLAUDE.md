@@ -1,7 +1,6 @@
 # CrushCrushSaveEdit
 
-Decode/edit/re-encode save files for **Crush Crush** (Sad Panda Studios). Reverse-engineered format + tools below, so
-format discovery isn't repeated.
+Decode/edit/re-encode save files for **Crush Crush** (Sad Panda Studios).
 
 Per-key docs - check before re-deriving what a field means:
 
@@ -21,16 +20,12 @@ Per-key docs - check before re-deriving what a field means:
 ## Directory layout
 
 ```
-saves/     Real save files, exactly as copied from the game, may have any name. Never hand-edit
-           these directly - decode, edit the plaintext, re-encode.
-decoded/   Human-readable JSON dumps produced by tools/crushcrush_save.py.
-           Regenerate freely; not authoritative once saves/ changes.
-tools/     The decode/encode implementation (Python 3, stdlib only).
-utils/     Generic, Crush-Crush-agnostic codecs that tools/ depends on (LZF
-           compression, .NET DateTime.ToBinary() timestamps) - reusable on
-           any project that happens to hit the same generic formats.
-scripts/   Investigation/analysis helpers used while reverse-engineering the
-           format (not needed to just edit a save - see `tools/` for that).
+saves/          Real save files, exactly as copied from the game. Never hand-edit directly.
+decoded/        JSON save dumps produced by tools/crushcrush_save.py. Regenerate freely.
+tools/          The decode/encode implementation.
+utils/          Generic codecs that tools/ depends on.
+scripts/        Investigation/analysis helpers used for reverse-engineering
+templates/      JSON templates for blank save file generation.
 ```
 
 ## Standard live save locations
@@ -60,11 +55,14 @@ These locations contain live save files for pulling in. Never touch them except 
 
 - `docs/FLINGS.md`'s fling-ID → girl mapping is WIP (most IDs unmapped/unconfirmed) - don't treat it as complete.
 - `dchk`, `ana.ev`/`ana.vid` appear to be irrelevant or analytics; ignore them.
-- Edits to `pes<N>`-scoped `Girl`/`Job`/`Hobby` blocks are out of scope unless asked.
+- Edits to Parallel Event `Girl`/`Job`/`Hobby` blocks are out of scope unless asked.
+
+## Coding style
+
+- Keep code comments terse.
+- Do not explain design or implementation in docblocks.
 
 ## Open items / not yet done
 
 - No value-specific validation (e.g. `Love` 0-9, `Diamonds` non-negative) is enforced - edits are freeform JSON.
-  Building an actual editor UI/CLI for specific fields is new work, not started.
-- A future editor could push/pull saves directly against Nutaku's BlayFap backend (see `docs/NUTAKU.md`) instead of
-  only local `.sav` files - fetch/edit/save round-trip against the live API is confirmed working, not just decode.
+- Building an actual editor UI/CLI for specific fields is new work, not started.

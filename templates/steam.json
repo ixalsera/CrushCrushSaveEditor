@@ -9,7 +9,6 @@
       "2020": {},
       "LTE": {}
     },
-    "Current": null,
     "LTE": {},
     "PE": {}
   },
@@ -212,9 +211,7 @@
     "Date": null,
     "DateUTC": null,
     "Diamonds": 0,
-    "Hobbies": null,
-    "Ids": null,
-    "LoginDate": null,
+    "Hobbies": 0,
     "Money": 0,
     "Multipliers": {
       "Pending": 0.0,
